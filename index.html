@@ -14,7 +14,6 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: transparent;
-            padding: 20px;
         }
 
         .container {
@@ -28,6 +27,11 @@
             border-radius: 8px;
             margin-bottom: 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .config-section.hidden {
+            display: none;
         }
 
         .config-section h2 {
@@ -55,9 +59,91 @@
             font-size: 14px;
         }
 
+        /* Config Section Branding */
+        .config-branding {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .config-branding-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            gap: 12px;
+        }
+
+        .config-branding-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .config-branding-logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .config-branding-text h4 {
+            font-size: 12px;
+            color: #333;
+            margin-bottom: 2px;
+            font-weight: 600;
+        }
+
+        .config-branding-text p {
+            font-size: 10px;
+            color: #999;
+            margin: 0;
+        }
+
+        .config-branding-link {
+            padding: 6px 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .config-branding-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 480px) {
+            .config-branding-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .config-branding-info {
+                flex-direction: column;
+            }
+        }
+
         .menu-container {
             position: relative;
-            display: inline-block;
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 15px;
+            z-index: 2000;
         }
 
         .hamburger-btn {
@@ -142,23 +228,100 @@
             color: #28a745;
         }
 
+        .menu-item.settings {
+            color: #6c757d;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .menu-item.share {
+            color: #0066ff;
+        }
+
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 4px;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: transparent;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
         }
 
         .grid-item {
             position: relative;
-            aspect-ratio: 1;
+            aspect-ratio: 4 / 5;
             overflow: hidden;
-            cursor: grab;
-            border-radius: 4px;
+            cursor: default;
             background: #f5f5f5;
+            transition: box-shadow 0.2s;
+        }
+
+        .grid-item.drag-mode {
+            cursor: grab;
+            box-shadow: 0 0 0 2px rgba(0, 102, 255, 0.5);
+        }
+
+        .grid-item.drag-mode:active {
+            cursor: grabbing;
+        }
+
+        .grid-item.drag-mode::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            z-index: 100;
+            cursor: grab;
+        }
+
+        .grid-item.drag-mode:active::after {
+            cursor: grabbing;
+        }
+
+        .drag-handle {
+            display: none;
+        }
+
+        .grid-item iframe {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            border: none;
+            pointer-events: auto;
+            -webkit-transform: translate(-50%, -50%);
+        }
+
+        /* Hide Canva's fullscreen button */
+        .grid-item iframe::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: 60px;
+            background: transparent;
+            pointer-events: none;
+        }
+
+        .grid-item.drag-mode iframe {
+            pointer-events: none !important;
+        }
+
+        .grid-item.reel iframe {
+            transform: translate(-50%, -50%) scale(1.5);
+            transform-origin: center center;
+            width: 100%;
+            height: 100%;
+            -webkit-transform: translate(-50%, -50%) scale(1.5);
+        }
+
+        .grid-item.dragging iframe {
+            pointer-events: none;
         }
 
         .grid-item:active {
@@ -169,6 +332,12 @@
             opacity: 0.5;
         }
 
+        .grid-item.dragging iframe,
+        .grid-item.dragging video,
+        .grid-item.dragging img {
+            pointer-events: none;
+        }
+
         .grid-item.drag-over {
             border: 2px solid #0066ff;
         }
@@ -177,6 +346,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center;
             transition: transform 0.2s;
             border: none;
         }
@@ -185,55 +355,57 @@
             transform: scale(1.05);
         }
 
-        /* Media type indicator */
         .media-indicator {
             position: absolute;
             top: 8px;
             right: 8px;
-            background: rgba(0, 0, 0, 0.7);
             color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 16px;
             z-index: 10;
             display: flex;
             align-items: center;
-            gap: 4px;
+            filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
         }
 
-        /* Carousel indicator */
         .carousel-indicator {
             position: absolute;
             top: 8px;
             right: 8px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 4px;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 10;
+            filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
         }
 
-        /* Canva badge */
+        .carousel-indicator svg {
+            width: 16px;
+            height: 16px;
+            display: block;
+        }
+
         .canva-badge {
             position: absolute;
             bottom: 8px;
             left: 8px;
             background: rgba(0, 199, 190, 0.9);
             color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
+            padding: 4px 6px;
+            border-radius: 3px;
             z-index: 10;
+            width: 45px;
+            height: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Carousel slides */
+        .canva-badge svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
         .carousel-slides {
             position: relative;
             width: 100%;
@@ -309,42 +481,113 @@
             color: #060;
         }
 
-        .instructions {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 4px;
-            margin-top: 20px;
-            font-size: 13px;
-            color: #666;
-            line-height: 1.6;
+        /* Lightbox styles */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.3);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
-        .instructions h3 {
-            margin-bottom: 10px;
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            background: transparent;
+        }
+
+        .lightbox-content img,
+        .lightbox-content video,
+        .lightbox-content iframe {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .lightbox-content iframe {
+            width: auto;
+            height: 90vh;
+            max-width: 90vw;
+            max-height: 90vh;
+            border: none;
+            aspect-ratio: 9/16; /* Default to portrait for Canva designs */
+        }
+
+        @media (max-width: 768px) {
+            .lightbox-content iframe {
+                width: 95vw;
+                height: auto;
+                max-height: 85vh;
+            }
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
             color: #333;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: background 0.2s;
         }
 
-        .instructions ol, .instructions ul {
-            margin-left: 20px;
+        .lightbox-close:hover {
+            background: white;
         }
 
-        .instructions li {
-            margin-bottom: 8px;
-        }
-
-        .instructions code {
-            background: #e9ecef;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 12px;
+        /* Mobile touch improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .grid-item {
+                -webkit-tap-highlight-color: transparent;
+                touch-action: none;
+                user-select: none;
+                -webkit-user-select: none;
+            }
+            
+            .hamburger-btn {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            .menu-item {
+                padding: 16px;
+                min-height: 44px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="config-section">
-            <h2>⚙️ Notion Database Configuration</h2>
+        <div class="config-section" id="configSection">
+            <h2>⚙️ Configuration</h2>
             <div id="status"></div>
+            <div class="input-group">
+                <label for="apiUrl">API Endpoint URL:</label>
+                <input type="text" id="apiUrl" placeholder="https://your-project.vercel.app/api/notion">
+            </div>
             <div class="input-group">
                 <label for="databaseId">Database ID:</label>
                 <input type="text" id="databaseId" placeholder="Enter your Notion database ID">
@@ -353,69 +596,256 @@
                 <label for="apiKey">Integration Token:</label>
                 <input type="password" id="apiKey" placeholder="Enter your Notion integration token">
             </div>
-            <div class="menu-container">
-                <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
-                <div class="dropdown-menu" id="dropdownMenu">
-                    <div class="menu-item load" onclick="loadFromNotion(); closeMenu();">
-                        <span class="icon">📥</span>
-                        <span>Load Content</span>
+            <div style="background:#f0f8ff;border:1px solid #b3d9ff;border-radius:6px;padding:12px;margin-top:16px;font-size:13px;line-height:1.5;">
+                <strong>💡 Tips:</strong><br/>
+                • <strong>Canva embeds:</strong> Share → More → Embed → Generate code, then paste URL<br/>
+                • <strong>Hide items:</strong> Add a "Visible" checkbox property in Notion to control visibility<br/>
+                • Unchecked items won't appear in the grid
+            </div>
+
+            <!-- Branding -->
+            <div class="config-branding">
+                <div class="config-branding-content">
+                    <div class="config-branding-info">
+                        <div class="config-branding-logo">TA</div>
+                        <div class="config-branding-text">
+                            <h4>Instagram Grid Widget</h4>
+                            <p>© 2025 thriving, actually</p>
+                        </div>
                     </div>
-                    <div class="menu-item refresh" onclick="refreshGrid(); closeMenu();">
-                        <span class="icon">🔄</span>
-                        <span>Refresh</span>
-                    </div>
-                    <div class="menu-item save" onclick="saveToNotion(); closeMenu();">
-                        <span class="icon">💾</span>
-                        <span>Save Order</span>
-                    </div>
+                    <a href="https://thrivingactually.store/" target="_blank" class="config-branding-link">
+                        thrivingactually.store
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-container">
+            <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <div class="menu-item load" onclick="loadFromNotion(); closeMenu();">
+                    <span class="icon">📥</span>
+                    <span>Load Content</span>
+                </div>
+                <div class="menu-item refresh" onclick="refreshGrid(); closeMenu();">
+                    <span class="icon">🔄</span>
+                    <span>Refresh</span>
+                </div>
+                <div class="menu-item save" onclick="saveToNotion(); closeMenu();">
+                    <span class="icon">💾</span>
+                    <span>Save Order</span>
+                </div>
+                <div class="menu-item settings" onclick="toggleSettings(); closeMenu();">
+                    <span class="icon">⚙️</span>
+                    <span>Settings</span>
+                </div>
+                <div class="menu-item share" onclick="copyShareLink(); closeMenu();">
+                    <span class="icon">🔗</span>
+                    <span>Copy Share Link</span>
                 </div>
             </div>
         </div>
 
         <div class="grid" id="grid"></div>
 
-        <div class="instructions">
-            <h3>📋 Setup Instructions</h3>
-            <ol>
-                <li><strong>Create a Notion Integration:</strong> Go to <a href="https://www.notion.so/my-integrations" target="_blank">notion.so/my-integrations</a> and create a new integration. Copy the token.</li>
-                <li><strong>Create a Database:</strong> In Notion, create a database with these properties:
-                    <ul>
-                        <li><strong>Name</strong> (Title) - for content names</li>
-                        <li><strong>Canva URL</strong> (URL) - link to your Canva design</li>
-                        <li><strong>Image</strong> (Files & Media) - optional fallback for images/videos</li>
-                        <li><strong>Order</strong> (Number) - for grid position</li>
-                        <li><strong>Type</strong> (Select) - Options: "Photo", "Reel", "Carousel"</li>
-                        <li><strong>Slides</strong> (Files & Media) - for carousel images (multiple files, optional)</li>
-                    </ul>
-                </li>
-                <li><strong>Share Database:</strong> Click "..." → "Add connections" → Select your integration</li>
-                <li><strong>Get Database ID:</strong> Copy the ID from the database URL</li>
-                <li><strong>Add Content:</strong>
-                    <ul>
-                        <li><strong>Using Canva:</strong> Paste any Canva design URL in the "Canva URL" field. The widget will automatically detect and display photos, videos, or carousels!</li>
-                        <li><strong>Using Direct Files:</strong> Add images/videos to "Image" or "Slides" fields as before</li>
-                        <li><strong>Priority:</strong> Canva URL is used first if available, then falls back to uploaded files</li>
-                    </ul>
-                </li>
-                <li><strong>Canva URL Format:</strong> Use embed URLs like:<br>
-                    <code>https://www.canva.com/design/[ID]/view?embed</code>
-                </li>
-            </ol>
-            <h3 style="margin-top: 15px;">🎨 Canva Tips</h3>
-            <ul>
-                <li>To get the embed URL: Open your Canva design → Click "Share" → "More" → "Embed" → Copy the URL from the code</li>
-                <li>Make sure your Canva design is set to "Anyone with the link"</li>
-                <li>Canva videos and carousels will display automatically based on your design</li>
-                <li>The widget shows a Canva badge for designs loaded from Canva</li>
-            </ul>
-            <p style="margin-top: 10px;"><strong>Note:</strong> This widget stores your API credentials in memory only. They're not saved anywhere.</p>
+        <!-- Lightbox -->
+        <div class="lightbox" id="lightbox">
+            <button class="lightbox-close" onclick="closeLightbox()">×</button>
+            <div class="lightbox-content" id="lightboxContent"></div>
         </div>
     </div>
 
     <script>
         let images = [];
         let draggedElement = null;
-        let carouselIntervals = {};
+        let dragMode = false;
+        let displayedCount = 12; // Start with 12 images
+        const LOAD_INCREMENT = 12; // Load 12 more each time
+        
+        // Detect if we're in an environment that supports iframes well
+        function canUseIframes() {
+            // Check if we're in mobile Notion or Safari which block iframes
+            const isMobileNotion = /Notion/.test(navigator.userAgent) && /Mobile|Android|iPhone|iPad/.test(navigator.userAgent);
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            
+            // Don't use iframes in these environments
+            if (isMobileNotion || isIOS) {
+                console.log('Environment detected: mobile/iOS - will use image fallbacks for Canva');
+                return false;
+            }
+            
+            // Safari on desktop has mixed results, but let's try
+            if (isSafari) {
+                console.log('Safari detected - will attempt Canva iframes with fallback');
+                return true; // Try it, but we'll have fallback logic
+            }
+            
+            return true;
+        }
+
+        const SUPPORTS_IFRAMES = canUseIframes();
+
+        let touchStartTime = 0;
+        let touchStartPos = { x: 0, y: 0 };
+        let longPressTimer = null;
+        let lastTapTime = 0;
+        let isDraggingTouch = false;
+        let touchDraggedElement = null;
+        const LONG_PRESS_DURATION = 500; // ms
+        const DOUBLE_TAP_DELAY = 300; // ms
+        const MOVE_THRESHOLD = 10; // px
+
+        function openLightbox(img) {
+            const lightbox = document.getElementById('lightbox');
+            const content = document.getElementById('lightboxContent');
+            content.innerHTML = '';
+
+            const apiUrl = document.getElementById('apiUrl').value.trim();
+            const apiKey = document.getElementById('apiKey').value.trim();
+            
+            // Use same smart selection logic as grid
+            let primarySource;
+            let isFromCanva = false;
+            
+            if (img.canvaUrl && img.imageUrl) {
+                if (SUPPORTS_IFRAMES) {
+                    primarySource = img.canvaUrl;
+                    isFromCanva = true;
+                } else {
+                    primarySource = img.imageUrl;
+                    isFromCanva = false;
+                }
+            } else if (img.canvaUrl) {
+                primarySource = img.canvaUrl;
+                isFromCanva = true;
+            } else {
+                primarySource = img.imageUrl || img.url;
+                isFromCanva = false;
+            }
+            
+            if (img.type === 'Carousel' && img.slides.length > 0) {
+                // Create carousel in lightbox
+                const carouselContainer = document.createElement('div');
+                carouselContainer.style.position = 'relative';
+                carouselContainer.style.maxWidth = '90vw';
+                carouselContainer.style.maxHeight = '90vh';
+                
+                img.slides.forEach((slideUrl, index) => {
+                    const slideDiv = document.createElement('div');
+                    slideDiv.style.display = index === 0 ? 'block' : 'none';
+                    slideDiv.className = 'lightbox-slide';
+                    
+                    const media = createMediaElement(slideUrl, img.name, true, apiUrl, apiKey, null);
+                    if (media) {
+                        if (media.type === 'video') {
+                            media.element.controls = true;
+                            media.element.muted = false;
+                        }
+                        slideDiv.appendChild(media.element);
+                    }
+                    carouselContainer.appendChild(slideDiv);
+                });
+                
+                // Add navigation if multiple slides
+                if (img.slides.length > 1) {
+                    let currentSlide = 0;
+                    const prevBtn = document.createElement('button');
+                    prevBtn.innerHTML = '‹';
+                    prevBtn.style.cssText = 'position:absolute;left:20px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.9);border:none;font-size:40px;padding:10px 20px;cursor:pointer;border-radius:4px;z-index:10001;';
+                    prevBtn.onclick = () => {
+                        document.querySelectorAll('.lightbox-slide')[currentSlide].style.display = 'none';
+                        currentSlide = (currentSlide - 1 + img.slides.length) % img.slides.length;
+                        document.querySelectorAll('.lightbox-slide')[currentSlide].style.display = 'block';
+                    };
+                    
+                    const nextBtn = document.createElement('button');
+                    nextBtn.innerHTML = '›';
+                    nextBtn.style.cssText = 'position:absolute;right:20px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.9);border:none;font-size:40px;padding:10px 20px;cursor:pointer;border-radius:4px;z-index:10001;';
+                    nextBtn.onclick = () => {
+                        document.querySelectorAll('.lightbox-slide')[currentSlide].style.display = 'none';
+                        currentSlide = (currentSlide + 1) % img.slides.length;
+                        document.querySelectorAll('.lightbox-slide')[currentSlide].style.display = 'block';
+                    };
+                    
+                    carouselContainer.appendChild(prevBtn);
+                    carouselContainer.appendChild(nextBtn);
+                }
+                
+                content.appendChild(carouselContainer);
+            } else if (primarySource) {
+                const fallback = isFromCanva ? img.imageUrl : null;
+                const media = createMediaElement(primarySource, img.name, !isFromCanva, apiUrl, apiKey, fallback);
+                if (media) {
+                    if (media.type === 'video') {
+                        media.element.controls = true;
+                        media.element.muted = false;
+                        media.element.autoplay = true;
+                    }
+                    content.appendChild(media.element);
+                }
+            }
+
+            lightbox.classList.add('active');
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            const content = document.getElementById('lightboxContent');
+            
+            // Pause all videos when closing
+            const videos = content.querySelectorAll('video');
+            videos.forEach(video => {
+                video.pause();
+                video.currentTime = 0;
+            });
+            
+            lightbox.classList.remove('active');
+        }
+
+        // Close lightbox on clicking background
+        document.addEventListener('click', (e) => {
+            const lightbox = document.getElementById('lightbox');
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close lightbox on touch (mobile)
+        document.addEventListener('touchend', (e) => {
+            const lightbox = document.getElementById('lightbox');
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close lightbox on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+
+        // Toggle drag mode with Shift key
+        document.addEventListener('keydown', (e) => {
+            if (e.shiftKey && !dragMode) {
+                dragMode = true;
+                document.querySelectorAll('.grid-item').forEach(item => {
+                    item.classList.add('drag-mode');
+                    item.draggable = true;
+                });
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (!e.shiftKey && dragMode) {
+                dragMode = false;
+                document.querySelectorAll('.grid-item').forEach(item => {
+                    item.classList.remove('drag-mode');
+                    item.draggable = false;
+                });
+            }
+        });
 
         function toggleMenu() {
             const menu = document.getElementById('dropdownMenu');
@@ -427,7 +857,16 @@
             menu.classList.remove('show');
         }
 
-        // Close menu when clicking outside
+        function toggleSettings() {
+            const configSection = document.getElementById('configSection');
+            configSection.classList.toggle('hidden');
+        }
+
+        function hideSettings() {
+            const configSection = document.getElementById('configSection');
+            configSection.classList.add('hidden');
+        }
+
         document.addEventListener('click', function(event) {
             const menu = document.getElementById('dropdownMenu');
             const hamburger = document.querySelector('.hamburger-btn');
@@ -447,8 +886,18 @@
         function getMediaType(url) {
             if (!url) return null;
             const lower = url.toLowerCase();
-            if (lower.match(/\.(jpg|jpeg|png|gif|webp|svg)$/)) return 'image';
-            if (lower.match(/\.(mp4|webm|ogg|mov)$/)) return 'video';
+            
+            // Check for image extensions (with or without query params)
+            if (lower.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?|$)/)) return 'image';
+            
+            // Check for video extensions (with or without query params)
+            if (lower.match(/\.(mp4|webm|ogg|mov)(\?|$)/)) return 'video';
+            
+            // If it's from Notion's S3, assume it's an image if we can't determine
+            if (lower.includes('amazonaws.com') && lower.includes('prod-files-secure')) {
+                return 'image'; // Default to image for Notion files
+            }
+            
             return null;
         }
 
@@ -459,75 +908,254 @@
         function convertToCanvaEmbedUrl(url) {
             if (!url) return null;
             
-            // If already an embed URL, return as is
             if (url.includes('/view?embed') || url.includes('/view/embed')) {
                 return url;
             }
             
-            // Extract design ID and convert to embed URL
             const match = url.match(/canva\.com\/design\/([^\/\?]+)/);
             if (match && match[1]) {
-                return `https://www.canva.com/design/${match[1]}/view?embed`;
+                // Add embed parameter and allow-same-origin for better Safari compatibility
+                return `https://www.canva.com/design/${match[1]}/view?embed&ui=eyJBIjp7fX0`;
             }
             
             return url;
         }
 
-        async function loadFromNotion() {
+        function getCanvaDesignId(url) {
+            if (!url) return null;
+            const match = url.match(/canva\.com\/design\/([^\/\?]+)/);
+            return match ? match[1] : null;
+        }
+
+        function getCanvaThumbnailUrl(url) {
+            // Try to get thumbnail URL from Canva design
+            // Canva doesn't have a public API for this, but we can try the view URL without embed
+            const designId = getCanvaDesignId(url);
+            if (!designId) return null;
+            
+            // Try direct view link (might work better than embed on mobile)
+            return `https://www.canva.com/design/${designId}/view`;
+        }
+
+        function copyShareLink() {
+            const apiUrl = document.getElementById('apiUrl').value.trim();
             const databaseId = document.getElementById('databaseId').value.trim();
             const apiKey = document.getElementById('apiKey').value.trim();
 
-            if (!databaseId || !apiKey) {
-                showStatus('Please enter both Database ID and Integration Token', true);
+            if (!apiUrl || !databaseId || !apiKey) {
+                showStatus('Please configure settings first', true);
                 return;
             }
 
+            // Create shareable URL with credentials
+            const shareUrl = new URL(window.location.href.split('?')[0]);
+            shareUrl.searchParams.set('apiUrl', apiUrl);
+            shareUrl.searchParams.set('databaseId', databaseId);
+            shareUrl.searchParams.set('apiKey', apiKey);
+
+            // Copy to clipboard
+            navigator.clipboard.writeText(shareUrl.toString()).then(() => {
+                showStatus('✅ Share link copied! Paste it anywhere to stay logged in.');
+            }).catch(err => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = shareUrl.toString();
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showStatus('✅ Share link copied! Paste it anywhere to stay logged in.');
+                } catch (err) {
+                    showStatus('Failed to copy link', true);
+                }
+                document.body.removeChild(textArea);
+            });
+        }
+
+        // Load saved credentials on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            // First, check URL parameters for credentials (for cross-device sharing)
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlApiUrl = urlParams.get('apiUrl');
+            const urlDatabaseId = urlParams.get('databaseId');
+            const urlApiKey = urlParams.get('apiKey');
+            
+            // Use URL params if available, otherwise fall back to localStorage
+            const savedApiUrl = urlApiUrl || localStorage.getItem('apiUrl');
+            const savedDatabaseId = urlDatabaseId || localStorage.getItem('databaseId');
+            const savedApiKey = urlApiKey || localStorage.getItem('apiKey');
+            
+            if (savedApiUrl) document.getElementById('apiUrl').value = savedApiUrl;
+            if (savedDatabaseId) document.getElementById('databaseId').value = savedDatabaseId;
+            if (savedApiKey) document.getElementById('apiKey').value = savedApiKey;
+            
+            // Save to localStorage if coming from URL params
+            if (urlApiUrl || urlDatabaseId || urlApiKey) {
+                if (savedApiUrl) localStorage.setItem('apiUrl', savedApiUrl);
+                if (savedDatabaseId) localStorage.setItem('databaseId', savedDatabaseId);
+                if (savedApiKey) localStorage.setItem('apiKey', savedApiKey);
+            }
+            
+            // Auto-load if all credentials are present
+            if (savedApiUrl && savedDatabaseId && savedApiKey) {
+                loadFromNotion();
+                // Hide settings after auto-loading
+                setTimeout(() => hideSettings(), 1000);
+            }
+        });
+
+        function saveCredentials(apiUrl, databaseId, apiKey) {
+            localStorage.setItem('apiUrl', apiUrl);
+            localStorage.setItem('databaseId', databaseId);
+            localStorage.setItem('apiKey', apiKey);
+            
+            // Update URL with credentials (for sharing across devices/browsers)
+            const url = new URL(window.location);
+            url.searchParams.set('apiUrl', apiUrl);
+            url.searchParams.set('databaseId', databaseId);
+            url.searchParams.set('apiKey', apiKey);
+            window.history.replaceState({}, '', url);
+        }
+
+        async function loadFromNotion() {
+            const apiUrl = document.getElementById('apiUrl').value.trim();
+            const databaseId = document.getElementById('databaseId').value.trim();
+            const apiKey = document.getElementById('apiKey').value.trim();
+
+            if (!apiUrl || !databaseId || !apiKey) {
+                showStatus('Please enter API URL, Database ID, and Integration Token', true);
+                return;
+            }
+
+            // Save credentials
+            saveCredentials(apiUrl, databaseId, apiKey);
+
             try {
-                const response = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
+                console.log('=== LOADING FROM NOTION ===');
+                console.log('API URL:', apiUrl);
+                console.log('Database ID:', databaseId);
+                
+                const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${apiKey}`,
-                        'Notion-Version': '2022-06-28',
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        sorts: [{ property: 'Order', direction: 'ascending' }]
+                        action: 'query',
+                        databaseId: databaseId,
+                        apiKey: apiKey
                     })
                 });
 
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+
                 if (!response.ok) {
-                    throw new Error(`Notion API error: ${response.status}`);
+                    const errorText = await response.text();
+                    console.error('API Error Response:', errorText);
+                    throw new Error(`API error: ${response.status} - ${errorText}`);
                 }
 
                 const data = await response.json();
+                console.log('API Response data:', data);
+                
+                if (data.error) {
+                    console.error('Notion API Error:', data.error);
+                    throw new Error(data.error);
+                }
+
+                console.log('Notion API Response:', data); // Debug log
+                console.log('Number of results:', data.results?.length);
+
                 images = data.results.map(page => {
-                    // Check for Canva URL first
-                    const canvaUrl = page.properties['Canva URL']?.url || null;
+                    console.log('Processing page:', page); // Debug log
                     
-                    // Fallback to uploaded files
+                    const canvaUrl = page.properties['Canva URL']?.url || null;
                     const imageFiles = page.properties.Image?.files || [];
-                    const imageUrl = imageFiles.length > 0 ? imageFiles[0].file?.url || imageFiles[0].external?.url : null;
+                    const visible = page.properties.Visible?.checkbox ?? true; // Default to true if not set
+                    
+                    console.log('  - Canva URL:', canvaUrl);
+                    console.log('  - Image files:', imageFiles);
+                    console.log('  - Visible:', visible);
+                    
+                    // Get all file URLs from Image property
+                    const allImageUrls = imageFiles.map(file => file.file?.url || file.external?.url).filter(url => url);
+                    
+                    console.log('  - All image URLs:', allImageUrls);
                     
                     const type = page.properties.Type?.select?.name || 'Photo';
                     
-                    const slides = page.properties.Slides?.files || [];
-                    const slideUrls = slides.map(slide => slide.file?.url || slide.external?.url).filter(url => url);
+                    // If multiple images, treat as carousel regardless of type
+                    const isCarousel = allImageUrls.length > 1 || type === 'Carousel';
+                    const finalType = isCarousel ? 'Carousel' : type;
+                    
+                    // First image as main URL, rest as slides
+                    const imageUrl = allImageUrls.length > 0 ? allImageUrls[0] : null;
+                    const slideUrls = allImageUrls.length > 1 ? allImageUrls : [];
+                    
+                    console.log('Extracted data:', { 
+                        canvaUrl, 
+                        imageUrl, 
+                        type: finalType, 
+                        slideCount: slideUrls.length,
+                        visible: visible,
+                        supportsIframes: SUPPORTS_IFRAMES
+                    });
                     
                     return {
                         id: page.id,
                         name: page.properties.Name?.title[0]?.plain_text || 'Untitled',
                         canvaUrl: convertToCanvaEmbedUrl(canvaUrl),
-                        url: imageUrl,
-                        type: type,
+                        imageUrl: imageUrl, // Keep this separate
+                        url: imageUrl, // For backward compatibility
+                        type: finalType,
                         slides: slideUrls,
-                        order: page.properties.Order?.number || 0
+                        order: page.properties.Order?.number || 0,
+                        visible: visible
                     };
-                }).filter(img => img.canvaUrl || img.url || img.slides.length > 0);
+                });
+                
+                console.log('Before filtering:', images.length, 'items');
+                console.log('All images before filter:', images);
+                
+                // Filter by visible checkbox first, then by having content
+                images = images.filter(img => {
+                    const hasContent = img.canvaUrl || img.url || img.slides.length > 0;
+                    const isVisible = img.visible !== false; // Show if visible is true or undefined
+                    return hasContent && isVisible;
+                });
+
+                console.log('After filtering:', images.length, 'items');
+                console.log('Final images array:', images); // Debug log
+
+                // Log what types of URLs we have
+                images.forEach((img, i) => {
+                    console.log(`Image ${i}:`, {
+                        hasCanva: !!img.canvaUrl,
+                        hasUrl: !!img.url,
+                        hasSlides: img.slides.length,
+                        url: img.url,
+                        canvaUrl: img.canvaUrl,
+                        type: img.type
+                    });
+                });
+
+                // Reset infinite scroll counter
+                displayedCount = 12;
 
                 renderGrid();
                 showStatus(`Loaded ${images.length} items successfully!`);
+                
+                // Hide settings after successful load
+                setTimeout(() => hideSettings(), 1500);
             } catch (error) {
-                showStatus(`Error loading from Notion: ${error.message}`, true);
+                console.error('=== ERROR LOADING ===');
+                console.error('Error object:', error);
+                console.error('Error message:', error.message);
+                console.error('Error stack:', error.stack);
+                showStatus(`Error: ${error.message}`, true);
             }
         }
 
@@ -537,56 +1165,92 @@
         }
 
         async function saveToNotion() {
+            const apiUrl = document.getElementById('apiUrl').value.trim();
             const databaseId = document.getElementById('databaseId').value.trim();
             const apiKey = document.getElementById('apiKey').value.trim();
 
-            if (!databaseId || !apiKey) {
-                showStatus('Please configure Notion settings first', true);
+            if (!apiUrl || !databaseId || !apiKey) {
+                showStatus('Please configure settings first', true);
                 return;
             }
 
             try {
                 for (let i = 0; i < images.length; i++) {
-                    await fetch(`https://api.notion.com/v1/pages/${images[i].id}`, {
-                        method: 'PATCH',
+                    await fetch(apiUrl, {
+                        method: 'POST',
                         headers: {
-                            'Authorization': `Bearer ${apiKey}`,
-                            'Notion-Version': '2022-06-28',
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            properties: {
-                                Order: { number: i }
-                            }
+                            action: 'update',
+                            databaseId: databaseId,
+                            apiKey: apiKey,
+                            pageId: images[i].id,
+                            order: i
                         })
                     });
                 }
-                showStatus('Grid order saved to Notion successfully!');
+                showStatus('Grid order saved successfully!');
             } catch (error) {
-                showStatus(`Error saving to Notion: ${error.message}`, true);
+                showStatus(`Error saving: ${error.message}`, true);
             }
         }
 
-        function createMediaElement(url, alt) {
+        function createMediaElement(url, alt, useProxy, apiUrl, apiKey, fallbackUrl) {
             const mediaType = getMediaType(url);
+            
+            // Notion S3 URLs are already public and signed - don't proxy them
+            const isNotionS3 = url && url.includes('amazonaws.com') && url.includes('prod-files-secure');
+            const shouldProxy = useProxy && !isNotionS3 && apiUrl && apiKey;
             
             if (mediaType === 'video') {
                 const video = document.createElement('video');
-                video.src = url;
+                if (shouldProxy) {
+                    video.src = `${apiUrl}?proxyImage=${encodeURIComponent(url)}&apiKey=${encodeURIComponent(apiKey)}`;
+                } else {
+                    video.src = url;
+                }
                 video.muted = true;
                 video.loop = true;
                 video.playsInline = true;
+                video.onerror = () => console.error('Video failed to load:', url);
                 return { element: video, type: 'video' };
             } else if (mediaType === 'image') {
                 const img = document.createElement('img');
-                img.src = url;
+                if (shouldProxy) {
+                    img.src = `${apiUrl}?proxyImage=${encodeURIComponent(url)}&apiKey=${encodeURIComponent(apiKey)}`;
+                } else {
+                    img.src = url;
+                }
                 img.alt = alt;
+                img.onerror = () => {
+                    console.error('Image failed to load:', url);
+                    console.error('Was using proxy:', shouldProxy);
+                    img.style.display = 'none';
+                    const placeholder = document.createElement('div');
+                    placeholder.style.cssText = 'display:flex;align-items:center;justify-content:center;height:100%;background:#f5f5f5;color:#999;font-size:12px;padding:10px;text-align:center;';
+                    placeholder.textContent = 'Image failed to load';
+                    img.parentElement?.appendChild(placeholder);
+                };
+                img.onload = () => console.log('Image loaded successfully:', url);
                 return { element: img, type: 'image' };
             } else if (isCanvaUrl(url)) {
+                // Canva iframe for grid and lightbox
                 const iframe = document.createElement('iframe');
                 iframe.src = url;
                 iframe.loading = 'lazy';
-                iframe.allow = 'autoplay';
+                iframe.setAttribute('allowfullscreen', 'true');
+                iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+                iframe.style.cssText = 'width:100%;height:100%;border:none;';
+                
+                console.log('Creating Canva iframe:', url);
+                
+                iframe.onload = () => console.log('✅ Canva iframe loaded');
+                iframe.onerror = () => {
+                    console.error('❌ Canva iframe error - design may not be published');
+                    console.error('Make sure to use Share → More → Embed → Generate code in Canva');
+                };
+                
                 return { element: iframe, type: 'canva' };
             }
             
@@ -597,46 +1261,196 @@
             const grid = document.getElementById('grid');
             grid.innerHTML = '';
 
-            // Clear existing carousel intervals
-            Object.values(carouselIntervals).forEach(interval => clearInterval(interval));
-            carouselIntervals = {};
+            const apiUrl = document.getElementById('apiUrl').value.trim();
+            const apiKey = document.getElementById('apiKey').value.trim();
+
+            console.log('Rendering grid with', displayedCount, 'of', images.length, 'images');
 
             if (images.length === 0) {
-                grid.innerHTML = '<div class="placeholder">No items loaded. Configure your Notion database above and add some content!</div>';
+                grid.innerHTML = '<div class="placeholder">No items loaded. Configure your settings above and add some content!</div>';
                 return;
             }
 
-            images.forEach((img, index) => {
+            // Only render up to displayedCount images
+            const imagesToRender = images.slice(0, displayedCount);
+
+            imagesToRender.forEach((img, index) => {
+                console.log('Rendering item', index, img); // Debug
+                
                 const item = document.createElement('div');
                 item.className = 'grid-item';
-                item.draggable = true;
+                if (img.type === 'Reel') {
+                    item.classList.add('reel');
+                }
                 item.dataset.index = index;
+                item.draggable = false;
 
-                // Priority: Canva URL > Carousel Slides > Single Image/Video
-                const primarySource = img.canvaUrl || img.url;
-                const isFromCanva = !!img.canvaUrl;
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('drop', handleDrop);
+                item.addEventListener('dragend', handleDragEnd);
+
+                // Double-click to open lightbox (but not when in drag mode)
+                item.addEventListener('dblclick', (e) => {
+                    if (!dragMode) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        openLightbox(img);
+                    }
+                });
+
+                // Mobile touch support
+                item.addEventListener('touchstart', (e) => {
+                    touchStartTime = Date.now();
+                    touchStartPos = {
+                        x: e.touches[0].clientX,
+                        y: e.touches[0].clientY
+                    };
+                    
+                    // Double tap detection
+                    const currentTime = Date.now();
+                    const tapTimeDiff = currentTime - lastTapTime;
+                    
+                    if (tapTimeDiff < DOUBLE_TAP_DELAY && tapTimeDiff > 0) {
+                        // Double tap detected
+                        e.preventDefault();
+                        clearTimeout(longPressTimer);
+                        openLightbox(img);
+                        lastTapTime = 0;
+                        return;
+                    }
+                    
+                    lastTapTime = currentTime;
+                    
+                    // Long press detection
+                    longPressTimer = setTimeout(() => {
+                        if (!isDraggingTouch) {
+                            // Start drag mode
+                            isDraggingTouch = true;
+                            touchDraggedElement = item;
+                            item.classList.add('dragging');
+                            item.style.opacity = '0.5';
+                            navigator.vibrate && navigator.vibrate(50);
+                        }
+                    }, LONG_PRESS_DURATION);
+                }, { passive: false });
+
+                item.addEventListener('touchmove', (e) => {
+                    const touch = e.touches[0];
+                    const moveX = Math.abs(touch.clientX - touchStartPos.x);
+                    const moveY = Math.abs(touch.clientY - touchStartPos.y);
+                    
+                    // Cancel long press if moved too much
+                    if ((moveX > MOVE_THRESHOLD || moveY > MOVE_THRESHOLD) && !isDraggingTouch) {
+                        clearTimeout(longPressTimer);
+                    }
+                    
+                    // Handle dragging
+                    if (isDraggingTouch && touchDraggedElement) {
+                        e.preventDefault();
+                        
+                        // Find element under touch point
+                        const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+                        const targetItem = targetElement?.closest('.grid-item');
+                        
+                        if (targetItem && targetItem !== touchDraggedElement) {
+                            // Highlight potential drop target
+                            document.querySelectorAll('.grid-item').forEach(i => i.classList.remove('drag-over'));
+                            targetItem.classList.add('drag-over');
+                        }
+                    }
+                }, { passive: false });
+
+                item.addEventListener('touchend', (e) => {
+                    clearTimeout(longPressTimer);
+                    
+                    if (isDraggingTouch && touchDraggedElement) {
+                        e.preventDefault();
+                        
+                        const touch = e.changedTouches[0];
+                        const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+                        const targetItem = targetElement?.closest('.grid-item');
+                        
+                        if (targetItem && targetItem !== touchDraggedElement) {
+                            // Perform the swap
+                            const draggedIndex = parseInt(touchDraggedElement.dataset.index);
+                            const targetIndex = parseInt(targetItem.dataset.index);
+                            
+                            const draggedImage = images[draggedIndex];
+                            images.splice(draggedIndex, 1);
+                            images.splice(targetIndex, 0, draggedImage);
+                            
+                            renderGrid();
+                        }
+                        
+                        // Clean up
+                        touchDraggedElement.classList.remove('dragging');
+                        touchDraggedElement.style.opacity = '';
+                        document.querySelectorAll('.grid-item').forEach(i => i.classList.remove('drag-over'));
+                        touchDraggedElement = null;
+                        isDraggingTouch = false;
+                    }
+                }, { passive: false });
+
+                item.addEventListener('touchcancel', () => {
+                    clearTimeout(longPressTimer);
+                    if (touchDraggedElement) {
+                        touchDraggedElement.classList.remove('dragging');
+                        touchDraggedElement.style.opacity = '';
+                        document.querySelectorAll('.grid-item').forEach(i => i.classList.remove('drag-over'));
+                        touchDraggedElement = null;
+                        isDraggingTouch = false;
+                    }
+                });
+
+                // Smart source selection based on environment
+                let primarySource;
+                let isFromCanva = false;
+                
+                if (img.canvaUrl && img.imageUrl) {
+                    // Both available - choose based on environment
+                    if (SUPPORTS_IFRAMES) {
+                        primarySource = img.canvaUrl;
+                        isFromCanva = true;
+                        console.log('Using Canva iframe (desktop environment)');
+                    } else {
+                        primarySource = img.imageUrl;
+                        isFromCanva = false;
+                        console.log('Using image fallback (mobile/Safari environment)');
+                    }
+                } else if (img.canvaUrl) {
+                    // Only Canva available
+                    primarySource = img.canvaUrl;
+                    isFromCanva = true;
+                    console.log('Using Canva iframe (only option)');
+                } else {
+                    // Only image available
+                    primarySource = img.imageUrl || img.url;
+                    isFromCanva = false;
+                    console.log('Using image (only option)');
+                }
+
+                console.log('Primary source for item', index, ':', primarySource);
+                console.log('isFromCanva:', isFromCanva, 'img.type:', img.type);
 
                 if (img.type === 'Carousel' && (isFromCanva || img.slides.length > 0)) {
-                    // Render carousel
                     const carouselContainer = document.createElement('div');
                     carouselContainer.className = 'carousel-slides';
 
                     if (isFromCanva) {
-                        // Single Canva embed for carousel
                         const slide = document.createElement('div');
                         slide.className = 'carousel-slide active';
-                        const media = createMediaElement(img.canvaUrl, img.name);
+                        const media = createMediaElement(img.canvaUrl, img.name, false, apiUrl, apiKey, img.imageUrl);
                         if (media) {
                             slide.appendChild(media.element);
                         }
                         carouselContainer.appendChild(slide);
                     } else {
-                        // Multiple slides from uploaded files
                         img.slides.forEach((slideUrl, slideIndex) => {
                             const slide = document.createElement('div');
                             slide.className = `carousel-slide ${slideIndex === 0 ? 'active' : ''}`;
                             
-                            const media = createMediaElement(slideUrl, `${img.name} - Slide ${slideIndex + 1}`);
+                            const media = createMediaElement(slideUrl, `${img.name} - Slide ${slideIndex + 1}`, true, apiUrl, apiKey);
                             if (media) {
                                 slide.appendChild(media.element);
                             }
@@ -647,14 +1461,14 @@
 
                     item.appendChild(carouselContainer);
 
-                    // Add carousel indicator
                     const indicator = document.createElement('div');
                     indicator.className = 'carousel-indicator';
-                    indicator.innerHTML = '⊡⊡';
-                    indicator.style.fontSize = '10px';
+                    indicator.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14.82 14.87" width="16" height="16">
+                        <path fill="#fff" d="M13.6,2.32v8.48c0,1.54-1.25,2.8-2.8,2.8H2.26c.25.74.94,1.27,1.76,1.27h6.97c2.12,0,3.84-1.72,3.84-3.84v-6.97c0-.8-.51-1.48-1.22-1.74Z"/>
+                        <rect fill="#fff" width="12.66" height="12.66" rx="1.85" ry="1.85"/>
+                    </svg>`;
                     item.appendChild(indicator);
 
-                    // Add dots if multiple slides from files
                     if (!isFromCanva && img.slides.length > 1) {
                         const dotsContainer = document.createElement('div');
                         dotsContainer.className = 'carousel-nav';
@@ -665,61 +1479,80 @@
                         });
                         item.appendChild(dotsContainer);
 
-                        // Auto-rotate carousel
                         let currentSlide = 0;
-                        carouselIntervals[index] = setInterval(() => {
-                            const slides = item.querySelectorAll('.carousel-slide');
-                            const dots = item.querySelectorAll('.carousel-dot');
-                            
-                            slides[currentSlide].classList.remove('active');
-                            dots[currentSlide].classList.remove('active');
-                            
-                            currentSlide = (currentSlide + 1) % img.slides.length;
-                            
-                            slides[currentSlide].classList.add('active');
-                            dots[currentSlide].classList.add('active');
-                        }, 2000);
+                        let hoverInterval = null;
+                        
+                        // Only auto-advance on hover (desktop)
+                        item.addEventListener('mouseenter', () => {
+                            if (!dragMode) {
+                                hoverInterval = setInterval(() => {
+                                    const slides = item.querySelectorAll('.carousel-slide');
+                                    const dots = item.querySelectorAll('.carousel-dot');
+                                    
+                                    slides[currentSlide].classList.remove('active');
+                                    dots[currentSlide].classList.remove('active');
+                                    
+                                    currentSlide = (currentSlide + 1) % img.slides.length;
+                                    
+                                    slides[currentSlide].classList.add('active');
+                                    dots[currentSlide].classList.add('active');
+                                }, 2000);
+                            }
+                        });
+                        
+                        item.addEventListener('mouseleave', () => {
+                            if (hoverInterval) {
+                                clearInterval(hoverInterval);
+                                hoverInterval = null;
+                            }
+                        });
                     }
 
                 } else if (img.type === 'Reel' && primarySource) {
-                    // Render reel (video or Canva video)
-                    const media = createMediaElement(primarySource, img.name);
+                    const fallback = isFromCanva ? img.imageUrl : null;
+                    const media = createMediaElement(primarySource, img.name, !isFromCanva, apiUrl, apiKey, fallback);
                     if (media) {
                         item.appendChild(media.element);
                         
                         if (media.type === 'video') {
-                            // Auto-play on hover for direct videos
-                            item.addEventListener('mouseenter', () => media.element.play());
-                            item.addEventListener('mouseleave', () => media.element.pause());
+                            // Find the actual video element (might be inside a container)
+                            const videoElement = media.element.tagName === 'VIDEO' ? media.element : media.element.querySelector('video');
+                            if (videoElement) {
+                                item.addEventListener('mouseenter', () => videoElement.play());
+                                item.addEventListener('mouseleave', () => videoElement.pause());
+                            }
                         }
                     }
 
-                    // Add reel indicator
                     const indicator = document.createElement('div');
                     indicator.className = 'media-indicator';
-                    indicator.innerHTML = '▶';
+                    indicator.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11.44 12.86" width="16" height="16">
+                        <path fill="#fff" d="M10.87,7.42L1.72,12.7C.95,13.14,0,12.59,0,11.71V1.15C0,.27.95-.29,1.72.16l9.15,5.28c.76.44.76,1.54,0,1.98Z"/>
+                    </svg>`;
                     item.appendChild(indicator);
 
                 } else if (primarySource) {
-                    // Render regular photo or Canva static design
-                    const media = createMediaElement(primarySource, img.name);
+                    console.log('Rendering regular photo/video for item', index); // Debug
+                    const fallback = isFromCanva ? img.imageUrl : null;
+                    const media = createMediaElement(primarySource, img.name, !isFromCanva, apiUrl, apiKey, fallback);
+                    console.log('Media element created:', media); // Debug
                     if (media) {
                         item.appendChild(media.element);
+                    } else {
+                        console.error('Failed to create media element for item', index);
                     }
+                } else {
+                    console.warn('No primary source for item', index, img);
                 }
 
-                // Add Canva badge if content is from Canva
                 if (isFromCanva) {
                     const badge = document.createElement('div');
                     badge.className = 'canva-badge';
-                    badge.textContent = 'Canva';
+                    badge.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="30 42 350 120">
+                        <path fill="#fff" fill-rule="evenodd" d="M34.69,100.89c0,27.01,13.28,43.18,36.29,43.18,15.71,0,29.48-12.13,36.77-26.36.81,11.81,6.16,17.95,14.42,17.95,7.29,0,13.12-4.37,17.66-11.97,1.78,7.92,6.32,11.81,12.31,11.81,6.8,0,12.64-4.37,17.98-12.29,0,6.31,1.3,12.29,6.8,12.29,2.59,0,5.67-.65,6.16-2.91,5.83-23.77,20.09-43.34,24.46-43.34,1.3,0,1.62,1.29,1.62,2.75,0,6.47-4.54,19.73-4.54,28.14,0,9.22,3.89,15.2,11.99,15.2,8.91,0,17.98-10.84,23.98-26.85,1.94,14.88,5.99,26.85,12.31,26.85,7.78,0,21.87-16.5,30.29-33.96,3.24.49,8.26.32,13.12-3.07-2.11,5.18-3.24,10.84-3.24,16.33,0,16.17,7.78,20.7,14.42,20.7,7.29,0,13.12-4.37,17.66-11.97,1.46,6.79,5.35,11.81,12.31,11.81,10.85,0,20.41-11.16,20.41-20.38.16-1.94-.97-3.56-2.11-3.56-.49,0-.97.32-1.3,1.13-3.24,9.38-7.78,15.04-11.5,15.04-2.11,0-2.92-2.43-2.92-5.98,0-9.22,5.51-28.79,8.26-37.84.32-1.13.49-2.1.49-2.91,0-2.59-1.46-3.88-5.02-3.88s-7.94,1.46-11.83,8.41c-1.3-6.15-5.51-8.73-11.34-8.73-6.64,0-13.12,4.37-18.47,11.32-5.35,6.95-11.66,9.22-16.36,8.09,3.4-8.25,4.7-14.55,4.7-19.08,0-7.28-3.56-11.64-9.4-11.64-8.75,0-13.77,8.41-13.77,17.14,0,6.79,3.08,13.75,9.88,17.14-5.67,12.78-13.93,24.42-17.17,24.42-4.05,0-5.35-19.89-5.02-34.12.16-8.09.81-8.57.81-11,0-1.46-.97-2.43-4.7-2.43-8.59,0-11.34,7.28-11.66,15.69-.16,3.23-.65,6.31-1.46,9.38-3.56,12.78-11.02,22.64-15.88,22.64-2.27,0-2.92-2.26-2.92-5.17,0-9.22,5.18-20.86,5.18-30.73,0-7.28-3.24-11.81-9.23-11.81-7.13,0-16.36,8.41-25.27,24.1,2.92-11.97,4.05-23.61-4.54-23.61-1.94,0-3.73.49-5.35,1.46-1.13.49-1.78,1.62-1.78,2.91.81,12.78-10.37,45.6-20.9,45.6-1.94,0-2.92-2.1-2.92-5.5,0-9.22,5.51-28.79,8.26-37.84.32-1.13.49-2.1.49-3.07,0-2.43-1.46-3.72-5.02-3.72s-7.94,1.46-11.83,8.41c-1.46-6.15-5.51-8.73-11.34-8.73-9.56,0-20.09,10.03-24.79,23.13-6.32,17.47-18.79,34.45-35.8,34.45-15.39,0-23.49-12.78-23.49-32.99,0-29.27,21.55-53.04,37.42-53.04,7.61,0,11.18,4.85,11.18,12.29,0,9.06-5.02,13.1-5.02,16.66,0,.97.81,2.1,2.59,2.1,6.97,0,15.07-8.09,15.07-19.24s-8.75-19.08-24.62-19.08h0c-26.4,0-52.81,26.36-52.81,60.32ZM324.33,84.88c3.56,0,4.86,4.2,4.86,9.54.16,11.64-7.13,32.18-14.9,32.18-4.37,0-6.16-5.17-6.16-11,0-11.16,7.94-30.73,16.2-30.73ZM276.55,81.16c0-4.69,1.78-8.57,3.73-8.57s2.75,1.94,2.75,4.85c-.16,4.53-1.78,11.48-2.92,14.88-2.59-3.07-3.56-7.44-3.56-11.16ZM139.01,84.88c3.56,0,5.02,4.2,5.02,9.54,0,11.64-7.45,32.18-15.07,32.18-4.37,0-6.16-4.37-6.16-11,0-11.48,7.94-30.73,16.2-30.73Z"/>
+                    </svg>`;
                     item.appendChild(badge);
                 }
-
-                item.addEventListener('dragstart', handleDragStart);
-                item.addEventListener('dragover', handleDragOver);
-                item.addEventListener('drop', handleDrop);
-                item.addEventListener('dragend', handleDragEnd);
 
                 grid.appendChild(item);
             });
@@ -760,7 +1593,40 @@
             });
         }
 
-        // Initial render
+        // Infinite scroll implementation
+        let isLoading = false;
+        
+        function checkScroll() {
+            if (isLoading) return;
+            if (displayedCount >= images.length) return; // All images loaded
+            
+            const scrollPosition = window.innerHeight + window.scrollY;
+            const threshold = document.body.offsetHeight - 500; // Trigger 500px before bottom
+            
+            if (scrollPosition >= threshold) {
+                isLoading = true;
+                console.log('Loading more images...');
+                
+                // Simulate small delay for smooth loading
+                setTimeout(() => {
+                    displayedCount = Math.min(displayedCount + LOAD_INCREMENT, images.length);
+                    renderGrid();
+                    isLoading = false;
+                    console.log('Now showing', displayedCount, 'of', images.length, 'images');
+                }, 100);
+            }
+        }
+        
+        // Throttle scroll events for performance
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            if (scrollTimeout) clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(checkScroll, 100);
+        });
+        
+        // Also check on window resize
+        window.addEventListener('resize', checkScroll);
+
         renderGrid();
     </script>
 </body>
