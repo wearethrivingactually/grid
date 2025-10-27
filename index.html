@@ -59,6 +59,51 @@
             font-size: 14px;
         }
 
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .action-btn.secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .action-btn.secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
         /* Config Section Branding */
         .config-branding {
             margin-top: 20px;
@@ -596,6 +641,19 @@
                 <label for="apiKey">Integration Token:</label>
                 <input type="password" id="apiKey" placeholder="Enter your Notion integration token">
             </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-btn primary" onclick="loadFromNotion()">
+                    <span>📥</span>
+                    <span>Load Content</span>
+                </button>
+                <button class="action-btn secondary" onclick="hideSettings()">
+                    <span>✕</span>
+                    <span>Hide Settings</span>
+                </button>
+            </div>
+
             <div style="background:#f0f8ff;border:1px solid #b3d9ff;border-radius:6px;padding:12px;margin-top:16px;font-size:13px;line-height:1.5;">
                 <strong>💡 Tips:</strong><br/>
                 • <strong>Canva embeds:</strong> Share → More → Embed → Generate code, then paste URL<br/>
@@ -623,10 +681,6 @@
         <div class="menu-container">
             <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
             <div class="dropdown-menu" id="dropdownMenu">
-                <div class="menu-item load" onclick="loadFromNotion(); closeMenu();">
-                    <span class="icon">📥</span>
-                    <span>Load Content</span>
-                </div>
                 <div class="menu-item refresh" onclick="refreshGrid(); closeMenu();">
                     <span class="icon">🔄</span>
                     <span>Refresh</span>
