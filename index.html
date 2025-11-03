@@ -61,12 +61,11 @@
 
         /* Icon Buttons Above Grid */
         .icon-buttons {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 80px;
-            margin-bottom: 20px;
-            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            max-width: 1200px;
+            margin: 0 auto 10px auto;
+            padding: 0;
         }
 
         .icon-btn {
@@ -77,6 +76,9 @@
             border-radius: 8px;
             transition: all 0.2s;
             position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .icon-btn svg {
