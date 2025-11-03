@@ -451,6 +451,23 @@
             display: block;
         }
 
+        .pinned-indicator {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        }
+
         .carousel-slides {
             position: relative;
             width: 100%;
@@ -657,8 +674,9 @@
             <div style="background:#f0f8ff;border:1px solid #b3d9ff;border-radius:6px;padding:12px;margin-top:16px;font-size:13px;line-height:1.5;">
                 <strong>💡 Tips:</strong><br/>
                 • <strong>Canva embeds:</strong> Share → More → Embed → Generate code, then paste URL<br/>
-                • <strong>Hide items:</strong> Add a "Visible" checkbox property in Notion to control visibility<br/>
-                • Unchecked items won't appear in the grid
+                • <strong>Pin posts:</strong> Add a "Pinned" checkbox property to keep posts at the top<br/>
+                • <strong>Hide items:</strong> Add a "Visible" checkbox property to control visibility<br/>
+                • <strong>New posts:</strong> Latest posts appear first (unless pinned posts are above them)
             </div>
 
             <!-- Branding -->
@@ -1129,10 +1147,12 @@
                     const canvaUrl = page.properties['Canva URL']?.url || null;
                     const imageFiles = page.properties.Image?.files || [];
                     const visible = page.properties.Visible?.checkbox ?? true; // Default to true if not set
+                    const pinned = page.properties.Pinned?.checkbox ?? false; // Check if pinned
                     
                     console.log('  - Canva URL:', canvaUrl);
                     console.log('  - Image files:', imageFiles);
                     console.log('  - Visible:', visible);
+                    console.log('  - Pinned:', pinned);
                     
                     // Get all file URLs from Image property
                     const allImageUrls = imageFiles.map(file => file.file?.url || file.external?.url).filter(url => url);
@@ -1155,6 +1175,7 @@
                         type: finalType, 
                         slideCount: slideUrls.length,
                         visible: visible,
+                        pinned: pinned,
                         supportsIframes: SUPPORTS_IFRAMES
                     });
                     
@@ -1167,7 +1188,9 @@
                         type: finalType,
                         slides: slideUrls,
                         order: page.properties.Order?.number || 0,
-                        visible: visible
+                        visible: visible,
+                        pinned: pinned,
+                        createdTime: page.created_time // Store creation time for reverse chronological
                     };
                 });
                 
@@ -1183,6 +1206,36 @@
 
                 console.log('After filtering:', images.length, 'items');
                 console.log('Final images array:', images); // Debug log
+
+                // Sort images: Pinned first (by Order), then unpinned by reverse chronological (newest first)
+                images.sort((a, b) => {
+                    // Both pinned - sort by Order
+                    if (a.pinned && b.pinned) {
+                        return (a.order || 0) - (b.order || 0);
+                    }
+                    
+                    // Only a is pinned - a comes first
+                    if (a.pinned) return -1;
+                    
+                    // Only b is pinned - b comes first
+                    if (b.pinned) return 1;
+                    
+                    // Neither pinned - sort by created time (newest first)
+                    // If no created_time, fall back to Order (reverse)
+                    if (a.createdTime && b.createdTime) {
+                        return new Date(b.createdTime) - new Date(a.createdTime);
+                    }
+                    
+                    // Fallback to reverse Order if no created_time
+                    return (b.order || 0) - (a.order || 0);
+                });
+
+                console.log('After sorting (pinned first, then newest):', images.map(i => ({
+                    name: i.name,
+                    pinned: i.pinned,
+                    order: i.order,
+                    createdTime: i.createdTime
+                })));
 
                 // Log what types of URLs we have
                 images.forEach((img, i) => {
@@ -1603,9 +1656,17 @@
                     const badge = document.createElement('div');
                     badge.className = 'canva-badge';
                     badge.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="30 42 350 120">
-                        <path fill="#fff" fill-rule="evenodd" d="M34.69,100.89c0,27.01,13.28,43.18,36.29,43.18,15.71,0,29.48-12.13,36.77-26.36.81,11.81,6.16,17.95,14.42,17.95,7.29,0,13.12-4.37,17.66-11.97,1.78,7.92,6.32,11.81,12.31,11.81,6.8,0,12.64-4.37,17.98-12.29,0,6.31,1.3,12.29,6.8,12.29,2.59,0,5.67-.65,6.16-2.91,5.83-23.77,20.09-43.34,24.46-43.34,1.3,0,1.62,1.29,1.62,2.75,0,6.47-4.54,19.73-4.54,28.14,0,9.22,3.89,15.2,11.99,15.2,8.91,0,17.98-10.84,23.98-26.85,1.94,14.88,5.99,26.85,12.31,26.85,7.78,0,21.87-16.5,30.29-33.96,3.24.49,8.26.32,13.12-3.07-2.11,5.18-3.24,10.84-3.24,16.33,0,16.17,7.78,20.7,14.42,20.7,7.29,0,13.12-4.37,17.66-11.97,1.46,6.79,5.35,11.81,12.31,11.81,10.85,0,20.41-11.16,20.41-20.38.16-1.94-.97-3.56-2.11-3.56-.49,0-.97.32-1.3,1.13-3.24,9.38-7.78,15.04-11.5,15.04-2.11,0-2.92-2.43-2.92-5.98,0-9.22,5.51-28.79,8.26-37.84.32-1.13.49-2.1.49-2.91,0-2.59-1.46-3.88-5.02-3.88s-7.94,1.46-11.83,8.41c-1.3-6.15-5.51-8.73-11.34-8.73-6.64,0-13.12,4.37-18.47,11.32-5.35,6.95-11.66,9.22-16.36,8.09,3.4-8.25,4.7-14.55,4.7-19.08,0-7.28-3.56-11.64-9.4-11.64-8.75,0-13.77,8.41-13.77,17.14,0,6.79,3.08,13.75,9.88,17.14-5.67,12.78-13.93,24.42-17.17,24.42-4.05,0-5.35-19.89-5.02-34.12.16-8.09.81-8.57.81-11,0-1.46-.97-2.43-4.7-2.43-8.59,0-11.34,7.28-11.66,15.69-.16,3.23-.65,6.31-1.46,9.38-3.56,12.78-11.02,22.64-15.88,22.64-2.27,0-2.92-2.26-2.92-5.17,0-9.22,5.18-20.86,5.18-30.73,0-7.28-3.24-11.81-9.23-11.81-7.13,0-16.36,8.41-25.27,24.1,2.92-11.97,4.05-23.61-4.54-23.61-1.94,0-3.73.49-5.35,1.46-1.13.49-1.78,1.62-1.78,2.91.81,12.78-10.37,45.6-20.9,45.6-1.94,0-2.92-2.1-2.92-5.5,0-9.22,5.51-28.79,8.26-37.84.32-1.13.49-2.1.49-3.07,0-2.43-1.46-3.72-5.02-3.72s-7.94,1.46-11.83,8.41c-1.46-6.15-5.51-8.73-11.34-8.73-9.56,0-20.09,10.03-24.79,23.13-6.32,17.47-18.79,34.45-35.8,34.45-15.39,0-23.49-12.78-23.49-32.99,0-29.27,21.55-53.04,37.42-53.04,7.61,0,11.18,4.85,11.18,12.29,0,9.06-5.02,13.1-5.02,16.66,0,.97.81,2.1,2.59,2.1,6.97,0,15.07-8.09,15.07-19.24s-8.75-19.08-24.62-19.08h0c-26.4,0-52.81,26.36-52.81,60.32ZM324.33,84.88c3.56,0,4.86,4.2,4.86,9.54.16,11.64-7.13,32.18-14.9,32.18-4.37,0-6.16-5.17-6.16-11,0-11.16,7.94-30.73,16.2-30.73ZM276.55,81.16c0-4.69,1.78-8.57,3.73-8.57s2.75,1.94,2.75,4.85c-.16,4.53-1.78,11.48-2.92,14.88-2.59-3.07-3.56-7.44-3.56-11.16ZM139.01,84.88c3.56,0,5.02,4.2,5.02,9.54,0,11.64-7.45,32.18-15.07,32.18-4.37,0-6.16-4.37-6.16-11,0-11.48,7.94-30.73,16.2-30.73Z"/>
+                        <path fill="#fff" fill-rule="evenodd" d="M34.69,100.89c0,27.01,13.28,43.18,36.29,43.18,15.71,0,29.48-12.13,36.77-26.36.81,11.81,6.16,17.95,14.42,17.95,7.29,0,13.12-4.37,17.66-11.97,1.78,7.92,6.32,11.81,12.31,11.81,6.8,0,12.64-4.37,17.98-12.29,0,6.31,1.3,12.29,6.8,12.29,2.59,0,5.67-.65,6.16-2.91,5.83-23.77,20.09-43.34,24.46-43.34,1.3,0,1.62,1.29,1.62,2.75,0,6.47-4.54,19.73-4.54,28.14,0,9.22,3.89,15.2,11.99,15.2,8.91,0,17.98-10.84,23.98-26.85,1.94,14.88,5.99,26.85,12.31,26.85,7.78,0,21.87-16.5,30.29-33.96,3.24.49,8.26.32,13.12-3.07-2.11,5.18-3.24,10.84-3.24,16.33,0,16.17,7.78,20.7,14.42,20.7,7.29,0,13.12-4.37,17.66-11.97,1.46,6.79,5.35,11.81,12.31,11.81,10.85,0,20.41-11.16,20.41-20.38.16-1.94-.97-3.56-2.11-3.56-.49,0-.97.32-1.3,1.13-3.24,9.38-7.78,15.04-11.5,15.04-2.11,0-2.92-2.43-2.92-5.98,0-9.22,5.51-28.79,8.26-37.84.32-1.13.49-2.1.49-2.91,0-2.59-1.46-3.88-5.02-3.88s-7.94,1.46-11.83,8.41c-1.3-6.15-5.51-8.73-11.34-8.73-6.64,0-13.12,4.37-18.47,11.32-5.35,6.95-11.66,9.22-16.36,8.09,3.4-8.25,4.7-14.55,4.7-19.08,0-7.28-3.56-11.64-9.4-11.64-8.75,0-13.77,8.41-13.77,17.14,0,6.79,3.08,13.75,9.88,17.14-5.67,12.78-13.93,24.42-17.17,24.42-4.05,0-5.35-19.89-5.02-34.12.16-8.09.81-8.57.81-11,0-1.46-.97-2.43-4.7-2.43-8.59,0-11.34,7.28-11.66,15.69-.16,3.23-.65,6.31-1.46,9.38-3.56,12.78-11.02,22.64-15.88,22.64-2.27,0-2.92-2.26-2.92-5.17,0-9.22,5.18-20.86,5.18-30.73,0-7.28-3.24-11.81-9.23-11.81-7.13,0-16.36,8.41-25.27,24.1,2.92-11.97,4.05-23.61-4.54-23.61-1.94,0-3.73.49-5.35,1.46-1.13.49-1.78,1.62-1.78,2.91.81,12.78-10.37,45.6-20.9,45.6-1.94,0-2.92-2.1-2.92-5.5,0-9.22,5.51-28.79,8.26-37.84.32-1.13.49-2.1.49-3.07,0-2.43-1.46-3.72-5.02-3.72s-7.94,1.46-11.83,8.41c-1.46-6.15-5.51-8.73-11.34-8.73-9.56,0-20.09,10.03-24.79,23.13-6.32,17.47-18.79,34.45-35.8,34.45-15.39,0-23.49-12.78-23.49-32.99,0-29.27,21.55-53.04,37.42-53.04,7.61,0,11.18,4.85,11.18,12.29,0,9.06-5.02,13.1-5.02,16.66,0,.97.81,2.1,2.59,2.10,6.97,0,15.07-8.09,15.07-19.24s-8.75-19.08-24.62-19.08h0c-26.4,0-52.81,26.36-52.81,60.32ZM324.33,84.88c3.56,0,4.86,4.2,4.86,9.54.16,11.64-7.13,32.18-14.9,32.18-4.37,0-6.16-5.17-6.16-11,0-11.16,7.94-30.73,16.2-30.73ZM276.55,81.16c0-4.69,1.78-8.57,3.73-8.57s2.75,1.94,2.75,4.85c-.16,4.53-1.78,11.48-2.92,14.88-2.59-3.07-3.56-7.44-3.56-11.16ZM139.01,84.88c3.56,0,5.02,4.2,5.02,9.54,0,11.64-7.45,32.18-15.07,32.18-4.37,0-6.16-4.37-6.16-11,0-11.48,7.94-30.73,16.2-30.73Z"/>
                     </svg>`;
                     item.appendChild(badge);
+                }
+
+                // Add pinned indicator if post is pinned
+                if (img.pinned) {
+                    const pinnedBadge = document.createElement('div');
+                    pinnedBadge.className = 'pinned-indicator';
+                    pinnedBadge.innerHTML = '<span>📌</span><span>Pinned</span>';
+                    item.appendChild(pinnedBadge);
                 }
 
                 grid.appendChild(item);
