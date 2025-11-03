@@ -14,6 +14,8 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: transparent;
+            padding: 20px;
+            min-height: 100vh;
         }
 
         .container {
@@ -1335,9 +1337,11 @@
                 return;
             }
 
+            showStatus('Saving order...');
+            
             try {
                 for (let i = 0; i < images.length; i++) {
-                    await fetch(apiUrl, {
+                    const response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -1350,8 +1354,12 @@
                             order: i
                         })
                     });
+                    
+                    if (!response.ok) {
+                        throw new Error(`Failed to update item ${i + 1}`);
+                    }
                 }
-                showStatus('Grid order saved successfully!');
+                showStatus('✓ Grid order saved successfully!');
             } catch (error) {
                 showStatus(`Error saving: ${error.message}`, true);
             }
@@ -1730,6 +1738,12 @@
 
                 grid.appendChild(item);
             });
+            
+            // After rendering, check if we need to load more immediately
+            // (in case the initial 12 don't fill the screen)
+            setTimeout(() => {
+                checkScroll();
+            }, 200);
         }
 
         function handleDragStart(e) {
@@ -1774,19 +1788,29 @@
             if (isLoading) return;
             if (displayedCount >= images.length) return; // All images loaded
             
-            const scrollPosition = window.innerHeight + window.scrollY;
-            const threshold = document.body.offsetHeight - 500; // Trigger 500px before bottom
+            const scrollPosition = window.innerHeight + window.pageYOffset;
+            const pageHeight = document.documentElement.scrollHeight;
+            const threshold = pageHeight - 800; // Trigger 800px before bottom
+            
+            console.log('Scroll check:', {
+                scrollPosition,
+                threshold,
+                pageHeight,
+                displayed: displayedCount,
+                total: images.length
+            });
             
             if (scrollPosition >= threshold) {
                 isLoading = true;
                 console.log('Loading more images...');
                 
-                // Simulate small delay for smooth loading
+                // Load more images
                 setTimeout(() => {
+                    const previousCount = displayedCount;
                     displayedCount = Math.min(displayedCount + LOAD_INCREMENT, images.length);
+                    console.log(`Loading more: ${previousCount} → ${displayedCount} of ${images.length}`);
                     renderGrid();
                     isLoading = false;
-                    console.log('Now showing', displayedCount, 'of', images.length, 'images');
                 }, 100);
             }
         }
