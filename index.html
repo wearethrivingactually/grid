@@ -457,15 +457,21 @@
             left: 8px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
+            padding: 6px;
+            border-radius: 8px;
             z-index: 10;
             display: flex;
             align-items: center;
-            gap: 4px;
+            justify-content: center;
             box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+            width: 32px;
+            height: 32px;
+        }
+
+        .pinned-indicator svg {
+            width: 18px;
+            height: auto;
+            display: block;
         }
 
         .carousel-slides {
@@ -1665,7 +1671,12 @@
                 if (img.pinned) {
                     const pinnedBadge = document.createElement('div');
                     pinnedBadge.className = 'pinned-indicator';
-                    pinnedBadge.innerHTML = '<span>📌</span><span>Pinned</span>';
+                    pinnedBadge.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20.91 28.42">
+                        <g>
+                            <polygon fill="#fff" points="20.64 6.42 20.64 6.42 20.64 6.42 20.64 6.42"/>
+                            <path fill="#fff" d="M20.64,6.42L11.04.09c-.27-.18-.64-.1-.81.18l-.5.8c-.17.28-.1.65.18.83l.83.54-.44.7h0s-2.73,4.34-2.73,4.34L.87,9.84l-.73,1.17,6.44,4.24L.73,24.53,0,28.41h0s0,0,0,0h0s0,0,0,0l3.15-2.28,5.85-9.29,6.44,4.24.73-1.17-.67-7.2,2.73-4.34h0s.44-.7.44-.7l.83.54c.27.18.64.1.81-.18l.5-.8c.17-.28.09-.65-.18-.83Z"/>
+                        </g>
+                    </svg>`;
                     item.appendChild(pinnedBadge);
                 }
 
