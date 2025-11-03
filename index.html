@@ -59,6 +59,131 @@
             font-size: 14px;
         }
 
+        /* Icon Buttons Above Grid */
+        .icon-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .icon-btn svg {
+            width: 28px;
+            height: 28px;
+            display: block;
+            fill: #000;
+            transition: fill 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .icon-btn:hover svg {
+            fill: #666;
+        }
+
+        .icon-btn:active {
+            background: #e0e0e0;
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .icon-btn svg {
+                fill: #fff;
+            }
+            
+            .icon-btn:hover {
+                background: rgba(255, 255, 255, 0.1);
+            }
+            
+            .icon-btn:hover svg {
+                fill: #ccc;
+            }
+            
+            .icon-btn:active {
+                background: rgba(255, 255, 255, 0.15);
+            }
+        }
+
+        /* Settings Dropdown */
+        .settings-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 200px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+        }
+
+        .settings-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #333;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .dropdown-item:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .dropdown-item:hover {
+            background: #f8f9fa;
+        }
+
+        .dropdown-item .icon {
+            font-size: 16px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .settings-dropdown {
+                background: #2d2d2d;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            }
+            
+            .dropdown-item {
+                color: #fff;
+                border-bottom-color: #444;
+            }
+            
+            .dropdown-item:hover {
+                background: #3d3d3d;
+            }
+        }
+
         /* Action Buttons */
         .action-buttons {
             display: flex;
@@ -181,105 +306,6 @@
             .config-branding-info {
                 flex-direction: column;
             }
-        }
-
-        .menu-container {
-            position: relative;
-            display: flex;
-            justify-content: flex-start;
-            margin-bottom: 15px;
-            z-index: 2000;
-        }
-
-        .hamburger-btn {
-            background: #f0f0f0;
-            color: #333;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 20px;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-        }
-
-        .hamburger-btn:hover {
-            background: #e0e0e0;
-        }
-
-        .dropdown-menu {
-            position: absolute;
-            top: 45px;
-            left: 0;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            min-width: 200px;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.2s ease;
-        }
-
-        .dropdown-menu.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .menu-item {
-            padding: 12px 16px;
-            cursor: pointer;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-            color: #333;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .menu-item:first-child {
-            border-radius: 8px 8px 0 0;
-        }
-
-        .menu-item:last-child {
-            border-bottom: none;
-            border-radius: 0 0 8px 8px;
-        }
-
-        .menu-item:hover {
-            background: #f8f9fa;
-        }
-
-        .menu-item .icon {
-            font-size: 16px;
-        }
-
-        .menu-item.load {
-            color: #0066ff;
-        }
-
-        .menu-item.refresh {
-            color: #6c757d;
-        }
-
-        .menu-item.save {
-            color: #28a745;
-        }
-
-        .menu-item.settings {
-            color: #6c757d;
-            border-top: 1px solid #f0f0f0;
-        }
-
-        .menu-item.share {
-            color: #0066ff;
         }
 
         .grid {
@@ -696,26 +722,52 @@
             </div>
         </div>
 
-        <div class="menu-container">
-            <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
-            <div class="dropdown-menu" id="dropdownMenu">
-                <div class="menu-item refresh" onclick="refreshGrid(); closeMenu();">
-                    <span class="icon">🔄</span>
-                    <span>Refresh</span>
+        <!-- Icon Buttons Above Grid -->
+        <div class="icon-buttons">
+            <button class="icon-btn" onclick="saveToNotion()" title="Save Order">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33.17 33.17">
+                    <g>
+                        <path d="M20.77.55c-.18-.18-.38-.31-.61-.41-.23-.1-.47-.14-.72-.14h-5.72c-.25,0-.49.05-.72.14s-.43.23-.61.41c-.18.18-.31.38-.41.61-.1.23-.14.47-.14.72v5.72c0,.25.05.49.14.72.1.23.23.43.41.61s.38.31.61.41c.23.1.47.14.72.14h5.72c.25,0,.49-.05.72-.14.23-.1.43-.23.61-.41s.31-.38.41-.61c.1-.23.14-.47.14-.72V1.88c0-.25-.05-.49-.14-.72-.1-.23-.23-.43-.41-.61Z"/>
+                        <path d="M8.93.55c-.18-.18-.38-.31-.61-.41s-.47-.14-.72-.14H1.88c-.25,0-.49.05-.72.14s-.43.23-.61.41c-.18.18-.31.38-.41.61-.1.23-.14.47-.14.72v5.72c0,.25.05.49.14.72.1.23.23.43.41.61.18.18.38.31.61.41.23.1.47.14.72.14h5.72c.25,0,.49-.05.72-.14.23-.1.43-.23.61-.41.18-.18.31-.38.41-.61.1-.23.14-.47.14-.72V1.88c0-.25-.05-.49-.14-.72-.1-.23-.23-.43-.41-.61Z"/>
+                        <path d="M8.93,12.4c-.18-.18-.38-.31-.61-.41-.23-.1-.47-.14-.72-.14H1.88c-.25,0-.49.05-.72.14-.23.1-.43.23-.61.41-.18.18-.31.38-.41.61-.1.23-.14.47-.14.72v5.72c0,.25.05.49.14.72.1.23.23.43.41.61.18.18.38.31.61.41.23.1.47.14.72.14h5.72c.25,0,.49-.05.72-.14.23-.1.43-.23.61-.41.18-.18.31-.38.41-.61.1-.23.14-.47.14-.72v-5.72c0-.25-.05-.49-.14-.72-.1-.23-.23-.43-.41-.61Z"/>
+                        <path d="M20.77,12.4c-.18-.18-.38-.31-.61-.41-.23-.1-.47-.14-.72-.14h-5.72c-.25,0-.49.05-.72.14-.23.1-.43.23-.61.41-.18.18-.31.38-.41.61-.1.23-.14.47-.14.72v5.72c0,.25.05.49.14.72.1.23.23.43.41.61.18.18.38.31.61.41.23.1.47.14.72.14h5.72c.25,0,.49-.05.72-.14.23-.1.43-.23.61-.41.18-.18.31-.38.41-.61.1-.23.14-.47.14-.72v-5.72c0-.25-.05-.49-.14-.72-.1-.23-.23-.43-.41-.61Z"/>
+                        <path d="M33.03,1.16c-.1-.23-.23-.43-.41-.61-.18-.18-.38-.31-.61-.41-.23-.1-.47-.14-.72-.14h-5.72c-.25,0-.49.05-.72.14-.23.1-.43.23-.61.41-.18.18-.31.38-.41.61-.1.23-.14.47-.14.72v5.72c0,.25.05.49.14.72.1.23.23.43.41.61s.38.31.61.41c.23.1.47.14.72.14h5.72c.25,0,.49-.05.72-.14.23-.1.43-.23.61-.41s.31-.38.41-.61c.1-.23.14-.47.14-.72V1.88c0-.25-.05-.49-.14-.72Z"/>
+                        <path d="M32.62,12.4c-.18-.18-.38-.31-.61-.41-.23-.1-.47-.14-.72-.14h-5.72c-.25,0-.49.05-.72.14-.23.1-.43.23-.61.41-.18.18-.31.38-.41.61-.1.23-.14.47-.14.72v5.72c0,.25.05.49.14.72.1.23.23.43.41.61.18.18.38.31.61.41.23.1.47.14.72.14h5.72c.25,0,.49-.05.72-.14.23-.1.43-.23.61-.41.18-.18.31-.38.41-.61.1-.23.14-.47.14-.72v-5.72c0-.25-.05-.49-.14-.72-.1-.23-.23-.43-.41-.61Z"/>
+                        <path d="M8.93,24.24c-.18-.18-.38-.31-.61-.41s-.47-.14-.72-.14H1.88c-.25,0-.49.05-.72.14s-.43.23-.61.41c-.18.18-.31.38-.41.61-.1.23-.14.47-.14.72v5.72c0,.25.05.49.14.72.1.23.23.43.41.61.18.18.38.31.61.41.23.1.47.14.72.14h5.72c.25,0,.49-.05.72-.14.23-.1.43-.23.61-.41.18-.18.31-.38.41-.61.1-.23.14-.47.14-.72v-5.72c0-.25-.05-.49-.14-.72-.1-.23-.23-.43-.41-.61Z"/>
+                        <path d="M20.77,24.24c-.18-.18-.38-.31-.61-.41-.23-.1-.47-.14-.72-.14h-5.72c-.25,0-.49.05-.72.14s-.43.23-.61.41-.31.38-.41.61c-.1.23-.14.47-.14.72v5.72c0,.25.05.49.14.72.1.23.23.43.41.61.18.18.38.31.61.41.23.1.47.14.72.14h5.72c.25,0,.49-.05.72-.14.23-.1.43-.23.61-.41.18-.18.31-.38.41-.61.1-.23.14-.47.14-.72v-5.72c0-.25-.05-.49-.14-.72-.1-.23-.23-.43-.41-.61Z"/>
+                        <path d="M32.62,24.24c-.18-.18-.38-.31-.61-.41-.23-.1-.47-.14-.72-.14h-5.72c-.25,0-.49.05-.72.14-.23.1-.43.23-.61.41s-.31.38-.41.61-.14.47-.14.72v5.72c0,.25.05.49.14.72.1.23.23.43.41.61.18.18.38.31.61.41.23.1.47.14.72.14h5.72c.25,0,.49-.05.72-.14.23-.1.43-.23.61-.41.18-.18.31-.38.41-.61.1-.23.14-.47.14-.72v-5.72c0-.25-.05-.49-.14-.72s-.23-.43-.41-.61Z"/>
+                    </g>
+                </svg>
+            </button>
+            
+            <button class="icon-btn" onclick="refreshGrid()" title="Refresh">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34.5 35.59">
+                    <path d="M3.52,8.97c0,.62.28,1.23.79,1.66.41.34.91.51,1.41.52,0,0,.01,0,.02,0h6.44c1.23,0,2.22-.99,2.22-2.2,0-1.13-.86-2.06-1.96-2.19,1.49-.6,3.11-.93,4.81-.93,7.07,0,12.8,5.68,12.8,12.68,0,1.22,1,2.2,2.22,2.2s2.22-.99,2.22-2.2c0-9.43-7.73-17.08-17.25-17.08-3.42,0-6.6.99-9.28,2.69v-1.55c0-1.22-1-2.2-2.22-2.2s-2.22.99-2.22,2.2v6.38s0,.02,0,.02h0ZM26.54,31.84v1.55c0,1.22,1,2.2,2.22,2.2s2.22-.99,2.22-2.2v-6.38s0-.02,0-.02c0-.62-.28-1.23-.79-1.66-.41-.34-.91-.51-1.41-.52,0,0-.01,0-.02,0h-6.44c-1.23,0-2.22.99-2.22,2.2,0,1.13.86,2.06,1.96,2.19-1.49.6-3.11.93-4.81.93-7.07,0-12.8-5.68-12.8-12.68,0-1.22-1-2.2-2.22-2.2s-2.22.99-2.22,2.2c0,9.43,7.73,17.08,17.25,17.08,3.42,0,6.6-.99,9.28-2.69h0Z"/>
+                </svg>
+            </button>
+            
+            <button class="icon-btn" onclick="toggleSettingsDropdown()" title="More Options">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35.25 34.74">
+                    <g>
+                        <path d="M15.89,27.18c-.19-.08-.39-.12-.59-.12s-.4.04-.59.12c-.19.08-.36.19-.5.34-.15.15-.26.31-.34.51-.08.19-.12.39-.12.6s.04.41.12.6c.08.2.19.36.34.51.15.15.31.26.5.34.38.16.8.16,1.18,0,.19-.08.36-.19.5-.34.15-.15.26-.31.34-.51.08-.19.12-.39.12-.6s-.04-.4-.12-.6c-.08-.19-.19-.36-.34-.51-.15-.15-.31-.26-.5-.34Z"/>
+                        <path d="M9.33,9.57c.38.16.8.16,1.18,0,.19-.08.36-.19.5-.34.15-.15.26-.31.34-.51.08-.19.12-.39.12-.6s-.04-.4-.12-.6c-.08-.19-.19-.36-.34-.51-.15-.15-.31-.26-.5-.34-.19-.08-.39-.12-.59-.12s-.4.04-.59.12c-.19.08-.35.19-.5.34-.15.15-.26.31-.34.51-.08.19-.12.39-.12.6s.04.41.12.6c.08.2.19.36.34.51.15.15.31.26.5.34Z"/>
+                        <path d="M27.19,16.93c-.19-.08-.38-.12-.59-.12s-.4.04-.59.12c-.19.08-.36.19-.5.34-.15.15-.26.31-.34.51-.08.19-.12.39-.12.6s.04.41.12.6c.08.19.19.36.34.51.15.15.31.26.5.34.38.16.8.16,1.18,0,.19-.08.36-.19.5-.34.15-.15.26-.31.34-.51h0c.08-.19.12-.39.12-.6s-.04-.41-.12-.6c-.08-.19-.19-.36-.34-.51-.15-.15-.31-.26-.5-.34Z"/>
+                        <path d="M.67,7.73c.21.21.46.38.73.49.28.12.57.18.88.18h2c.15.38.34.74.56,1.08.37.57.82,1.06,1.35,1.48.53.42,1.12.74,1.76.95.64.22,1.3.33,1.97.33s1.34-.11,1.97-.33c.64-.22,1.23-.54,1.76-.96.53-.42.99-.91,1.35-1.47.22-.34.41-.7.56-1.08h17.41c.3,0,.6-.06.87-.17.28-.11.52-.28.74-.5.21-.21.38-.46.49-.74.11-.28.17-.57.17-.87s-.06-.59-.17-.87c-.11-.28-.28-.53-.49-.74-.21-.21-.46-.38-.74-.49-.28-.12-.57-.17-.87-.17H15.57c-.15-.38-.34-.74-.56-1.08-.37-.56-.82-1.06-1.35-1.48-.53-.41-1.12-.74-1.76-.96-1.27-.44-2.67-.44-3.95,0-.63.22-1.23.54-1.76.96-.53.41-.99.91-1.35,1.47-.22.34-.41.7-.56,1.08h-2c-.3,0-.59.06-.87.17s-.53.28-.74.49c-.21.21-.38.46-.49.74-.12.28-.17.57-.17.87s.06.6.17.87c.11.28.28.53.49.74ZM8.38,6.12c0-.21.04-.41.12-.6.08-.19.19-.36.34-.51.15-.15.31-.26.5-.34.19-.08.39-.12.59-.12s.4.04.59.12c.19.08.35.19.5.34.15.15.26.31.34.51.08.2.12.39.12.6s-.04.41-.12.6c-.08.2-.19.36-.34.51-.15.15-.31.26-.5.34-.38.16-.8.16-1.18,0-.19-.08-.36-.19-.5-.34-.15-.15-.26-.31-.34-.51-.08-.19-.12-.39-.12-.6Z"/>
+                        <path d="M34.59,27.01h0c-.21-.22-.46-.38-.74-.5-.28-.12-.57-.17-.87-.17h-12.03c-.15-.38-.34-.74-.56-1.08-.37-.56-.82-1.06-1.35-1.48-.53-.41-1.12-.74-1.76-.96-1.27-.44-2.67-.44-3.95,0-.64.22-1.23.54-1.76.96-.53.41-.99.91-1.35,1.47-.22.34-.41.7-.56,1.08H2.28c-.3,0-.59.06-.87.17s-.53.28-.74.49c-.21.21-.38.46-.49.74-.12.28-.17.57-.17.88s.06.6.17.87c.12.28.28.53.49.74.21.21.46.38.74.5s.57.17.87.17h7.38c.15.38.34.74.56,1.08.37.56.82,1.06,1.35,1.48.53.41,1.12.74,1.76.96.64.22,1.3.33,1.97.33s1.34-.11,1.97-.33c.64-.22,1.23-.54,1.76-.96.53-.42.99-.91,1.35-1.47.22-.34.41-.7.56-1.08h12.03c.3,0,.59-.06.87-.17.28-.11.52-.28.74-.5.21-.21.38-.46.49-.74.11-.28.17-.57.17-.87s-.06-.59-.17-.87c-.11-.28-.28-.53-.49-.74ZM16.85,28.62c0,.21-.04.4-.12.6-.08.19-.19.36-.34.51-.15.15-.31.26-.5.34-.38.16-.8.16-1.18,0-.19-.08-.36-.19-.5-.34-.15-.15-.26-.31-.34-.51-.08-.19-.12-.39-.12-.6s.04-.41.12-.6c.08-.2.19-.36.34-.51.15-.15.31-.26.5-.34.19-.08.38-.12.59-.12s.4.04.59.12c.19.08.36.19.5.34.15.15.26.31.34.51.08.2.12.39.12.6Z"/>
+                        <path d="M34.59,15.76h0c-.21-.21-.46-.38-.74-.5-.28-.12-.57-.17-.87-.17h-.73c-.15-.38-.34-.74-.56-1.08-.37-.56-.82-1.06-1.35-1.48-.53-.41-1.12-.73-1.76-.95-1.27-.44-2.67-.44-3.95,0-.64.22-1.23.54-1.76.96-.53.42-.99.91-1.35,1.48-.22.34-.41.7-.56,1.08H2.28c-.3,0-.59.06-.88.17-.28.12-.53.28-.73.49-.21.21-.38.46-.49.74-.12.28-.17.57-.17.87s.06.6.17.87c.12.28.28.53.49.74.21.21.46.38.74.5.28.12.57.17.87.17h18.68c.15.38.34.74.56,1.08.37.56.82,1.06,1.35,1.48.53.42,1.12.74,1.76.95.64.22,1.3.33,1.97.33s1.34-.11,1.97-.33c.63-.22,1.23-.54,1.76-.96.53-.41.99-.91,1.35-1.47.22-.34.41-.7.56-1.08h.73c.3,0,.59-.06.87-.17.28-.11.52-.28.74-.5.21-.21.38-.46.49-.74.11-.28.17-.57.17-.87s-.06-.59-.17-.87c-.11-.28-.28-.53-.49-.74ZM28.15,17.37c0,.21-.04.41-.12.6h0c-.08.19-.19.36-.34.51-.15.15-.31.26-.5.34-.38.16-.8.16-1.18,0-.19-.08-.36-.19-.5-.34-.15-.15-.26-.31-.34-.51-.08-.2-.12-.39-.12-.6s.04-.4.12-.6c.08-.2.19-.36.34-.51.15-.15.31-.26.5-.34.19-.08.39-.12.59-.12s.4.04.59.12c.19.08.36.19.5.34.15.15.26.31.34.51.08.19.12.39.12.6Z"/>
+                    </g>
+                </svg>
+                <div class="settings-dropdown" id="settingsDropdown">
+                    <div class="dropdown-item" onclick="toggleSettings(); closeSettingsDropdown();">
+                        <span class="icon">⚙️</span>
+                        <span>Settings</span>
+                    </div>
+                    <div class="dropdown-item" onclick="copyShareLink(); closeSettingsDropdown();">
+                        <span class="icon">🔗</span>
+                        <span>Copy Share Link</span>
+                    </div>
                 </div>
-                <div class="menu-item save" onclick="saveToNotion(); closeMenu();">
-                    <span class="icon">💾</span>
-                    <span>Save Order</span>
-                </div>
-                <div class="menu-item settings" onclick="toggleSettings(); closeMenu();">
-                    <span class="icon">⚙️</span>
-                    <span>Settings</span>
-                </div>
-                <div class="menu-item share" onclick="copyShareLink(); closeMenu();">
-                    <span class="icon">🔗</span>
-                    <span>Copy Share Link</span>
-                </div>
-            </div>
+            </button>
         </div>
 
         <div class="grid" id="grid"></div>
@@ -919,14 +971,14 @@
             }
         });
 
-        function toggleMenu() {
-            const menu = document.getElementById('dropdownMenu');
-            menu.classList.toggle('show');
+        function toggleSettingsDropdown() {
+            const dropdown = document.getElementById('settingsDropdown');
+            dropdown.classList.toggle('show');
         }
 
-        function closeMenu() {
-            const menu = document.getElementById('dropdownMenu');
-            menu.classList.remove('show');
+        function closeSettingsDropdown() {
+            const dropdown = document.getElementById('settingsDropdown');
+            dropdown.classList.remove('show');
         }
 
         function toggleSettings() {
@@ -939,12 +991,14 @@
             configSection.classList.add('hidden');
         }
 
+        // Close dropdown when clicking outside
         document.addEventListener('click', function(event) {
-            const menu = document.getElementById('dropdownMenu');
-            const hamburger = document.querySelector('.hamburger-btn');
+            const dropdown = document.getElementById('settingsDropdown');
+            const button = event.target.closest('.icon-btn');
             
-            if (!menu.contains(event.target) && !hamburger.contains(event.target)) {
-                closeMenu();
+            // If clicked outside dropdown and button, close dropdown
+            if (dropdown && !dropdown.contains(event.target) && !button) {
+                closeSettingsDropdown();
             }
         });
 
