@@ -1234,16 +1234,19 @@
                 console.log('After filtering:', images.length, 'items');
                 console.log('Final images array:', images);
 
+                // Sort by Order property (ascending)
+                // Pinned items first by their Order, then unpinned items by their Order
                 images.sort((a, b) => {
+                    // Both pinned - sort by Order ascending
                     if (a.pinned && b.pinned) {
                         return (a.order || 0) - (b.order || 0);
                     }
+                    // Only a is pinned - a comes first
                     if (a.pinned) return -1;
+                    // Only b is pinned - b comes first  
                     if (b.pinned) return 1;
-                    if (a.createdTime && b.createdTime) {
-                        return new Date(b.createdTime) - new Date(a.createdTime);
-                    }
-                    return (b.order || 0) - (a.order || 0);
+                    // Neither pinned - sort by Order ascending
+                    return (a.order || 0) - (b.order || 0);
                 });
 
                 console.log('After sorting (pinned first, then newest):', images.map(i => ({
