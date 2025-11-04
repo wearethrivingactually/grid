@@ -782,6 +782,15 @@
     </div>
 
     <script>
+        // TEST: Verify functions are accessible
+        console.log('✅ Script loaded!');
+        window.addEventListener('load', function() {
+            console.log('✅ Page fully loaded');
+            console.log('saveToNotion function exists:', typeof saveToNotion);
+            console.log('loadFromNotion function exists:', typeof loadFromNotion);
+            console.log('refreshGrid function exists:', typeof refreshGrid);
+        });
+        
         let images = [];
         let draggedElement = null;
         let dragMode = false;
@@ -1276,17 +1285,23 @@
         }
 
         async function saveToNotion() {
+            console.log('🔴 SAVE BUTTON CLICKED - Function started!');
+            
             const apiUrl = document.getElementById('apiUrl').value.trim();
             const databaseId = document.getElementById('databaseId').value.trim();
             const apiKey = document.getElementById('apiKey').value.trim();
 
+            console.log('Config values:', { apiUrl, databaseId, apiKey: apiKey ? '***' : 'missing' });
+
             if (!apiUrl || !databaseId || !apiKey) {
+                console.log('❌ Missing configuration');
                 showStatus('Please configure settings first', true);
                 return;
             }
 
             showStatus('Saving order...');
             console.log('Starting save process...');
+            console.log(`Total items to save: ${images.length}`);
             
             try {
                 let successCount = 0;
@@ -1309,6 +1324,8 @@
                         })
                     });
                     
+                    console.log(`Response for item ${i + 1}:`, response.status, response.ok);
+                    
                     if (response.ok) {
                         successCount++;
                         console.log(`✓ Item ${i + 1} saved successfully`);
@@ -1319,15 +1336,17 @@
                     }
                 }
                 
+                console.log(`Save complete: ${successCount} succeeded, ${errorCount} failed`);
+                
                 if (errorCount === 0) {
                     showStatus(`✓ Grid order saved successfully! (${successCount} items)`);
-                    console.log('All items saved successfully!');
+                    console.log('✅ All items saved successfully!');
                 } else {
                     showStatus(`⚠ Partially saved: ${successCount} succeeded, ${errorCount} failed`, true);
                     console.warn(`Save completed with errors: ${successCount} succeeded, ${errorCount} failed`);
                 }
             } catch (error) {
-                console.error('Save error:', error);
+                console.error('❌ Save error:', error);
                 showStatus(`Error saving: ${error.message}`, true);
             }
         }
