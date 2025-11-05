@@ -499,6 +499,42 @@
             display: block;
         }
 
+        .date-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.65);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .date-badge.with-pin {
+            left: auto;
+            right: auto;
+            top: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .date-badge-container {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
         .carousel-slides {
             position: relative;
             width: 100%;
@@ -728,6 +764,14 @@
             <div class="input-group">
                 <label for="apiKey">Integration Token:</label>
                 <input type="password" id="apiKey" placeholder="Enter your Notion integration token">
+            </div>
+
+            <!-- Date Badge Toggle -->
+            <div class="input-group">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" id="showDateBadge" checked style="width: auto;">
+                    <span>Show date badges on posts</span>
+                </label>
             </div>
 
             <!-- Action Buttons -->
@@ -1080,6 +1124,21 @@
             }, 3000);
         }
 
+        function formatDateBadge(dateString) {
+            if (!dateString) return null;
+            
+            try {
+                const date = new Date(dateString);
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                               'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const month = months[date.getMonth()];
+                const day = date.getDate();
+                return `${month} ${day}`;
+            } catch (e) {
+                return null;
+            }
+        }
+
         function getMediaType(url) {
             if (!url) return null;
             const lower = url.toLowerCase();
@@ -1168,10 +1227,22 @@
             const savedApiUrl = urlApiUrl || localStorage.getItem('apiUrl');
             const savedDatabaseId = urlDatabaseId || localStorage.getItem('databaseId');
             const savedApiKey = urlApiKey || localStorage.getItem('apiKey');
+            const savedShowDateBadge = localStorage.getItem('showDateBadge');
             
             if (savedApiUrl) document.getElementById('apiUrl').value = savedApiUrl;
             if (savedDatabaseId) document.getElementById('databaseId').value = savedDatabaseId;
             if (savedApiKey) document.getElementById('apiKey').value = savedApiKey;
+            
+            // Load date badge preference (default to true/checked)
+            if (savedShowDateBadge !== null) {
+                document.getElementById('showDateBadge').checked = savedShowDateBadge === 'true';
+            }
+            
+            // Save date badge preference when changed
+            document.getElementById('showDateBadge').addEventListener('change', function() {
+                localStorage.setItem('showDateBadge', this.checked);
+                renderGrid(); // Re-render to show/hide badges
+            });
             
             if (urlApiUrl || urlDatabaseId || urlApiKey) {
                 if (savedApiUrl) localStorage.setItem('apiUrl', savedApiUrl);
@@ -1292,7 +1363,8 @@
                         order: page.properties.Order?.number || 0,
                         visible: visible,
                         pinned: pinned,
-                        createdTime: page.created_time
+                        createdTime: page.created_time,
+                        date: page.properties.Date?.date?.start || null
                     };
                 });
                 
@@ -1784,16 +1856,39 @@
                     item.appendChild(badge);
                 }
 
-                if (img.pinned) {
-                    const pinnedBadge = document.createElement('div');
-                    pinnedBadge.className = 'pinned-indicator';
-                    pinnedBadge.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20.91 28.42">
-                        <g>
-                            <polygon fill="#fff" points="20.64 6.42 20.64 6.42 20.64 6.42 20.64 6.42"/>
-                            <path fill="#fff" d="M20.64,6.42L11.04.09c-.27-.18-.64-.1-.81.18l-.5.8c-.17.28-.1.65.18.83l.83.54-.44.7h0s-2.73,4.34-2.73,4.34L.87,9.84l-.73,1.17,6.44,4.24L.73,24.53,0,28.41h0s0,0,0,0h0s0,0,0,0l3.15-2.28,5.85-9.29,6.44,4.24.73-1.17-.67-7.2,2.73-4.34h0s.44-.7.44-.7l.83.54c.27.18.64.1.81-.18l.5-.8c.17-.28.09-.65-.18-.83Z"/>
-                        </g>
-                    </svg>`;
-                    item.appendChild(pinnedBadge);
+                // Add date badge and pinned indicator in a container
+                const showDateBadge = document.getElementById('showDateBadge')?.checked ?? true;
+                
+                if (img.pinned || (showDateBadge && img.date)) {
+                    const container = document.createElement('div');
+                    container.className = 'date-badge-container';
+                    
+                    // Add pinned indicator
+                    if (img.pinned) {
+                        const pinnedIcon = document.createElement('div');
+                        pinnedIcon.style.cssText = 'display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));';
+                        pinnedIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20.91 28.42" width="14" height="14">
+                            <g>
+                                <polygon fill="#fff" points="20.64 6.42 20.64 6.42 20.64 6.42 20.64 6.42"/>
+                                <path fill="#fff" d="M20.64,6.42L11.04.09c-.27-.18-.64-.1-.81.18l-.5.8c-.17.28-.1.65.18.83l.83.54-.44.7h0s-2.73,4.34-2.73,4.34L.87,9.84l-.73,1.17,6.44,4.24L.73,24.53,0,28.41h0s0,0,0,0h0s0,0,0,0l3.15-2.28,5.85-9.29,6.44,4.24.73-1.17-.67-7.20,2.73-4.34h0s.44-.7.44-.7l.83.54c.27.18.64.1.81-.18l.5-.8c.17-.28.09-.65-.18-.83Z"/>
+                            </g>
+                        </svg>`;
+                        container.appendChild(pinnedIcon);
+                    }
+                    
+                    // Add date badge
+                    if (showDateBadge && img.date) {
+                        const formattedDate = formatDateBadge(img.date);
+                        if (formattedDate) {
+                            const dateBadge = document.createElement('div');
+                            dateBadge.className = 'date-badge';
+                            dateBadge.style.cssText = 'position:relative;left:auto;top:auto;';
+                            dateBadge.textContent = formattedDate;
+                            container.appendChild(dateBadge);
+                        }
+                    }
+                    
+                    item.appendChild(container);
                 }
 
                 grid.appendChild(item);
