@@ -970,7 +970,9 @@
                     let currentSlide = 0;
                     const prevBtn = document.createElement('button');
                     prevBtn.innerHTML = '‹';
-                    prevBtn.style.cssText = 'position:absolute;left:20px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.9);border:none;font-size:40px;padding:10px 20px;cursor:pointer;border-radius:4px;z-index:10001;';
+                    prevBtn.style.cssText = 'position:absolute;left:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.3);border:none;font-size:40px;padding:10px 20px;cursor:pointer;border-radius:4px;z-index:10001;color:white;transition:background 0.2s;backdrop-filter:blur(4px);';
+                    prevBtn.onmouseover = () => prevBtn.style.background = 'rgba(255,255,255,0.5)';
+                    prevBtn.onmouseout = () => prevBtn.style.background = 'rgba(255,255,255,0.3)';
                     prevBtn.onclick = () => {
                         document.querySelectorAll('.lightbox-slide')[currentSlide].style.display = 'none';
                         currentSlide = (currentSlide - 1 + img.slides.length) % img.slides.length;
@@ -979,7 +981,9 @@
                     
                     const nextBtn = document.createElement('button');
                     nextBtn.innerHTML = '›';
-                    nextBtn.style.cssText = 'position:absolute;right:20px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.9);border:none;font-size:40px;padding:10px 20px;cursor:pointer;border-radius:4px;z-index:10001;';
+                    nextBtn.style.cssText = 'position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.3);border:none;font-size:40px;padding:10px 20px;cursor:pointer;border-radius:4px;z-index:10001;color:white;transition:background 0.2s;backdrop-filter:blur(4px);';
+                    nextBtn.onmouseover = () => nextBtn.style.background = 'rgba(255,255,255,0.5)';
+                    nextBtn.onmouseout = () => nextBtn.style.background = 'rgba(255,255,255,0.3)';
                     nextBtn.onclick = () => {
                         document.querySelectorAll('.lightbox-slide')[currentSlide].style.display = 'none';
                         currentSlide = (currentSlide + 1) % img.slides.length;
