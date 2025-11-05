@@ -755,7 +755,7 @@
             <div id="status"></div>
             <div class="input-group">
                 <label for="apiUrl">API Endpoint URL:</label>
-                <input type="text" id="apiUrl" placeholder="https://your-project.vercel.app/api/notion">
+                <input type="text" id="apiUrl" placeholder="https://your-project.vercel.app/api/notion" value="https://grid-three-iota.vercel.app/api/notion">
             </div>
             <div class="input-group">
                 <label for="databaseId">Database ID:</label>
@@ -1229,7 +1229,12 @@
             const savedApiKey = urlApiKey || localStorage.getItem('apiKey');
             const savedShowDateBadge = localStorage.getItem('showDateBadge');
             
-            if (savedApiUrl) document.getElementById('apiUrl').value = savedApiUrl;
+            // Set API URL - use saved value if exists, otherwise keep the default value in the input
+            if (savedApiUrl) {
+                document.getElementById('apiUrl').value = savedApiUrl;
+            }
+            // If no saved URL, the default value in HTML will be used
+            
             if (savedDatabaseId) document.getElementById('databaseId').value = savedDatabaseId;
             if (savedApiKey) document.getElementById('apiKey').value = savedApiKey;
             
@@ -1250,7 +1255,9 @@
                 if (savedApiKey) localStorage.setItem('apiKey', savedApiKey);
             }
             
-            if (savedApiUrl && savedDatabaseId && savedApiKey) {
+            // Auto-load if database ID and API key are present (API URL has default)
+            const currentApiUrl = document.getElementById('apiUrl').value.trim();
+            if (currentApiUrl && savedDatabaseId && savedApiKey) {
                 loadFromNotion();
                 setTimeout(() => hideSettings(), 1000);
             }
