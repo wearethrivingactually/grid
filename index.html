@@ -1143,27 +1143,28 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
         }
 
         function convertToCanvaEmbedUrl(url) {
-            if (!url) return null;
-            
-            // If already has embed parameter, return as-is
-            if (url.includes('/view?embed') || url.includes('/view/embed') || url.includes('?embed')) {
-                return url;
-            }
-            
-            // Extract design ID and create proper embed URL
-            const match = url.match(/canva\.com\/design\/([^\/\?]+)/);
-            if (match && match[1]) {
-                // Use the ?embed parameter - this works on mobile/Safari/iOS!
-                return `https://www.canva.com/design/${match[1]}/view?embed&ui=eyJBIjp7fX0`;
-            }
-            
-            // If it's a /view URL without embed, add it
-            if (url.includes('/view')) {
-                return url.includes('?') ? `${url}&embed` : `${url}?embed`;
-            }
-            
-            return url;
-        }
+    if (!url) return null;
+    
+    // Already a proper embed URL
+    if (url.includes('/view?embed')) {
+        return url;
+    }
+    
+    // Extract the design ID (the part after /design/)
+    const designMatch = url.match(/canva\.com\/design\/([^\/\?]+)/);
+    if (designMatch && designMatch[1]) {
+        const designId = designMatch[1];
+        // Always use /view?embed format (works for videos and static designs)
+        return `https://www.canva.com/design/${designId}/view?embed`;
+    }
+    
+    // Fallback
+    if (url.includes('/view')) {
+        return url.includes('?') ? `${url}&embed` : `${url}?embed`;
+    }
+    
+    return url;
+}
 
         function getCanvaDesignId(url) {
             if (!url) return null;
