@@ -899,8 +899,9 @@
             
             // Always prefer Canva if available - it works on mobile/Safari/iOS with ?embed parameter!
             if (img.canvaUrl) {
-                primarySource = img.canvaUrl;
-                isFromCanva = true;
+    primarySource = convertToCanvaEmbedUrl(img.canvaUrl);
+    isFromCanva = true;
+    console.log('Lightbox using Canva embed URL:', primarySource);
             } else {
                 primarySource = img.imageUrl || img.url;
                 isFromCanva = false;
@@ -917,7 +918,8 @@
                     slideDiv.style.display = index === 0 ? 'block' : 'none';
                     slideDiv.className = 'lightbox-slide';
                     
-                    const media = createMediaElement(slideUrl, img.name, true, apiUrl, apiKey, null);
+                    const processedSlideUrl = isCanvaUrl(slideUrl) ? convertToCanvaEmbedUrl(slideUrl) : slideUrl;
+const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiKey, null);
                     if (media) {
                         if (media.type === 'video') {
                             media.element.controls = true;
