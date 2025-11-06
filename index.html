@@ -899,7 +899,7 @@
             
             // Always prefer Canva if available - it works on mobile/Safari/iOS with ?embed parameter!
             if (img.canvaUrl) {
-                primarySource = img.canvaUrl;
+                primarySource = convertToCanvaEmbedUrl(img.canvaUrl);
                 isFromCanva = true;
             } else {
                 primarySource = img.imageUrl || img.url;
@@ -907,7 +907,7 @@
             }
             
             if (img.type === 'Carousel' && img.slides.length > 0) {
-                const carouselContainer = document.createElement('div');
+                const processedSlideUrl = isCanvaUrl(slideUrl) ? convertToCanvaEmbedUrl(slideUrl) : slideUrl;
                 carouselContainer.style.position = 'relative';
                 carouselContainer.style.maxWidth = '90vw';
                 carouselContainer.style.maxHeight = '90vh';
