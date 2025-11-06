@@ -1502,8 +1502,13 @@
         function createMediaElement(url, alt, useProxy, apiUrl, apiKey, fallbackUrl) {
             const mediaType = getMediaType(url);
             
-            const isNotionS3 = url && url.includes('amazonaws.com') && url.includes('prod-files-secure');
-            const shouldProxy = useProxy && !isNotionS3 && apiUrl && apiKey;
+            // Notion uses multiple CDNs - don't proxy these
+            const isNotionCDN = url && (
+                (url.includes('amazonaws.com') && url.includes('prod-files-secure')) ||
+                url.includes('api.sprig.com') ||
+                url.includes('sprig.com')
+            );
+            const shouldProxy = useProxy && !isNotionCDN && apiUrl && apiKey;
             
             if (mediaType === 'video') {
                 const video = document.createElement('video');
@@ -1515,6 +1520,7 @@
                 video.muted = true;
                 video.loop = true;
                 video.playsInline = true;
+                video.setAttribute('crossorigin', 'anonymous');
                 video.onerror = () => console.error('Video failed to load:', url);
                 return { element: video, type: 'video' };
             } else if (mediaType === 'image') {
@@ -1525,6 +1531,7 @@
                     img.src = url;
                 }
                 img.alt = alt;
+                img.setAttribute('crossorigin', 'anonymous');
                 img.onerror = () => {
                     console.error('Image failed to load:', url);
                     console.error('Was using proxy:', shouldProxy);
