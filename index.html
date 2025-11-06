@@ -886,26 +886,6 @@
         let dragMode = false;
         let displayedCount = 12;
         const LOAD_INCREMENT = 12;
-        
-        function canUseIframes() {
-            const isMobileNotion = /Notion/.test(navigator.userAgent) && /Mobile|Android|iPhone|iPad/.test(navigator.userAgent);
-            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-            
-            if (isMobileNotion || isIOS) {
-                console.log('Environment detected: mobile/iOS - will use image fallbacks for Canva');
-                return false;
-            }
-            
-            if (isSafari) {
-                console.log('Safari detected - will attempt Canva iframes with fallback');
-                return true;
-            }
-            
-            return true;
-        }
-
-        const SUPPORTS_IFRAMES = canUseIframes();
 
         let touchStartTime = 0;
         let touchStartPos = { x: 0, y: 0 };
@@ -928,15 +908,8 @@
             let primarySource;
             let isFromCanva = false;
             
-            if (img.canvaUrl && img.imageUrl) {
-                if (SUPPORTS_IFRAMES) {
-                    primarySource = img.canvaUrl;
-                    isFromCanva = true;
-                } else {
-                    primarySource = img.imageUrl;
-                    isFromCanva = false;
-                }
-            } else if (img.canvaUrl) {
+            // Always prefer Canva if available - it works on mobile/Safari/iOS with ?embed parameter!
+            if (img.canvaUrl) {
                 primarySource = img.canvaUrl;
                 isFromCanva = true;
             } else {
@@ -1164,13 +1137,21 @@
         function convertToCanvaEmbedUrl(url) {
             if (!url) return null;
             
-            if (url.includes('/view?embed') || url.includes('/view/embed')) {
+            // If already has embed parameter, return as-is
+            if (url.includes('/view?embed') || url.includes('/view/embed') || url.includes('?embed')) {
                 return url;
             }
             
+            // Extract design ID and create proper embed URL
             const match = url.match(/canva\.com\/design\/([^\/\?]+)/);
             if (match && match[1]) {
-                return `https://www.canva.com/design/${match[1]}/view?embed&ui=eyJBIjp7fX0`;
+                // Use the ?embed parameter - this works on mobile/Safari/iOS!
+                return `https://www.canva.com/design/${match[1]}/view?embed`;
+            }
+            
+            // If it's a /view URL without embed, add it
+            if (url.includes('/view')) {
+                return url.includes('?') ? `${url}&embed` : `${url}?embed`;
             }
             
             return url;
@@ -1725,24 +1706,15 @@
                 let primarySource;
                 let isFromCanva = false;
                 
-                if (img.canvaUrl && img.imageUrl) {
-                    if (SUPPORTS_IFRAMES) {
-                        primarySource = img.canvaUrl;
-                        isFromCanva = true;
-                        console.log('Using Canva iframe (desktop environment)');
-                    } else {
-                        primarySource = img.imageUrl;
-                        isFromCanva = false;
-                        console.log('Using image fallback (mobile/Safari environment)');
-                    }
-                } else if (img.canvaUrl) {
+                // Always prefer Canva if available - it works on mobile/Safari/iOS with ?embed parameter!
+                if (img.canvaUrl) {
                     primarySource = img.canvaUrl;
                     isFromCanva = true;
-                    console.log('Using Canva iframe (only option)');
+                    console.log('Using Canva iframe');
                 } else {
                     primarySource = img.imageUrl || img.url;
                     isFromCanva = false;
-                    console.log('Using image (only option)');
+                    console.log('Using image/video');
                 }
 
                 console.log('Primary source for item', index, ':', primarySource);
