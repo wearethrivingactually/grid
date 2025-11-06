@@ -1145,18 +1145,36 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
         function convertToCanvaEmbedUrl(url) {
     if (!url) return null;
     
-    if (url.includes('/view?embed')) {
+    // Already a proper embed URL with ui parameter
+    if (url.includes('/view?embed') && url.includes('ui=')) {
         return url;
     }
     
+    // Extract design ID AND view token for videos
+    // Format: canva.com/design/DESIGN_ID/VIEW_TOKEN/watch
+    const videoMatch = url.match(/canva\.com\/design\/([^\/\?]+)\/([^\/\?]+)\/watch/);
+    if (videoMatch && videoMatch[1] && videoMatch[2]) {
+        const designId = videoMatch[1];
+        const viewToken = videoMatch[2];
+        // CRITICAL: Include the view token for videos!
+        return `https://www.canva.com/design/${designId}/${viewToken}/view?embed&ui=eyJBIjp7fX0`;
+    }
+    
+    // Try to extract just design ID (for non-video embeds)
     const designMatch = url.match(/canva\.com\/design\/([^\/\?]+)/);
     if (designMatch && designMatch[1]) {
         const designId = designMatch[1];
         return `https://www.canva.com/design/${designId}/view?embed&ui=eyJBIjp7fX0`;
     }
     
+    // Fallback
     if (url.includes('/view')) {
-        return url.includes('?') ? `${url}&embed&ui=eyJBIjp7fX0` : `${url}?embed&ui=eyJBIjp7fX0`;
+        const hasParams = url.includes('?');
+        const hasUi = url.includes('ui=');
+        if (!hasUi) {
+            return hasParams ? `${url}&embed&ui=eyJBIjp7fX0` : `${url}?embed&ui=eyJBIjp7fX0`;
+        }
+        return hasParams ? `${url}&embed` : `${url}?embed`;
     }
     
     return url;
