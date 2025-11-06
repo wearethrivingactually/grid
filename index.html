@@ -1109,9 +1109,26 @@
             if (!url) return null;
             const lower = url.toLowerCase();
             
-            if (lower.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?|$)/)) return 'image';
-            if (lower.match(/\.(mp4|webm|ogg|mov)(\?|$)/)) return 'video';
+            // Decode URL first to catch encoded extensions
+            let decodedUrl = '';
+            try {
+                decodedUrl = decodeURIComponent(url).toLowerCase();
+            } catch (e) {
+                decodedUrl = lower;
+            }
             
+            // Check both original and decoded URLs for extensions
+            const checkUrl = decodedUrl || lower;
+            
+            if (checkUrl.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?|$|&)/)) return 'image';
+            if (checkUrl.match(/\.(mp4|webm|ogg|mov)(\?|$|&)/)) return 'video';
+            
+            // Check for video file names in the URL path
+            if (checkUrl.includes('.mp4') || checkUrl.includes('.webm') || checkUrl.includes('.mov') || checkUrl.includes('.ogg')) {
+                return 'video';
+            }
+            
+            // S3 URLs - default to image
             if (lower.includes('amazonaws.com') && lower.includes('prod-files-secure')) {
                 return 'image';
             }
