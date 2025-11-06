@@ -1145,22 +1145,18 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
         function convertToCanvaEmbedUrl(url) {
     if (!url) return null;
     
-    // Already a proper embed URL
     if (url.includes('/view?embed')) {
         return url;
     }
     
-    // Extract the design ID (the part after /design/)
     const designMatch = url.match(/canva\.com\/design\/([^\/\?]+)/);
     if (designMatch && designMatch[1]) {
         const designId = designMatch[1];
-        // Always use /view?embed format (works for videos and static designs)
-        return `https://www.canva.com/design/${designId}/view?embed`;
+        return `https://www.canva.com/design/${designId}/view?embed&ui=eyJBIjp7fX0`;
     }
     
-    // Fallback
     if (url.includes('/view')) {
-        return url.includes('?') ? `${url}&embed` : `${url}?embed`;
+        return url.includes('?') ? `${url}&embed&ui=eyJBIjp7fX0` : `${url}?embed&ui=eyJBIjp7fX0`;
     }
     
     return url;
