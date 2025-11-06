@@ -470,6 +470,51 @@
             display: block;
         }
 
+        .canva-play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 50;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .canva-play-overlay:hover {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .canva-play-overlay.hidden {
+            display: none;
+        }
+
+        .canva-play-button {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .canva-play-overlay:hover .canva-play-button {
+            transform: scale(1.1);
+        }
+
+        .canva-play-button svg {
+            width: 24px;
+            height: 24px;
+            margin-left: 4px;
+        }
+
         .pinned-indicator {
             position: absolute;
             top: 8px;
@@ -924,8 +969,18 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                         if (media.type === 'video') {
                             media.element.controls = true;
                             media.element.muted = false;
+                        } else if (media.type === 'canva') {
+                            // Add play overlay for Canva in lightbox carousel
+                            const wrapper = document.createElement('div');
+                            wrapper.style.position = 'relative';
+                            wrapper.style.width = '100%';
+                            wrapper.style.height = '90vh';
+                            wrapper.appendChild(media.element);
+                            createCanvaPlayOverlay(wrapper, media.element);
+                            slideDiv.appendChild(wrapper);
+                        } else {
+                            slideDiv.appendChild(media.element);
                         }
-                        slideDiv.appendChild(media.element);
                     }
                     carouselContainer.appendChild(slideDiv);
                 });
@@ -967,8 +1022,20 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                         media.element.controls = true;
                         media.element.muted = false;
                         media.element.autoplay = true;
+                        content.appendChild(media.element);
+                    } else if (media.type === 'canva') {
+                        // Add play overlay for Canva in lightbox
+                        const wrapper = document.createElement('div');
+                        wrapper.style.position = 'relative';
+                        wrapper.style.width = 'auto';
+                        wrapper.style.height = '90vh';
+                        wrapper.style.maxWidth = '90vw';
+                        wrapper.appendChild(media.element);
+                        createCanvaPlayOverlay(wrapper, media.element);
+                        content.appendChild(wrapper);
+                    } else {
+                        content.appendChild(media.element);
                     }
-                    content.appendChild(media.element);
                 }
             }
 
@@ -986,6 +1053,32 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
             });
             
             lightbox.classList.remove('active');
+        }
+
+        function createCanvaPlayOverlay(container, iframe) {
+            const overlay = document.createElement('div');
+            overlay.className = 'canva-play-overlay';
+            
+            const playButton = document.createElement('div');
+            playButton.className = 'canva-play-button';
+            playButton.innerHTML = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 5v14l11-7L8 5z" fill="#00C7BE"/>
+            </svg>`;
+            
+            overlay.appendChild(playButton);
+            
+            overlay.addEventListener('click', function(e) {
+                e.stopPropagation();
+                // Enable pointer events on iframe to allow interaction
+                iframe.style.pointerEvents = 'auto';
+                // Hide the overlay
+                overlay.classList.add('hidden');
+                // Try to trigger play by sending a click to the iframe
+                iframe.contentWindow?.postMessage({action: 'play'}, '*');
+            });
+            
+            container.appendChild(overlay);
+            return overlay;
         }
 
         document.addEventListener('click', (e) => {
@@ -1584,7 +1677,7 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 iframe.setAttribute('allowfullscreen', 'true');
                 // Only allow fullscreen - other permissions cause warnings
                 iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
-                iframe.style.cssText = 'width:100%;height:100%;border:none;';
+                iframe.style.cssText = 'width:100%;height:100%;border:none;pointer-events:none;'; // Start with pointer-events:none
                 
                 console.log('Creating Canva iframe:', url);
                 
@@ -1760,6 +1853,10 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                         const media = createMediaElement(img.canvaUrl, img.name, false, apiUrl, apiKey, img.imageUrl);
                         if (media) {
                             slide.appendChild(media.element);
+                            if (media.type === 'canva') {
+                                // Add play overlay for Canva carousel
+                                createCanvaPlayOverlay(slide, media.element);
+                            }
                         }
                         carouselContainer.appendChild(slide);
                     } else {
@@ -1836,6 +1933,9 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                                 item.addEventListener('mouseenter', () => videoElement.play());
                                 item.addEventListener('mouseleave', () => videoElement.pause());
                             }
+                        } else if (media.type === 'canva') {
+                            // Add play overlay for Canva reel
+                            createCanvaPlayOverlay(item, media.element);
                         }
                     }
 
@@ -1866,6 +1966,9 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                                     videoElement.currentTime = 0;
                                 });
                             }
+                        } else if (media.type === 'canva') {
+                            // Add play overlay for Canva photo/post
+                            createCanvaPlayOverlay(item, media.element);
                         }
                     } else {
                         console.error('Failed to create media element for item', index);
