@@ -1183,38 +1183,36 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
         function convertToCanvaEmbedUrl(url) {
     if (!url) return null;
     
-    // Already a proper embed URL with ui parameter and autoplay
-    if (url.includes('/view?embed') && url.includes('ui=') && url.includes('autoplay')) {
-        return url;
-    }
-    
     // Extract design ID AND view token for videos
     // Format: canva.com/design/DESIGN_ID/VIEW_TOKEN/watch
     const videoMatch = url.match(/canva\.com\/design\/([^\/\?]+)\/([^\/\?]+)\/watch/);
     if (videoMatch && videoMatch[1] && videoMatch[2]) {
         const designId = videoMatch[1];
         const viewToken = videoMatch[2];
-        // CRITICAL: Include the view token for videos AND autoplay
-        return `https://www.canva.com/design/${designId}/${viewToken}/view?embed&ui=eyJBIjp7fX0&autoplay=true`;
+        
+        // CRITICAL: Use UI parameter that enables playback controls
+        // ui=eyJBIjp7IkIiOnRydWV9fQ enables controls
+        // ui=eyJBIjp7fX0 is minimal (auto-plays, no controls)
+        return `https://www.canva.com/design/${designId}/${viewToken}/view?embed&ui=eyJBIjp7IkIiOnRydWV9fQ`;
+    }
+    
+    // Already has proper ui parameter with controls
+    if (url.includes('/view?embed') && url.includes('ui=eyJBIjp7IkIiOnRydWV9fQ')) {
+        return url;
     }
     
     // Try to extract just design ID (for non-video embeds/presentations)
     const designMatch = url.match(/canva\.com\/design\/([^\/\?]+)/);
     if (designMatch && designMatch[1]) {
         const designId = designMatch[1];
-        // Add autoplay for presentations
-        return `https://www.canva.com/design/${designId}/view?embed&ui=eyJBIjp7fX0&autoplay=true`;
+        // Use controls-enabled UI for presentations too
+        return `https://www.canva.com/design/${designId}/view?embed&ui=eyJBIjp7IkIiOnRydWV9fQ`;
     }
     
-    // Fallback
+    // Fallback - add controls UI parameter
     if (url.includes('/view')) {
         const hasParams = url.includes('?');
-        const hasUi = url.includes('ui=');
-        const hasAutoplay = url.includes('autoplay');
-        if (!hasUi || !hasAutoplay) {
-            return hasParams ? `${url}&embed&ui=eyJBIjp7fX0&autoplay=true` : `${url}?embed&ui=eyJBIjp7fX0&autoplay=true`;
-        }
-        return hasParams ? `${url}&embed` : `${url}?embed`;
+        return hasParams ? `${url}&embed&ui=eyJBIjp7IkIiOnRydWV9fQ` : `${url}?embed&ui=eyJBIjp7IkIiOnRydWV9fQ`;
     }
     
     return url;
