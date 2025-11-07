@@ -1501,15 +1501,18 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                     console.log('Processing page:', page);
                     
                     const canvaUrl = page.properties['Canva URL']?.url || null;
+                    const imageUrlProperty = page.properties['Image URL']?.url || null;
                     const imageFiles = page.properties.Image?.files || [];
                     const visible = page.properties.Visible?.checkbox ?? true;
                     const pinned = page.properties.Pinned?.checkbox ?? false;
                     
                     console.log('  - Canva URL:', canvaUrl);
+                    console.log('  - Image URL property:', imageUrlProperty);
                     console.log('  - Image files:', imageFiles);
                     console.log('  - Visible:', visible);
                     console.log('  - Pinned:', pinned);
                     
+                    // Get URLs from image files
                     const allImageUrls = imageFiles.map(file => file.file?.url || file.external?.url).filter(url => url);
                     
                     console.log('  - All image URLs:', allImageUrls);
@@ -1519,12 +1522,14 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                     const isCarousel = allImageUrls.length > 1 || type === 'Carousel';
                     const finalType = isCarousel ? 'Carousel' : type;
                     
-                    const imageUrl = allImageUrls.length > 0 ? allImageUrls[0] : null;
+                    // Priority: Image URL property > Image files > null
+                    const imageUrl = imageUrlProperty || (allImageUrls.length > 0 ? allImageUrls[0] : null);
                     const slideUrls = allImageUrls.length > 1 ? allImageUrls : [];
                     
                     console.log('Extracted data:', { 
                         canvaUrl, 
                         imageUrl, 
+                        imageUrlProperty,
                         type: finalType, 
                         slideCount: slideUrls.length,
                         visible: visible,
