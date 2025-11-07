@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="frame-src https://www.canva.com;">
     <title>Instagram Grid Widget</title>
     <style>
         * {
@@ -316,7 +317,7 @@
         .grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 4px;
+            gap: 2px;
             background: transparent;
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
@@ -327,8 +328,20 @@
             aspect-ratio: 4 / 5;
             overflow: hidden;
             cursor: default;
-            background: #f5f5f5;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
             transition: box-shadow 0.2s;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .grid-item.loaded {
+            background: #f5f5f5;
+            animation: none;
         }
 
         .grid-item.drag-mode {
@@ -739,7 +752,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="config-section" id="configSection">
+        <div class="config-section hidden" id="configSection">
             <h2>⚙️ Configuration</h2>
             <div id="status"></div>
             <div class="input-group">
@@ -875,6 +888,7 @@
         let dragMode = false;
         let displayedCount = 12;
         const LOAD_INCREMENT = 12;
+        let isInitialLoad = true; // Track if this is the first load
 
         // Detect if we're in an environment that supports iframes well
         function canUseIframes() {
@@ -1183,38 +1197,38 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
         function convertToCanvaEmbedUrl(url) {
     if (!url) return null;
     
-    // Extract design ID AND view token for videos
-    // Format: canva.com/design/DESIGN_ID/VIEW_TOKEN/watch
-    const videoMatch = url.match(/canva\.com\/design\/([^\/\?]+)\/([^\/\?]+)\/watch/);
-    if (videoMatch && videoMatch[1] && videoMatch[2]) {
-        const designId = videoMatch[1];
-        const viewToken = videoMatch[2];
+    console.log('Converting Canva URL:', url);
+    
+    // Extract design ID AND view token
+    // Works for both /watch and /view formats
+    const match = url.match(/canva\.com\/design\/([^\/\?]+)\/([^\/\?]+)/);
+    if (match && match[1] && match[2]) {
+        const designId = match[1];
+        const viewToken = match[2];
         
-        // CRITICAL: Use UI parameter that enables playback controls
-        // ui=eyJBIjp7IkIiOnRydWV9fQ enables controls
-        // ui=eyJBIjp7fX0 is minimal (auto-plays, no controls)
-        return `https://www.canva.com/design/${designId}/${viewToken}/view?embed&ui=eyJBIjp7IkIiOnRydWV9fQ`;
+        // Use EXACTLY the format that works for OLD videos (Test 8)
+        // Just /view?embed - no UI parameters, no autoplay, nothing fancy
+        const convertedUrl = `https://www.canva.com/design/${designId}/${viewToken}/view?embed`;
+        console.log('Converted to:', convertedUrl);
+        return convertedUrl;
     }
     
-    // Already has proper ui parameter with controls
-    if (url.includes('/view?embed') && url.includes('ui=eyJBIjp7IkIiOnRydWV9fQ')) {
-        return url;
-    }
-    
-    // Try to extract just design ID (for non-video embeds/presentations)
+    // Try to extract just design ID (for presentations without view token)
     const designMatch = url.match(/canva\.com\/design\/([^\/\?]+)/);
     if (designMatch && designMatch[1]) {
         const designId = designMatch[1];
-        // Use controls-enabled UI for presentations too
-        return `https://www.canva.com/design/${designId}/view?embed&ui=eyJBIjp7IkIiOnRydWV9fQ`;
+        const convertedUrl = `https://www.canva.com/design/${designId}/view?embed`;
+        console.log('Converted to:', convertedUrl);
+        return convertedUrl;
     }
     
-    // Fallback - add controls UI parameter
-    if (url.includes('/view')) {
-        const hasParams = url.includes('?');
-        return hasParams ? `${url}&embed&ui=eyJBIjp7IkIiOnRydWV9fQ` : `${url}?embed&ui=eyJBIjp7IkIiOnRydWV9fQ`;
+    // Already in correct format
+    if (url.includes('/view?embed')) {
+        console.log('Already in correct format');
+        return url;
     }
     
+    console.log('Could not convert URL, returning as-is');
     return url;
 }
 
@@ -1468,8 +1482,12 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 displayedCount = 12;
 
                 renderGrid();
-                showStatus(`Loaded ${images.length} items successfully!`);
-                showToast(`Loaded ${images.length} items successfully!`, 'success');
+                
+                // Show toast only on initial load
+                if (isInitialLoad) {
+                    showToast(`Loaded ${images.length} items successfully!`, 'success');
+                    isInitialLoad = false;
+                }
                 
                 setTimeout(() => hideSettings(), 1500);
             } catch (error) {
@@ -1482,7 +1500,7 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
         }
 
         async function refreshGrid() {
-            showStatus('Refreshing...');
+            // Silent refresh - no toast notification
             await loadFromNotion();
         }
 
@@ -1594,6 +1612,11 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 video.playsInline = true;
                 video.setAttribute('crossorigin', 'anonymous');
                 video.onerror = () => console.error('Video failed to load:', url);
+                video.onloadeddata = () => {
+                    // Add loaded class to stop shimmer animation
+                    const gridItem = video.closest('.grid-item');
+                    if (gridItem) gridItem.classList.add('loaded');
+                };
                 return { element: video, type: 'video' };
             } else if (mediaType === 'image') {
                 const img = document.createElement('img');
@@ -1613,7 +1636,12 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                     placeholder.textContent = 'Image failed to load';
                     img.parentElement?.appendChild(placeholder);
                 };
-                img.onload = () => console.log('Image loaded successfully:', url);
+                img.onload = () => {
+                    console.log('Image loaded successfully:', url);
+                    // Add loaded class to stop shimmer animation
+                    const gridItem = img.closest('.grid-item');
+                    if (gridItem) gridItem.classList.add('loaded');
+                };
                 return { element: img, type: 'image' };
             } else if (isCanvaUrl(url)) {
                 const iframe = document.createElement('iframe');
@@ -1626,7 +1654,12 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 
                 console.log('Creating Canva iframe:', url);
                 
-                iframe.onload = () => console.log('✅ Canva iframe loaded');
+                iframe.onload = () => {
+                    console.log('✅ Canva iframe loaded');
+                    // Add loaded class to stop shimmer animation
+                    const gridItem = iframe.closest('.grid-item');
+                    if (gridItem) gridItem.classList.add('loaded');
+                };
                 iframe.onerror = () => {
                     console.error('❌ Canva iframe error - design may not be published');
                     console.error('Make sure to use Share → More → Embed → Generate code in Canva');
