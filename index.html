@@ -13,24 +13,62 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #fafafa;
-            -webkit-font-smoothing: antialiased;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: transparent;
+            padding: 20px;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 935px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
         }
 
-        /* Header */
-        .header {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
+        .config-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
             margin-bottom: 20px;
-            position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .config-section.hidden {
+            display: none;
+        }
+
+        .config-section h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* Icon Buttons Above Grid */
+        .icon-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            max-width: 1200px;
+            margin: 0 auto 10px auto;
+            padding: 0;
         }
 
         .icon-btn {
@@ -39,21 +77,34 @@
             cursor: pointer;
             padding: 8px;
             border-radius: 8px;
-            transition: background 0.2s;
+            transition: all 0.2s;
             position: relative;
-        }
-
-        .icon-btn:hover {
-            background: rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .icon-btn svg {
-            width: 24px;
-            height: 24px;
-            fill: #262626;
+            width: 20px;
+            height: 20px;
+            display: block;
+            fill: #000;
             transition: fill 0.2s;
         }
 
+        .icon-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .icon-btn:hover svg {
+            fill: #666;
+        }
+
+        .icon-btn:active {
+            background: #e0e0e0;
+        }
+
+        /* Dark mode support */
         @media (prefers-color-scheme: dark) {
             .icon-btn svg {
                 fill: #fff;
@@ -61,6 +112,14 @@
             
             .icon-btn:hover {
                 background: rgba(255, 255, 255, 0.1);
+            }
+            
+            .icon-btn:hover svg {
+                fill: #ccc;
+            }
+            
+            .icon-btn:active {
+                background: rgba(255, 255, 255, 0.15);
             }
         }
 
@@ -109,12 +168,16 @@
         }
 
         .dropdown-item:hover {
-            background: #f8f9fa !important;
+            background: #f8f9fa;
         }
 
         .dropdown-item .icon {
             font-size: 16px;
             flex-shrink: 0;
+        }
+
+        .dropdown-item > span:not(.icon) {
+            text-align: left;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -132,10 +195,15 @@
                 background: #3d3d3d !important;
             }
             
+            .dropdown-item.toggle-item:hover {
+                background: #3d3d3d !important;
+            }
+            
             .toggle-label {
                 color: #fff !important;
             }
             
+            /* Dark mode toggle switch colors */
             .toggle-slider {
                 background-color: #484848;
             }
@@ -145,7 +213,190 @@
             }
         }
 
-        /* Toggle Switches */
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .action-btn.secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .action-btn.secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Config Section Branding */
+        .config-branding {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .config-branding-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            gap: 12px;
+        }
+
+        .config-branding-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .config-branding-logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .config-branding-text h4 {
+            font-size: 12px;
+            color: #333;
+            margin-bottom: 2px;
+            font-weight: 600;
+        }
+
+        .config-branding-text p {
+            font-size: 10px;
+            color: #999;
+            margin: 0;
+        }
+
+        .config-branding-link {
+            padding: 6px 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .config-branding-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 480px) {
+            .config-branding-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .config-branding-info {
+                flex-direction: column;
+            }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            background: transparent;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+
+        .grid-item {
+            position: relative;
+            aspect-ratio: 4 / 5;
+            overflow: hidden;
+            cursor: default;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            transition: box-shadow 0.2s;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .grid-item.loaded {
+            background: #f5f5f5;
+            animation: none;
+        }
+
+        .grid-item.drag-mode {
+            cursor: grab;
+            box-shadow: 0 0 0 2px rgba(0, 102, 255, 0.5);
+        }
+
+        .grid-item.drag-mode:active {
+            cursor: grabbing;
+        }
+
+        .grid-item.drag-mode::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            z-index: 100;
+            cursor: grab;
+        }
+
+        .grid-item.drag-mode:active::after {
+            cursor: grabbing;
+        }
+
+        .drag-handle {
+            display: none;
+        }
+
+        /* Small Grey Toggle Switches for Dropdown */
         .dropdown-item.toggle-item {
             display: flex;
             align-items: center;
@@ -155,13 +406,7 @@
         }
 
         .dropdown-item.toggle-item:hover {
-            background: #f8f9fa !important;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            .dropdown-item.toggle-item:hover {
-                background: #3d3d3d !important;
-            }
+            background: #f8f9fa;
         }
 
         .toggle-label {
@@ -172,6 +417,7 @@
             text-align: left;
         }
 
+        /* Smaller Instagram-style Toggle Switch */
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -220,237 +466,385 @@
             transform: translateX(16px);
         }
 
-        /* Grid */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2px;
-            background: transparent;
-        }
-
-        .grid-item {
-            position: relative;
-            aspect-ratio: 4 / 5;
-            overflow: hidden;
-            cursor: default;
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            transition: box-shadow 0.2s;
-            contain: layout style paint;
-        }
-        
-        .grid-item:not(.loaded) {
-            animation: shimmer 1.5s infinite;
-        }
-        
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-        
-        .grid-item.loaded {
-            background: #f5f5f5;
-            animation: none !important;
-        }
-
-        .grid-item img, 
-        .grid-item video, 
-        .grid-item iframe {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
         .grid-item iframe {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
             border: none;
             pointer-events: auto;
+            -webkit-transform: translate(-50%, -50%);
         }
 
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 10000;
+        .grid-item.drag-mode iframe {
+            pointer-events: none !important;
+        }
+
+        .grid-item.reel iframe {
+            transform: translate(-50%, -50%) scale(1.5);
+            transform-origin: center center;
+            width: 100%;
+            height: 100%;
+            -webkit-transform: translate(-50%, -50%) scale(1.5);
+        }
+
+        .grid-item.dragging iframe {
             pointer-events: none;
         }
 
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
+        .grid-item:active {
+            cursor: grabbing;
+        }
+
+        .grid-item.dragging {
+            opacity: 0.5;
+        }
+
+        .grid-item.dragging iframe,
+        .grid-item.dragging video,
+        .grid-item.dragging img {
+            pointer-events: none;
+        }
+
+        .grid-item.drag-over {
+            border: 2px solid #0066ff;
+        }
+
+        .grid-item img, .grid-item video, .grid-item iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.2s;
+            border: none;
+        }
+
+        .grid-item:hover img, .grid-item:hover video {
+            transform: scale(1.05);
+        }
+
+        .media-indicator {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            color: white;
+            font-size: 16px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+        }
+
+        .carousel-indicator {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+        }
+
+        .carousel-indicator svg {
+            width: 16px;
+            height: 16px;
+            display: block;
+        }
+
+        .canva-badge {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            background: rgba(0, 199, 190, 0.9);
+            color: white;
+            padding: 4px 6px;
+            border-radius: 3px;
+            z-index: 10;
+            width: 45px;
+            height: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .canva-badge svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .pinned-indicator {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .pinned-indicator svg {
+            width: 14px;
+            height: auto;
+            display: block;
+        }
+
+        .date-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.65);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .date-badge.with-pin {
+            left: auto;
+            right: auto;
+            top: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .date-badge-container {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .carousel-slides {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .carousel-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .carousel-slide.active {
             opacity: 1;
+        }
+
+        .carousel-slide img, .carousel-slide video, .carousel-slide iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            z-index: 10;
+        }
+
+        .carousel-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transition: background 0.2s;
+        }
+
+        .carousel-dot.active {
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            color: #999;
+            font-size: 14px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .status {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .status.error {
+            background: #fee;
+            color: #c00;
+        }
+
+        .status.success {
+            background: #efe;
+            color: #060;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(10px);
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
         }
 
         .toast-icon {
             font-size: 20px;
         }
 
-        /* Mobile */
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-
-            .grid {
-                gap: 2px;
-            }
-        }
-
-        /* Hidden */
-        .hidden {
+        /* Lightbox styles */
+        .lightbox {
             display: none;
-        }
-
-        /* Config Section */
-        .config-section {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .config-section h2 {
-            margin-bottom: 20px;
-            font-size: 20px;
-            color: #262626;
-        }
-
-        .input-group {
-            margin-bottom: 16px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #262626;
-        }
-
-        .input-group input {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #dbdbdb;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: border 0.2s;
+            height: 100%;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.3);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
-        .input-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .action-buttons {
+        .lightbox.active {
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
         }
 
-        .action-btn {
-            flex: 1;
-            padding: 12px 20px;
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            background: transparent;
+        }
+
+        .lightbox-content img,
+        .lightbox-content video,
+        .lightbox-content iframe {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+            pointer-events: auto;
+        }
+
+        .lightbox-content iframe {
+            width: auto;
+            height: 90vh;
+            max-width: 90vw;
+            max-height: 90vh;
             border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
+            aspect-ratio: 9/16; /* Default to portrait for Canva designs */
+        }
+
+        @media (max-width: 768px) {
+            .lightbox-content iframe {
+                width: 95vw;
+                height: auto;
+                max-height: 85vh;
+            }
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 24px;
             cursor: pointer;
-            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            z-index: 10000;
+            transition: background 0.2s;
         }
 
-        .action-btn.primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .lightbox-close:hover {
+            background: white;
         }
 
-        .action-btn.primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        .action-btn.secondary {
-            background: #f0f0f0;
-            color: #333;
-        }
-
-        .action-btn.secondary:hover {
-            background: #e0e0e0;
-        }
-
-        #status {
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 16px;
-            font-size: 14px;
-            display: none;
-        }
-
-        #status.success {
-            background: #d4edda;
-            color: #155724;
-            display: block;
-        }
-
-        #status.error {
-            background: #f8d7da;
-            color: #721c24;
-            display: block;
+        /* Mobile touch improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .grid-item {
+                -webkit-tap-highlight-color: transparent;
+                touch-action: none;
+                user-select: none;
+                -webkit-user-select: none;
+            }
+            
+            .hamburger-btn {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            .menu-item {
+                padding: 16px;
+                min-height: 44px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <button class="icon-btn" id="menuBtn" onclick="toggleMenu()">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/>
-                </svg>
-                <div class="settings-dropdown" id="settingsDropdown">
-                    <div class="dropdown-item toggle-item">
-                        <span class="toggle-label">Show Date</span>
-                        <label class="toggle-switch" onclick="event.stopPropagation();">
-                            <input type="checkbox" id="showDateBadge" checked>
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                    <div class="dropdown-item toggle-item">
-                        <span class="toggle-label">Show Canva Badge</span>
-                        <label class="toggle-switch" onclick="event.stopPropagation();">
-                            <input type="checkbox" id="showCanvaBadge" checked>
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                    <div class="dropdown-item" onclick="toggleSettings(); closeMenu();">
-                        <span class="icon">⚙️</span>
-                        <span>Settings</span>
-                    </div>
-                    <div class="dropdown-item" onclick="copyShareLink(); closeMenu();">
-                        <span class="icon">🔗</span>
-                        <span>Copy Share Link</span>
-                    </div>
-                </div>
-            </button>
-        </div>
-
         <div class="config-section hidden" id="configSection">
             <h2>⚙️ Configuration</h2>
             <div id="status"></div>
@@ -466,6 +860,8 @@
                 <label for="apiKey">Integration Token:</label>
                 <input type="password" id="apiKey" placeholder="Enter your Notion integration token">
             </div>
+
+            <!-- Action Buttons -->
             <div class="action-buttons">
                 <button class="action-btn primary" onclick="loadFromNotion()">
                     <span>📥</span>
@@ -476,122 +872,604 @@
                     <span>Hide Settings</span>
                 </button>
             </div>
+
+            <div style="background:#f0f8ff;border:1px solid #b3d9ff;border-radius:6px;padding:12px;margin-top:16px;font-size:13px;line-height:1.5;">
+                <strong>💡 Tips:</strong><br/>
+                • <strong>Canva embeds:</strong> Share → More → Embed → Generate code, then paste URL<br/>
+                • <strong>Pin posts:</strong> Add a "Pinned" checkbox property to keep posts at the top<br/>
+                • <strong>Hide items:</strong> Add a "Visible" checkbox property to control visibility<br/>
+                • <strong>New posts:</strong> Latest posts appear first (unless pinned posts are above them)
+            </div>
+
+            <!-- Branding -->
+            <div class="config-branding">
+                <div class="config-branding-content">
+                    <div class="config-branding-info">
+                        <div class="config-branding-logo">TA</div>
+                        <div class="config-branding-text">
+                            <h4>Instagram Grid Widget</h4>
+                            <p>© 2025 thriving, actually</p>
+                        </div>
+                    </div>
+                    <a href="https://thrivingactually.store/" target="_blank" class="config-branding-link">
+                        thrivingactually.store
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Icon Buttons Above Grid -->
+        <div class="icon-buttons">
+            <button class="icon-btn" onclick="saveToNotion()" title="Save Order">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33.17 33.17">
+                    <g>
+                        <path d="M20.77.55c-.18-.18-.38-.31-.61-.41-.23-.1-.47-.14-.72-.14h-5.72c-.25,0-.49.05-.72.14s-.43.23-.61.41c-.18.18-.31.38-.41.61-.1.23-.14.47-.14.72v5.72c0,.25.05.49.14.72.1.23.23.43.41.61s.38.31.61.41c.23.1.47.14.72.14h5.72c.25,0,.49-.05.72-.14.23-.1.43-.23.61-.41s.31-.38.41-.61c.1-.23.14-.47.14-.72V1.88c0-.25-.05-.49-.14-.72-.1-.23-.23-.43-.41-.61Z"/>
+                        <path d="M8.93.55c-.18-.18-.38-.31-.61-.41s-.47-.14-.72-.14H1.88c-.25,0-.49.05-.72.14s-.43.23-.61.41c-.18.18-.31.38-.41.61-.1.23-.14.47-.14.72v5.72c0,.25.05.49.14.72.1.23.23.43.41.61.18.18.38.31.61.41.23.1.47.14.72.14h5.72c.25,0,.49-.05.72-.14.23-.1.43-.23.61-.41.18-.18.31-.38.41-.61.1-.23.14-.47.14-.72V1.88c0-.25-.05-.49-.14-.72-.1-.23-.23-.43-.41-.61Z"/>
+                        <path d="M8.93,12.4c-.18-.18-.38-.31-.61-.41-.23-.1-.47-.14-.72-.14H1.88c-.25,0-.49.05-.72.14-.23.1-.43.23-.61.41-.18.18-.31.38-.41.61-.1.23-.14.47-.14.72v5.72c0,.25.05.49.14.72.1.23.23.43.41.61.18.18.38.31.61.41.23.1.47.14.72.14h5.72c.25,0,.49-.05.72-.14.23-.1.43-.23.61-.41.18-.18.31-.38.41-.61.1-.23.14-.47.14-.72v-5.72c0-.25-.05-.49-.14-.72-.1-.23-.23-.43-.41-.61Z"/>
+                        <path d="M20.77,12.4c-.18-.18-.38-.31-.61-.41-.23-.1-.47-.14-.72-.14h-5.72c-.25,0-.49.05-.72.14-.23.1-.43.23-.61.41-.18.18-.31.38-.41.61-.1.23-.14.47-.14.72v5.72c0,.25.05.49.14.72.1.23.23.43.41.61.18.18.38.31.61.41.23.1.47.14.72.14h5.72c.25,0,.49-.05.72-.14.23-.1.43-.23.61-.41.18-.18.31-.38.41-.61.1-.23.14-.47.14-.72v-5.72c0-.25-.05-.49-.14-.72-.1-.23-.23-.43-.41-.61Z"/>
+                        <path d="M33.03,1.16c-.1-.23-.23-.43-.41-.61-.18-.18-.38-.31-.61-.41-.23-.1-.47-.14-.72-.14h-5.72c-.25,0-.49.05-.72.14-.23.1-.43.23-.61.41-.18.18-.31.38-.41.61-.1.23-.14.47-.14.72v5.72c0,.25.05.49.14.72.1.23.23.43.41.61s.38.31.61.41c.23.1.47.14.72.14h5.72c.25,0,.49-.05.72-.14.23-.1.43-.23.61-.41s.31-.38.41-.61c.1-.23.14-.47.14-.72V1.88c0-.25-.05-.49-.14-.72Z"/>
+                        <path d="M32.62,12.4c-.18-.18-.38-.31-.61-.41-.23-.1-.47-.14-.72-.14h-5.72c-.25,0-.49.05-.72.14-.23.1-.43.23-.61.41-.18.18-.31.38-.41.61-.1.23-.14.47-.14.72v5.72c0,.25.05.49.14.72.1.23.23.43.41.61.18.18.38.31.61.41.23.1.47.14.72.14h5.72c.25,0,.49-.05.72-.14.23-.1.43-.23.61-.41.18-.18.31-.38.41-.61.1-.23.14-.47.14-.72v-5.72c0-.25-.05-.49-.14-.72-.1-.23-.23-.43-.41-.61Z"/>
+                        <path d="M8.93,24.24c-.18-.18-.38-.31-.61-.41s-.47-.14-.72-.14H1.88c-.25,0-.49.05-.72.14s-.43.23-.61.41c-.18.18-.31.38-.41.61-.1.23-.14.47-.14.72v5.72c0,.25.05.49.14.72.1.23.23.43.41.61.18.18.38.31.61.41.23.1.47.14.72.14h5.72c.25,0,.49-.05.72-.14.23-.1.43-.23.61-.41.18-.18.31-.38.41-.61.1-.23.14-.47.14-.72v-5.72c0-.25-.05-.49-.14-.72-.1-.23-.23-.43-.41-.61Z"/>
+                        <path d="M20.77,24.24c-.18-.18-.38-.31-.61-.41-.23-.1-.47-.14-.72-.14h-5.72c-.25,0-.49.05-.72.14s-.43.23-.61.41-.31.38-.41.61c-.1.23-.14.47-.14.72v5.72c0,.25.05.49.14.72.1.23.23.43.41.61.18.18.38.31.61.41.23.1.47.14.72.14h5.72c.25,0,.49-.05.72-.14.23-.1.43-.23.61-.41.18-.18.31-.38.41-.61.1-.23.14-.47.14-.72v-5.72c0-.25-.05-.49-.14-.72-.1-.23-.23-.43-.41-.61Z"/>
+                        <path d="M32.62,24.24c-.18-.18-.38-.31-.61-.41-.23-.1-.47-.14-.72-.14h-5.72c-.25,0-.49.05-.72.14-.23.1-.43.23-.61.41s-.31.38-.41.61-.14.47-.14.72v5.72c0,.25.05.49.14.72.1.23.23.43.41.61.18.18.38.31.61.41.23.1.47.14.72.14h5.72c.25,0,.49-.05.72-.14.23-.1.43-.23.61-.41.18-.18.31-.38.41-.61.1-.23.14-.47.14-.72v-5.72c0-.25-.05-.49-.14-.72s-.23-.43-.41-.61Z"/>
+                    </g>
+                </svg>
+            </button>
+            
+            <button class="icon-btn" onclick="refreshGrid()" title="Refresh">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34.5 35.59">
+                    <path d="M3.52,8.97c0,.62.28,1.23.79,1.66.41.34.91.51,1.41.52,0,0,.01,0,.02,0h6.44c1.23,0,2.22-.99,2.22-2.2,0-1.13-.86-2.06-1.96-2.19,1.49-.6,3.11-.93,4.81-.93,7.07,0,12.8,5.68,12.8,12.68,0,1.22,1,2.2,2.22,2.2s2.22-.99,2.22-2.2c0-9.43-7.73-17.08-17.25-17.08-3.42,0-6.6.99-9.28,2.69v-1.55c0-1.22-1-2.2-2.22-2.2s-2.22.99-2.22,2.2v6.38s0,.02,0,.02h0ZM26.54,31.84v1.55c0,1.22,1,2.2,2.22,2.2s2.22-.99,2.22-2.2v-6.38s0-.02,0-.02c0-.62-.28-1.23-.79-1.66-.41-.34-.91-.51-1.41-.52,0,0-.01,0-.02,0h-6.44c-1.23,0-2.22.99-2.22,2.2,0,1.13.86,2.06,1.96,2.19-1.49.6-3.11.93-4.81.93-7.07,0-12.8-5.68-12.8-12.68,0-1.22-1-2.2-2.22-2.2s-2.22.99-2.22,2.2c0,9.43,7.73,17.08,17.25,17.08,3.42,0,6.6-.99,9.28-2.69h0Z"/>
+                </svg>
+            </button>
+            
+            <button class="icon-btn" onclick="toggleSettingsDropdown()" title="More Options">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35.25 34.74">
+                    <g>
+                        <path d="M.67,7.73c.21.21.46.38.73.49.28.12.57.18.88.18h2c.15.38.34.74.56,1.08.37.57.82,1.06,1.35,1.48.53.42,1.12.74,1.76.95.64.22,1.3.33,1.97.33s1.34-.11,1.97-.33c.64-.22,1.23-.54,1.76-.96.53-.42.99-.91,1.35-1.47.22-.34.41-.7.56-1.08h17.41c.3,0,.6-.06.87-.17.28-.11.52-.28.74-.5.21-.21.38-.46.49-.74.11-.28.17-.57.17-.87s-.06-.59-.17-.87c-.11-.28-.28-.53-.49-.74-.21-.21-.46-.38-.74-.49-.28-.12-.57-.17-.87-.17H15.57c-.15-.38-.34-.74-.56-1.08-.37-.56-.82-1.06-1.35-1.48-.53-.41-1.12-.74-1.76-.96-1.27-.44-2.67-.44-3.95,0-.63.22-1.23.54-1.76.96-.53.41-.99.91-1.35,1.47-.22.34-.41.7-.56,1.08h-2c-.3,0-.59.06-.87.17s-.53.28-.74.49c-.21.21-.38.46-.49.74-.12.28-.17.57-.17.87s.06.6.17.87c.11.28.28.53.49.74ZM8.38,6.12c0-.21.04-.41.12-.6.08-.19.19-.36.34-.51.15-.15.31-.26.5-.34.19-.08.39-.12.59-.12s.4.04.59.12c.19.08.35.19.5.34.15.15.26.31.34.51.08.2.12.39.12.6s-.04.41-.12.6c-.08.2-.19.36-.34.51-.15.15-.31.26-.5.34-.38.16-.8.16-1.18,0-.19-.08-.36-.19-.5-.34-.15-.15-.26-.31-.34-.51-.08-.19-.12-.39-.12-.6Z"/>
+                        <path d="M34.59,27.01h0c-.21-.22-.46-.38-.74-.5-.28-.12-.57-.17-.87-.17h-12.03c-.15-.38-.34-.74-.56-1.08-.37-.56-.82-1.06-1.35-1.48-.53-.41-1.12-.74-1.76-.96-1.27-.44-2.67-.44-3.95,0-.64.22-1.23.54-1.76.96-.53.41-.99.91-1.35,1.47-.22.34-.41.7-.56,1.08H2.28c-.3,0-.59.06-.87.17s-.53.28-.74.49c-.21.21-.38.46-.49.74-.12.28-.17.57-.17.88s.06.6.17.87c.12.28.28.53.49.74.21.21.46.38.74.5s.57.17.87.17h7.38c.15.38.34.74.56,1.08.37.56.82,1.06,1.35,1.48.53.41,1.12.74,1.76.96.64.22,1.3.33,1.97.33s1.34-.11,1.97-.33c.64-.22,1.23-.54,1.76-.96.53-.42.99-.91,1.35-1.47.22-.34.41-.7.56-1.08h12.03c.3,0,.59-.06.87-.17.28-.11.52-.28.74-.5.21-.21.38-.46.49-.74.11-.28.17-.57.17-.87s-.06-.59-.17-.87c-.11-.28-.28-.53-.49-.74ZM16.85,28.62c0,.21-.04.4-.12.6-.08.19-.19.36-.34.51-.15.15-.31.26-.5.34-.38.16-.8.16-1.18,0-.19-.08-.36-.19-.5-.34-.15-.15-.26-.31-.34-.51-.08-.19-.12-.39-.12-.6s.04-.41.12-.6c.08-.2.19-.36.34-.51.15-.15.31-.26.5-.34.19-.08.38-.12.59-.12s.4.04.59.12c.19.08.36.19.5.34.15.15.26.31.34.51.08.2.12.39.12.6Z"/>
+                        <path d="M34.59,15.76h0c-.21-.21-.46-.38-.74-.5-.28-.12-.57-.17-.87-.17h-.73c-.15-.38-.34-.74-.56-1.08-.37-.56-.82-1.06-1.35-1.48-.53-.41-1.12-.73-1.76-.95-1.27-.44-2.67-.44-3.95,0-.64.22-1.23.54-1.76.96-.53.42-.99.91-1.35,1.48-.22.34-.41.7-.56,1.08H2.28c-.3,0-.59.06-.88.17-.28.12-.53.28-.73.49-.21.21-.38.46-.49.74-.12.28-.17.57-.17.87s.06.6.17.87c.12.28.28.53.49.74.21.21.46.38.74.5.28.12.57.17.87.17h18.68c.15.38.34.74.56,1.08.37.56.82,1.06,1.35,1.48.53.42,1.12.74,1.76.95.64.22,1.3.33,1.97.33s1.34-.11,1.97-.33c.63-.22,1.23-.54,1.76-.96.53-.41.99-.91,1.35-1.47.22-.34.41-.7.56-1.08h.73c.3,0,.59-.06.87-.17.28-.11.52-.28.74-.5.21-.21.38-.46.49-.74.11-.28.17-.57.17-.87s-.06-.59-.17-.87c-.11-.28-.28-.53-.49-.74ZM28.15,17.37c0,.21-.04.41-.12.6h0c-.08.19-.19.36-.34.51-.15.15-.31.26-.5.34-.38.16-.8.16-1.18,0-.19-.08-.36-.19-.5-.34-.15-.15-.26-.31-.34-.51-.08-.2-.12-.39-.12-.6s.04-.4.12-.6c.08-.2.19-.36.34-.51.15-.15.31-.26.5-.34.19-.08.39-.12.59-.12s.4.04.59.12c.19.08.36.19.5.34.15.15.26.31.34.51.08.19.12.39.12.6Z"/>
+                    </g>
+                </svg>
+                <div class="settings-dropdown" id="settingsDropdown">
+                    <!-- Toggle Switches -->
+                    <div class="dropdown-item toggle-item">
+                        <span class="toggle-label">Show Date</span>
+                        <label class="toggle-switch" onclick="event.stopPropagation();">
+                            <input type="checkbox" id="showDateBadge" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="dropdown-item toggle-item">
+                        <span class="toggle-label">Show Canva Badge</span>
+                        <label class="toggle-switch" onclick="event.stopPropagation();">
+                            <input type="checkbox" id="showCanvaBadge" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <!-- Menu Items -->
+                    <div class="dropdown-item" onclick="toggleSettings(); closeSettingsDropdown();">
+                        <span class="icon">⚙️</span>
+                        <span>Settings</span>
+                    </div>
+                    <div class="dropdown-item" onclick="copyShareLink(); closeSettingsDropdown();">
+                        <span class="icon">🔗</span>
+                        <span>Copy Share Link</span>
+                    </div>
+                </div>
+            </button>
         </div>
 
         <div class="grid" id="grid"></div>
 
+        <!-- Toast Notification -->
         <div class="toast" id="toast">
             <span class="toast-icon" id="toastIcon">✓</span>
             <span id="toastMessage">Saved successfully!</span>
         </div>
+
+        <!-- Lightbox -->
+        <div class="lightbox" id="lightbox">
+            <button class="lightbox-close" onclick="closeLightbox()">×</button>
+            <div class="lightbox-content" id="lightboxContent"></div>
+        </div>
     </div>
 
     <script>
+        // TEST: Verify functions are accessible
+        console.log('✅ Script loaded!');
+        window.addEventListener('load', function() {
+            console.log('✅ Page fully loaded');
+            console.log('saveToNotion function exists:', typeof saveToNotion);
+            console.log('loadFromNotion function exists:', typeof loadFromNotion);
+            console.log('refreshGrid function exists:', typeof refreshGrid);
+        });
+        
         let images = [];
+        let draggedElement = null;
+        let dragMode = false;
         let displayedCount = 12;
-        let isInitialLoad = true;
         const LOAD_INCREMENT = 12;
-        const CACHE_KEY = 'instagram_grid_cache_v1';
-        const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+        let isInitialLoad = true; // Track if this is the first load
 
-        // Cache functions
-        function getCachedData() {
-            try {
-                const cached = localStorage.getItem(CACHE_KEY);
-                if (!cached) return null;
-                
-                const { data, timestamp } = JSON.parse(cached);
-                if (Date.now() - timestamp > CACHE_DURATION) {
-                    localStorage.removeItem(CACHE_KEY);
-                    return null;
+        // Detect if we're in an environment that supports iframes well
+        function canUseIframes() {
+            // Check if we're in mobile Notion or Safari which block iframes
+            const isMobileNotion = /Notion/.test(navigator.userAgent) && /Mobile|Android|iPhone|iPad/.test(navigator.userAgent);
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            
+            // Don't use iframes in these environments
+            if (isMobileNotion || isIOS) {
+                console.log('Environment detected: mobile/iOS - will use image fallbacks for Canva');
+                return false;
+            }
+            
+            // Safari on desktop has mixed results, but let's try
+            if (isSafari) {
+                console.log('Safari detected - will attempt Canva iframes with fallback');
+                return true; // Try it, but we'll have fallback logic
+            }
+            
+            return true;
+        }
+
+        const SUPPORTS_IFRAMES = canUseIframes();
+
+        let touchStartTime = 0;
+        let touchStartPos = { x: 0, y: 0 };
+        let longPressTimer = null;
+        let lastTapTime = 0;
+        let isDraggingTouch = false;
+        let touchDraggedElement = null;
+        const LONG_PRESS_DURATION = 500;
+        const DOUBLE_TAP_DELAY = 300;
+        const MOVE_THRESHOLD = 10;
+
+        function openLightbox(img) {
+            const lightbox = document.getElementById('lightbox');
+            const content = document.getElementById('lightboxContent');
+            content.innerHTML = '';
+
+            const apiUrl = document.getElementById('apiUrl').value.trim();
+            const apiKey = document.getElementById('apiKey').value.trim();
+            
+            // Smart source selection based on environment
+            let primarySource;
+            let isFromCanva = false;
+            
+            if (img.canvaUrl && img.imageUrl) {
+                // Both available - choose based on environment
+                if (SUPPORTS_IFRAMES) {
+                    primarySource = convertToCanvaEmbedUrl(img.canvaUrl);
+                    isFromCanva = true;
+                    console.log('Lightbox using Canva iframe (desktop environment)');
+                } else {
+                    primarySource = img.imageUrl;
+                    isFromCanva = false;
+                    console.log('Lightbox using image fallback (mobile/Safari environment)');
                 }
-                return data;
-            } catch (e) {
-                return null;
+            } else if (img.canvaUrl) {
+                // Only Canva available
+                primarySource = convertToCanvaEmbedUrl(img.canvaUrl);
+                isFromCanva = true;
+                console.log('Lightbox using Canva iframe (only option)');
+            } else {
+                // Only image available
+                primarySource = img.imageUrl || img.url;
+                isFromCanva = false;
+                console.log('Lightbox using image (only option)');
             }
+            
+            if (img.type === 'Carousel' && img.slides.length > 0) {
+                const carouselContainer = document.createElement('div');
+                carouselContainer.style.position = 'relative';
+                carouselContainer.style.maxWidth = '90vw';
+                carouselContainer.style.maxHeight = '90vh';
+                
+                img.slides.forEach((slideUrl, index) => {
+                    const slideDiv = document.createElement('div');
+                    slideDiv.style.display = index === 0 ? 'block' : 'none';
+                    slideDiv.className = 'lightbox-slide';
+                    
+                    const processedSlideUrl = isCanvaUrl(slideUrl) ? convertToCanvaEmbedUrl(slideUrl) : slideUrl;
+const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiKey, null);
+                    if (media) {
+                        if (media.type === 'video') {
+                            media.element.controls = true;
+                            media.element.muted = false;
+                        }
+                        slideDiv.appendChild(media.element);
+                    }
+                    carouselContainer.appendChild(slideDiv);
+                });
+                
+                if (img.slides.length > 1) {
+                    let currentSlide = 0;
+                    const prevBtn = document.createElement('button');
+                    prevBtn.innerHTML = '‹';
+                    prevBtn.style.cssText = 'position:absolute;left:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.3);border:none;font-size:40px;padding:10px 20px;cursor:pointer;border-radius:4px;z-index:10001;color:white;transition:background 0.2s;backdrop-filter:blur(4px);';
+                    prevBtn.onmouseover = () => prevBtn.style.background = 'rgba(255,255,255,0.5)';
+                    prevBtn.onmouseout = () => prevBtn.style.background = 'rgba(255,255,255,0.3)';
+                    prevBtn.onclick = () => {
+                        document.querySelectorAll('.lightbox-slide')[currentSlide].style.display = 'none';
+                        currentSlide = (currentSlide - 1 + img.slides.length) % img.slides.length;
+                        document.querySelectorAll('.lightbox-slide')[currentSlide].style.display = 'block';
+                    };
+                    
+                    const nextBtn = document.createElement('button');
+                    nextBtn.innerHTML = '›';
+                    nextBtn.style.cssText = 'position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.3);border:none;font-size:40px;padding:10px 20px;cursor:pointer;border-radius:4px;z-index:10001;color:white;transition:background 0.2s;backdrop-filter:blur(4px);';
+                    nextBtn.onmouseover = () => nextBtn.style.background = 'rgba(255,255,255,0.5)';
+                    nextBtn.onmouseout = () => nextBtn.style.background = 'rgba(255,255,255,0.3)';
+                    nextBtn.onclick = () => {
+                        document.querySelectorAll('.lightbox-slide')[currentSlide].style.display = 'none';
+                        currentSlide = (currentSlide + 1) % img.slides.length;
+                        document.querySelectorAll('.lightbox-slide')[currentSlide].style.display = 'block';
+                    };
+                    
+                    carouselContainer.appendChild(prevBtn);
+                    carouselContainer.appendChild(nextBtn);
+                }
+                
+                content.appendChild(carouselContainer);
+            } else if (primarySource) {
+                const fallback = isFromCanva ? img.imageUrl : null;
+                const media = createMediaElement(primarySource, img.name, !isFromCanva, apiUrl, apiKey, fallback);
+                if (media) {
+                    if (media.type === 'video') {
+                        media.element.controls = true;
+                        media.element.muted = false;
+                        media.element.autoplay = true;
+                    }
+                    content.appendChild(media.element);
+                }
+            }
+
+            lightbox.classList.add('active');
         }
 
-        function setCachedData(data) {
-            try {
-                localStorage.setItem(CACHE_KEY, JSON.stringify({
-                    data: data,
-                    timestamp: Date.now()
-                }));
-            } catch (e) {
-                console.error('Cache save failed:', e);
-            }
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            const content = document.getElementById('lightboxContent');
+            
+            const videos = content.querySelectorAll('video');
+            videos.forEach(video => {
+                video.pause();
+                video.currentTime = 0;
+            });
+            
+            lightbox.classList.remove('active');
         }
 
-        function toggleMenu() {
+        document.addEventListener('click', (e) => {
+            const lightbox = document.getElementById('lightbox');
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        document.addEventListener('touchend', (e) => {
+            const lightbox = document.getElementById('lightbox');
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.shiftKey && !dragMode) {
+                dragMode = true;
+                document.querySelectorAll('.grid-item').forEach(item => {
+                    item.classList.add('drag-mode');
+                    item.draggable = true;
+                });
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (!e.shiftKey && dragMode) {
+                dragMode = false;
+                document.querySelectorAll('.grid-item').forEach(item => {
+                    item.classList.remove('drag-mode');
+                    item.draggable = false;
+                });
+            }
+        });
+
+        function toggleSettingsDropdown() {
             const dropdown = document.getElementById('settingsDropdown');
             dropdown.classList.toggle('show');
         }
 
-        function closeMenu() {
+        function closeSettingsDropdown() {
             const dropdown = document.getElementById('settingsDropdown');
             dropdown.classList.remove('show');
         }
 
         function toggleSettings() {
-            const config = document.getElementById('configSection');
-            config.classList.toggle('hidden');
+            const configSection = document.getElementById('configSection');
+            configSection.classList.toggle('hidden');
         }
 
         function hideSettings() {
-            document.getElementById('configSection').classList.add('hidden');
+            const configSection = document.getElementById('configSection');
+            configSection.classList.add('hidden');
+        }
+
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('settingsDropdown');
+            const button = event.target.closest('.icon-btn');
+            
+            if (dropdown && !dropdown.contains(event.target) && !button) {
+                closeSettingsDropdown();
+            }
+        });
+
+        function showStatus(message, isError = false) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${isError ? 'error' : 'success'}`;
+            setTimeout(() => status.textContent = '', 5000);
         }
 
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
-            const icon = document.getElementById('toastIcon');
-            const msg = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastMessage = document.getElementById('toastMessage');
             
-            icon.textContent = type === 'success' ? '✓' : '✕';
-            msg.textContent = message;
+            // Set icon based on type
+            if (type === 'success') {
+                toastIcon.textContent = '✓';
+                toast.className = 'toast success';
+            } else if (type === 'error') {
+                toastIcon.textContent = '✕';
+                toast.className = 'toast error';
+            } else {
+                toastIcon.textContent = 'ℹ';
+                toast.className = 'toast';
+            }
             
+            toastMessage.textContent = message;
+            
+            // Show toast
             toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function formatDateBadge(dateString) {
+            if (!dateString) return null;
+            
+            try {
+                const date = new Date(dateString);
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                               'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const month = months[date.getMonth()];
+                const day = date.getDate();
+                return `${month} ${day}`;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function getMediaType(url) {
+            if (!url) return null;
+            const lower = url.toLowerCase();
+            
+            // Decode URL first to catch encoded extensions
+            let decodedUrl = '';
+            try {
+                decodedUrl = decodeURIComponent(url).toLowerCase();
+            } catch (e) {
+                decodedUrl = lower;
+            }
+            
+            // Check both original and decoded URLs for extensions
+            const checkUrl = decodedUrl || lower;
+            
+            if (checkUrl.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?|$|&)/)) return 'image';
+            if (checkUrl.match(/\.(mp4|webm|ogg|mov)(\?|$|&)/)) return 'video';
+            
+            // Check for video file names in the URL path
+            if (checkUrl.includes('.mp4') || checkUrl.includes('.webm') || checkUrl.includes('.mov') || checkUrl.includes('.ogg')) {
+                return 'video';
+            }
+            
+            // S3 URLs - default to image
+            if (lower.includes('amazonaws.com') && lower.includes('prod-files-secure')) {
+                return 'image';
+            }
+            
+            return null;
+        }
+
+        function isCanvaUrl(url) {
+            return url && url.includes('canva.com');
+        }
+
+        function convertToCanvaEmbedUrl(url) {
+    if (!url) return null;
+    
+    console.log('Converting Canva URL:', url);
+    
+    // Extract design ID AND view token
+    // Works for both /watch and /view formats
+    const match = url.match(/canva\.com\/design\/([^\/\?]+)\/([^\/\?]+)/);
+    if (match && match[1] && match[2]) {
+        const designId = match[1];
+        const viewToken = match[2];
+        
+        // Use EXACTLY the format that works for OLD videos (Test 8)
+        // Just /view?embed - no UI parameters, no autoplay, nothing fancy
+        const convertedUrl = `https://www.canva.com/design/${designId}/${viewToken}/view?embed`;
+        console.log('Converted to:', convertedUrl);
+        return convertedUrl;
+    }
+    
+    // Try to extract just design ID (for presentations without view token)
+    const designMatch = url.match(/canva\.com\/design\/([^\/\?]+)/);
+    if (designMatch && designMatch[1]) {
+        const designId = designMatch[1];
+        const convertedUrl = `https://www.canva.com/design/${designId}/view?embed`;
+        console.log('Converted to:', convertedUrl);
+        return convertedUrl;
+    }
+    
+    // Already in correct format
+    if (url.includes('/view?embed')) {
+        console.log('Already in correct format');
+        return url;
+    }
+    
+    console.log('Could not convert URL, returning as-is');
+    return url;
+}
+
+        function getCanvaDesignId(url) {
+            if (!url) return null;
+            const match = url.match(/canva\.com\/design\/([^\/\?]+)/);
+            return match ? match[1] : null;
+        }
+
+        function getCanvaThumbnailUrl(url) {
+            const designId = getCanvaDesignId(url);
+            if (!designId) return null;
+            return `https://www.canva.com/design/${designId}/view`;
         }
 
         function copyShareLink() {
-            const params = new URLSearchParams({
-                apiUrl: document.getElementById('apiUrl').value,
-                databaseId: document.getElementById('databaseId').value,
-                apiKey: document.getElementById('apiKey').value
-            });
-            const link = window.location.origin + window.location.pathname + '?' + params.toString();
-            navigator.clipboard.writeText(link);
-            showToast('Share link copied!', 'success');
-        }
-
-        async function loadFromNotion() {
-            // Try cache first ⚡
-            const cached = getCachedData();
-            if (cached) {
-                images = cached;
-                displayedCount = 12;
-                renderGrid();
-                if (isInitialLoad) {
-                    showToast(`Loaded ${images.length} items from cache!`, 'success');
-                    isInitialLoad = false;
-                }
-                setTimeout(() => hideSettings(), 1500);
-                return;
-            }
-
             const apiUrl = document.getElementById('apiUrl').value.trim();
             const databaseId = document.getElementById('databaseId').value.trim();
             const apiKey = document.getElementById('apiKey').value.trim();
 
             if (!apiUrl || !databaseId || !apiKey) {
-                showToast('Please enter all credentials', 'error');
+                showStatus('Please configure settings first', true);
                 return;
             }
 
+            const shareUrl = new URL(window.location.href.split('?')[0]);
+            shareUrl.searchParams.set('apiUrl', apiUrl);
+            shareUrl.searchParams.set('databaseId', databaseId);
+            shareUrl.searchParams.set('apiKey', apiKey);
+
+            navigator.clipboard.writeText(shareUrl.toString()).then(() => {
+                showStatus('✅ Share link copied! Paste it anywhere to stay logged in.');
+            }).catch(err => {
+                const textArea = document.createElement('textarea');
+                textArea.value = shareUrl.toString();
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showStatus('✅ Share link copied! Paste it anywhere to stay logged in.');
+                } catch (err) {
+                    showStatus('Failed to copy link', true);
+                }
+                document.body.removeChild(textArea);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlApiUrl = urlParams.get('apiUrl');
+            const urlDatabaseId = urlParams.get('databaseId');
+            const urlApiKey = urlParams.get('apiKey');
+            
+            const savedApiUrl = urlApiUrl || localStorage.getItem('apiUrl');
+            const savedDatabaseId = urlDatabaseId || localStorage.getItem('databaseId');
+            const savedApiKey = urlApiKey || localStorage.getItem('apiKey');
+            const savedShowDateBadge = localStorage.getItem('showDateBadge');
+            const savedShowCanvaBadge = localStorage.getItem('showCanvaBadge');
+            
+            // Set API URL - use saved value if exists, otherwise keep the default value in the input
+            if (savedApiUrl) {
+                document.getElementById('apiUrl').value = savedApiUrl;
+            }
+            // If no saved URL, the default value in HTML will be used
+            
+            if (savedDatabaseId) document.getElementById('databaseId').value = savedDatabaseId;
+            if (savedApiKey) document.getElementById('apiKey').value = savedApiKey;
+            
+            // Load date badge preference (default to true/checked)
+            if (savedShowDateBadge !== null) {
+                document.getElementById('showDateBadge').checked = savedShowDateBadge === 'true';
+            }
+            
+            // Load Canva badge preference (default to true/checked)
+            if (savedShowCanvaBadge !== null) {
+                document.getElementById('showCanvaBadge').checked = savedShowCanvaBadge === 'true';
+            }
+            
+            // Save date badge preference when changed
+            document.getElementById('showDateBadge').addEventListener('change', function() {
+                localStorage.setItem('showDateBadge', this.checked);
+                renderGrid(); // Re-render to show/hide badges
+            });
+            
+            // Save Canva badge preference when changed
+            document.getElementById('showCanvaBadge').addEventListener('change', function() {
+                localStorage.setItem('showCanvaBadge', this.checked);
+                renderGrid(); // Re-render to show/hide badges
+            });
+            
+            if (urlApiUrl || urlDatabaseId || urlApiKey) {
+                if (savedApiUrl) localStorage.setItem('apiUrl', savedApiUrl);
+                if (savedDatabaseId) localStorage.setItem('databaseId', savedDatabaseId);
+                if (savedApiKey) localStorage.setItem('apiKey', savedApiKey);
+            }
+            
+            // Auto-load if database ID and API key are present (API URL has default)
+            const currentApiUrl = document.getElementById('apiUrl').value.trim();
+            if (currentApiUrl && savedDatabaseId && savedApiKey) {
+                loadFromNotion();
+                setTimeout(() => hideSettings(), 1000);
+            }
+        });
+
+        function saveCredentials(apiUrl, databaseId, apiKey) {
+            localStorage.setItem('apiUrl', apiUrl);
+            localStorage.setItem('databaseId', databaseId);
+            localStorage.setItem('apiKey', apiKey);
+            
+            const url = new URL(window.location);
+            url.searchParams.set('apiUrl', apiUrl);
+            url.searchParams.set('databaseId', databaseId);
+            url.searchParams.set('apiKey', apiKey);
+            window.history.replaceState({}, '', url);
+        }
+
+        async function loadFromNotion() {
+            const apiUrl = document.getElementById('apiUrl').value.trim();
+            const databaseId = document.getElementById('databaseId').value.trim();
+            const apiKey = document.getElementById('apiKey').value.trim();
+
+            if (!apiUrl || !databaseId || !apiKey) {
+                showStatus('Please enter API URL, Database ID, and Integration Token', true);
+                return;
+            }
+
+            saveCredentials(apiUrl, databaseId, apiKey);
+
             try {
+                console.log('=== LOADING FROM NOTION ===');
+                console.log('API URL:', apiUrl);
+                console.log('Database ID:', databaseId);
+                
                 const response = await fetch(apiUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({
                         action: 'query',
                         databaseId: databaseId,
@@ -599,57 +1477,131 @@
                     })
                 });
 
-                if (!response.ok) throw new Error(`API error: ${response.status}`);
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('API Error Response:', errorText);
+                    throw new Error(`API error: ${response.status} - ${errorText}`);
+                }
 
                 const data = await response.json();
-                if (data.error) throw new Error(data.error);
+                console.log('API Response data:', data);
+                
+                if (data.error) {
+                    console.error('Notion API Error:', data.error);
+                    throw new Error(data.error);
+                }
+
+                console.log('Notion API Response:', data);
+                console.log('Number of results:', data.results?.length);
 
                 images = data.results.map(page => {
+                    console.log('Processing page:', page);
+                    
                     const canvaUrl = page.properties['Canva URL']?.url || null;
                     const imageUrlProperty = page.properties['Image URL']?.url || null;
                     const imageFiles = page.properties.Image?.files || [];
                     const visible = page.properties.Visible?.checkbox ?? true;
                     const pinned = page.properties.Pinned?.checkbox ?? false;
                     
+                    console.log('  - Canva URL:', canvaUrl);
+                    console.log('  - Image URL property:', imageUrlProperty);
+                    console.log('  - Image files:', imageFiles);
+                    console.log('  - Visible:', visible);
+                    console.log('  - Pinned:', pinned);
+                    
+                    // Get URLs from image files
                     const allImageUrls = imageFiles.map(file => file.file?.url || file.external?.url).filter(url => url);
+                    
+                    console.log('  - All image URLs:', allImageUrls);
+                    
                     const type = page.properties.Type?.select?.name || 'Photo';
+                    
                     const isCarousel = allImageUrls.length > 1 || type === 'Carousel';
                     const finalType = isCarousel ? 'Carousel' : type;
+                    
+                    // Priority: Image URL property > Image files > null
                     const imageUrl = imageUrlProperty || (allImageUrls.length > 0 ? allImageUrls[0] : null);
+                    const slideUrls = allImageUrls.length > 1 ? allImageUrls : [];
+                    
+                    console.log('Extracted data:', { 
+                        canvaUrl, 
+                        imageUrl, 
+                        imageUrlProperty,
+                        type: finalType, 
+                        slideCount: slideUrls.length,
+                        visible: visible,
+                        pinned: pinned
+                    });
                     
                     return {
                         id: page.id,
                         name: page.properties.Name?.title[0]?.plain_text || 'Untitled',
-                        canvaUrl: canvaUrl ? convertToCanvaEmbedUrl(canvaUrl) : null,
+                        canvaUrl: convertToCanvaEmbedUrl(canvaUrl),
                         imageUrl: imageUrl,
                         url: imageUrl,
                         type: finalType,
-                        slides: allImageUrls.length > 1 ? allImageUrls : [],
+                        slides: slideUrls,
                         order: page.properties.Order?.number || 0,
                         visible: visible,
                         pinned: pinned,
                         createdTime: page.created_time,
                         date: page.properties.Date?.date?.start || null
                     };
-                }).filter(img => {
+                });
+                
+                console.log('Before filtering:', images.length, 'items');
+                console.log('All images before filter:', images);
+                
+                images = images.filter(img => {
                     const hasContent = img.canvaUrl || img.url || img.slides.length > 0;
-                    return hasContent && img.visible !== false;
+                    const isVisible = img.visible !== false;
+                    return hasContent && isVisible;
                 });
 
+                console.log('After filtering:', images.length, 'items');
+                console.log('Final images array:', images);
+
+                // Sort by Order property (ascending)
+                // Pinned items first by their Order, then unpinned items by their Order
                 images.sort((a, b) => {
-                    if (a.pinned && b.pinned) return (a.order || 0) - (b.order || 0);
+                    // Both pinned - sort by Order ascending
+                    if (a.pinned && b.pinned) {
+                        return (a.order || 0) - (b.order || 0);
+                    }
+                    // Only a is pinned - a comes first
                     if (a.pinned) return -1;
+                    // Only b is pinned - b comes first  
                     if (b.pinned) return 1;
+                    // Neither pinned - sort by Order ascending
                     return (a.order || 0) - (b.order || 0);
                 });
 
+                console.log('After sorting (pinned first, then newest):', images.map(i => ({
+                    name: i.name,
+                    pinned: i.pinned,
+                    order: i.order,
+                    createdTime: i.createdTime
+                })));
+
+                images.forEach((img, i) => {
+                    console.log(`Image ${i}:`, {
+                        hasCanva: !!img.canvaUrl,
+                        hasUrl: !!img.url,
+                        hasSlides: img.slides.length,
+                        url: img.url,
+                        canvaUrl: img.canvaUrl,
+                        type: img.type
+                    });
+                });
+
                 displayedCount = 12;
-                
-                // Save to cache ⚡
-                setCachedData(images);
-                
+
                 renderGrid();
                 
+                // Show toast only on initial load
                 if (isInitialLoad) {
                     showToast(`Loaded ${images.length} items successfully!`, 'success');
                     isInitialLoad = false;
@@ -657,134 +1609,608 @@
                 
                 setTimeout(() => hideSettings(), 1500);
             } catch (error) {
-                showToast(`Error: ${error.message}`, 'error');
+                console.error('=== ERROR LOADING ===');
+                console.error('Error object:', error);
+                console.error('Error message:', error.message);
+                console.error('Error stack:', error.stack);
+                showStatus(`Error: ${error.message}`, true);
             }
         }
 
-        function convertToCanvaEmbedUrl(url) {
-            if (!url) return null;
-            const videoMatch = url.match(/canva\.com\/design\/([^\/\?]+)\/([^\/\?]+)\/watch/);
-            if (videoMatch && videoMatch[1] && videoMatch[2]) {
-                return `https://www.canva.com/design/${videoMatch[1]}/${videoMatch[2]}/view?embed&ui=eyJBIjp7IkIiOnRydWV9fQ`;
+        async function refreshGrid() {
+            // Silent refresh - no toast notification
+            await loadFromNotion();
+        }
+
+        async function saveToNotion() {
+            console.log('🔴 SAVE BUTTON CLICKED - Function started!');
+            
+            const apiUrl = document.getElementById('apiUrl').value.trim();
+            const databaseId = document.getElementById('databaseId').value.trim();
+            const apiKey = document.getElementById('apiKey').value.trim();
+
+            console.log('Config values:', { apiUrl, databaseId, apiKey: apiKey ? '***' : 'missing' });
+
+            if (!apiUrl || !databaseId || !apiKey) {
+                console.log('❌ Missing configuration');
+                showStatus('Please configure settings first', true);
+                return;
             }
-            const designMatch = url.match(/canva\.com\/design\/([^\/\?]+)/);
-            if (designMatch && designMatch[1]) {
-                return `https://www.canva.com/design/${designMatch[1]}/view?embed&ui=eyJBIjp7IkIiOnRydWV9fQ`;
+
+            showStatus('Saving order...');
+            console.log('Starting save process...');
+            console.log(`Total items to save: ${images.length}`);
+            
+            try {
+                let successCount = 0;
+                let errorCount = 0;
+                
+                for (let i = 0; i < images.length; i++) {
+                    console.log(`\n=== Saving item ${i + 1}/${images.length} ===`);
+                    console.log('Item name:', images[i].name);
+                    console.log('Page ID:', images[i].id);
+                    console.log('New order:', i);
+                    
+                    const requestBody = {
+                        action: 'update',
+                        databaseId: databaseId,
+                        apiKey: apiKey,
+                        pageId: images[i].id,
+                        order: i
+                    };
+                    
+                    console.log('Request body:', JSON.stringify(requestBody, null, 2));
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+                    
+                    console.log(`Response status: ${response.status}`);
+                    console.log(`Response ok: ${response.ok}`);
+                    
+                    const responseText = await response.text();
+                    console.log('Response body:', responseText);
+                    
+                    if (response.ok) {
+                        successCount++;
+                        console.log(`✅ Item ${i + 1} saved successfully`);
+                    } else {
+                        errorCount++;
+                        console.error(`❌ Item ${i + 1} failed`);
+                        console.error('Error details:', responseText);
+                    }
+                }
+                
+                console.log(`\n=== SAVE COMPLETE ===`);
+                console.log(`✅ Succeeded: ${successCount}`);
+                console.log(`❌ Failed: ${errorCount}`);
+                
+                if (errorCount === 0) {
+                    showStatus(`✓ Grid order saved successfully! (${successCount} items)`);
+                    showToast(`Grid order saved! ${successCount} items updated`, 'success');
+                    console.log('✅ All items saved successfully!');
+                } else {
+                    showStatus(`⚠ Partially saved: ${successCount} succeeded, ${errorCount} failed`, true);
+                    showToast(`Partially saved: ${successCount} succeeded, ${errorCount} failed`, 'error');
+                    console.warn(`Save completed with errors: ${successCount} succeeded, ${errorCount} failed`);
+                }
+            } catch (error) {
+                console.error('❌ Save error:', error);
+                console.error('Error details:', error.message);
+                console.error('Error stack:', error.stack);
+                showStatus(`Error saving: ${error.message}`, true);
+                showToast(`Error saving: ${error.message}`, 'error');
             }
-            if (url.includes('/view')) {
-                const hasParams = url.includes('?');
-                return hasParams ? `${url}&embed&ui=eyJBIjp7IkIiOnRydWV9fQ` : `${url}?embed&ui=eyJBIjp7IkIiOnRydWV9fQ`;
+        }
+
+        function createMediaElement(url, alt, useProxy, apiUrl, apiKey, fallbackUrl) {
+            const mediaType = getMediaType(url);
+            
+            // Notion uses multiple CDNs - don't proxy these
+            const isNotionCDN = url && (
+                (url.includes('amazonaws.com') && url.includes('prod-files-secure')) ||
+                url.includes('api.sprig.com') ||
+                url.includes('sprig.com')
+            );
+            const shouldProxy = useProxy && !isNotionCDN && apiUrl && apiKey;
+            
+            if (mediaType === 'video') {
+                const video = document.createElement('video');
+                if (shouldProxy) {
+                    video.src = `${apiUrl}?proxyImage=${encodeURIComponent(url)}&apiKey=${encodeURIComponent(apiKey)}`;
+                } else {
+                    video.src = url;
+                }
+                video.muted = true;
+                video.loop = true;
+                video.playsInline = true;
+                video.setAttribute('crossorigin', 'anonymous');
+                video.onerror = () => console.error('Video failed to load:', url);
+                video.onloadeddata = () => {
+                    // Add loaded class to stop shimmer animation
+                    const gridItem = video.closest('.grid-item');
+                    if (gridItem) gridItem.classList.add('loaded');
+                };
+                return { element: video, type: 'video' };
+            } else if (mediaType === 'image') {
+                const img = document.createElement('img');
+                if (shouldProxy) {
+                    img.src = `${apiUrl}?proxyImage=${encodeURIComponent(url)}&apiKey=${encodeURIComponent(apiKey)}`;
+                } else {
+                    img.src = url;
+                }
+                img.alt = alt;
+                img.setAttribute('crossorigin', 'anonymous');
+                img.onerror = () => {
+                    console.error('Image failed to load:', url);
+                    console.error('Was using proxy:', shouldProxy);
+                    img.style.display = 'none';
+                    const placeholder = document.createElement('div');
+                    placeholder.style.cssText = 'display:flex;align-items:center;justify-content:center;height:100%;background:#f5f5f5;color:#999;font-size:12px;padding:10px;text-align:center;';
+                    placeholder.textContent = 'Image failed to load';
+                    img.parentElement?.appendChild(placeholder);
+                };
+                img.onload = () => {
+                    console.log('Image loaded successfully:', url);
+                    // Add loaded class to stop shimmer animation
+                    const gridItem = img.closest('.grid-item');
+                    if (gridItem) gridItem.classList.add('loaded');
+                };
+                return { element: img, type: 'image' };
+            } else if (isCanvaUrl(url)) {
+                const iframe = document.createElement('iframe');
+                iframe.src = url;
+                iframe.loading = 'lazy';
+                iframe.setAttribute('allowfullscreen', 'true');
+                // Only allow fullscreen - other permissions cause warnings
+                iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+                iframe.style.cssText = 'width:100%;height:100%;border:none;';
+                
+                console.log('Creating Canva iframe:', url);
+                
+                iframe.onload = () => {
+                    console.log('✅ Canva iframe loaded');
+                    // Add loaded class to stop shimmer animation
+                    const gridItem = iframe.closest('.grid-item');
+                    if (gridItem) gridItem.classList.add('loaded');
+                };
+                iframe.onerror = () => {
+                    console.error('❌ Canva iframe error - design may not be published');
+                    console.error('Make sure to use Share → More → Embed → Generate code in Canva');
+                };
+                
+                return { element: iframe, type: 'canva' };
             }
-            return url;
+            
+            return null;
         }
 
         function renderGrid() {
             const grid = document.getElementById('grid');
-            const fragment = document.createDocumentFragment();
-            
+            grid.innerHTML = '';
+
+            const apiUrl = document.getElementById('apiUrl').value.trim();
+            const apiKey = document.getElementById('apiKey').value.trim();
+
+            console.log('Rendering grid with', displayedCount, 'of', images.length, 'images');
+
+            if (images.length === 0) {
+                grid.innerHTML = '<div class="placeholder">No items loaded. Configure your settings above and add some content!</div>';
+                return;
+            }
+
             const imagesToRender = images.slice(0, displayedCount);
 
-            imagesToRender.forEach(img => {
+            imagesToRender.forEach((img, index) => {
+                console.log('Rendering item', index, img);
+                
                 const item = document.createElement('div');
                 item.className = 'grid-item';
+                if (img.type === 'Reel') {
+                    item.classList.add('reel');
+                }
+                item.dataset.index = index;
+                item.draggable = false;
+
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('drop', handleDrop);
+                item.addEventListener('dragend', handleDragEnd);
+
+                item.addEventListener('dblclick', (e) => {
+                    if (!dragMode) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        openLightbox(img);
+                    }
+                });
+
+                item.addEventListener('touchstart', (e) => {
+                    touchStartTime = Date.now();
+                    touchStartPos = {
+                        x: e.touches[0].clientX,
+                        y: e.touches[0].clientY
+                    };
+                    
+                    const currentTime = Date.now();
+                    const tapTimeDiff = currentTime - lastTapTime;
+                    
+                    if (tapTimeDiff < DOUBLE_TAP_DELAY && tapTimeDiff > 0) {
+                        e.preventDefault();
+                        clearTimeout(longPressTimer);
+                        openLightbox(img);
+                        lastTapTime = 0;
+                        return;
+                    }
+                    
+                    lastTapTime = currentTime;
+                    
+                    longPressTimer = setTimeout(() => {
+                        if (!isDraggingTouch) {
+                            isDraggingTouch = true;
+                            touchDraggedElement = item;
+                            item.classList.add('dragging');
+                            item.style.opacity = '0.5';
+                            navigator.vibrate && navigator.vibrate(50);
+                        }
+                    }, LONG_PRESS_DURATION);
+                }, { passive: false });
+
+                item.addEventListener('touchmove', (e) => {
+                    const touch = e.touches[0];
+                    const moveX = Math.abs(touch.clientX - touchStartPos.x);
+                    const moveY = Math.abs(touch.clientY - touchStartPos.y);
+                    
+                    if ((moveX > MOVE_THRESHOLD || moveY > MOVE_THRESHOLD) && !isDraggingTouch) {
+                        clearTimeout(longPressTimer);
+                    }
+                    
+                    if (isDraggingTouch && touchDraggedElement) {
+                        e.preventDefault();
+                        
+                        const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+                        const targetItem = targetElement?.closest('.grid-item');
+                        
+                        if (targetItem && targetItem !== touchDraggedElement) {
+                            document.querySelectorAll('.grid-item').forEach(i => i.classList.remove('drag-over'));
+                            targetItem.classList.add('drag-over');
+                        }
+                    }
+                }, { passive: false });
+
+                item.addEventListener('touchend', (e) => {
+                    clearTimeout(longPressTimer);
+                    
+                    if (isDraggingTouch && touchDraggedElement) {
+                        e.preventDefault();
+                        
+                        const touch = e.changedTouches[0];
+                        const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+                        const targetItem = targetElement?.closest('.grid-item');
+                        
+                        if (targetItem && targetItem !== touchDraggedElement) {
+                            const draggedIndex = parseInt(touchDraggedElement.dataset.index);
+                            const targetIndex = parseInt(targetItem.dataset.index);
+                            
+                            const draggedImage = images[draggedIndex];
+                            images.splice(draggedIndex, 1);
+                            images.splice(targetIndex, 0, draggedImage);
+                            
+                            renderGrid();
+                        }
+                        
+                        touchDraggedElement.classList.remove('dragging');
+                        touchDraggedElement.style.opacity = '';
+                        document.querySelectorAll('.grid-item').forEach(i => i.classList.remove('drag-over'));
+                        touchDraggedElement = null;
+                        isDraggingTouch = false;
+                    }
+                }, { passive: false });
+
+                item.addEventListener('touchcancel', () => {
+                    clearTimeout(longPressTimer);
+                    if (touchDraggedElement) {
+                        touchDraggedElement.classList.remove('dragging');
+                        touchDraggedElement.style.opacity = '';
+                        document.querySelectorAll('.grid-item').forEach(i => i.classList.remove('drag-over'));
+                        touchDraggedElement = null;
+                        isDraggingTouch = false;
+                    }
+                });
+
+                // Smart source selection based on environment
+                let primarySource;
+                let isFromCanva = false;
                 
-                let primarySource = img.canvaUrl ? img.canvaUrl : img.imageUrl;
-                let isFromCanva = !!img.canvaUrl && !img.imageUrl;
-                
-                if (primarySource) {
-                    if (primarySource.includes('canva.com')) {
-                        const iframe = document.createElement('iframe');
-                        iframe.loading = 'lazy'; // ⚡ Lazy load
-                        iframe.src = primarySource;
-                        iframe.setAttribute('allowfullscreen', 'true');
-                        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
-                        iframe.style.cssText = 'width:100%;height:100%;border:none;pointer-events:auto;';
-                        iframe.onload = () => item.classList.add('loaded');
-                        item.appendChild(iframe);
-                    } else if (primarySource.match(/\.(mp4|webm|ogg)$/i)) {
-                        const video = document.createElement('video');
-                        video.src = primarySource;
-                        video.muted = true;
-                        video.loop = true;
-                        video.playsInline = true;
-                        video.onloadeddata = () => item.classList.add('loaded');
-                        item.appendChild(video);
+                if (img.canvaUrl && img.imageUrl) {
+                    // Both available - choose based on environment
+                    if (SUPPORTS_IFRAMES) {
+                        primarySource = img.canvaUrl;
+                        isFromCanva = true;
+                        console.log('Using Canva iframe (desktop environment)');
                     } else {
-                        const imgEl = document.createElement('img');
-                        imgEl.loading = 'lazy'; // ⚡ Lazy load
-                        imgEl.decoding = 'async'; // ⚡ Async decode
-                        imgEl.src = primarySource;
-                        imgEl.alt = img.name;
-                        imgEl.onload = () => item.classList.add('loaded');
-                        item.appendChild(imgEl);
+                        primarySource = img.imageUrl;
+                        isFromCanva = false;
+                        console.log('Using image fallback (mobile/Safari environment)');
+                    }
+                } else if (img.canvaUrl) {
+                    // Only Canva available
+                    primarySource = img.canvaUrl;
+                    isFromCanva = true;
+                    console.log('Using Canva iframe (only option)');
+                } else {
+                    // Only image available
+                    primarySource = img.imageUrl || img.url;
+                    isFromCanva = false;
+                    console.log('Using image (only option)');
+                }
+
+                console.log('Primary source for item', index, ':', primarySource);
+                console.log('isFromCanva:', isFromCanva, 'img.type:', img.type);
+
+                if (img.type === 'Carousel' && (isFromCanva || img.slides.length > 0)) {
+                    const carouselContainer = document.createElement('div');
+                    carouselContainer.className = 'carousel-slides';
+
+                    if (isFromCanva) {
+                        const slide = document.createElement('div');
+                        slide.className = 'carousel-slide active';
+                        const media = createMediaElement(img.canvaUrl, img.name, false, apiUrl, apiKey, img.imageUrl);
+                        if (media) {
+                            slide.appendChild(media.element);
+                        }
+                        carouselContainer.appendChild(slide);
+                    } else {
+                        img.slides.forEach((slideUrl, slideIndex) => {
+                            const slide = document.createElement('div');
+                            slide.className = `carousel-slide ${slideIndex === 0 ? 'active' : ''}`;
+                            
+                            const media = createMediaElement(slideUrl, `${img.name} - Slide ${slideIndex + 1}`, true, apiUrl, apiKey);
+                            if (media) {
+                                slide.appendChild(media.element);
+                            }
+                            
+                            carouselContainer.appendChild(slide);
+                        });
+                    }
+
+                    item.appendChild(carouselContainer);
+
+                    const indicator = document.createElement('div');
+                    indicator.className = 'carousel-indicator';
+                    indicator.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14.82 14.87" width="16" height="16">
+                        <path fill="#fff" d="M13.6,2.32v8.48c0,1.54-1.25,2.8-2.8,2.8H2.26c.25.74.94,1.27,1.76,1.27h6.97c2.12,0,3.84-1.72,3.84-3.84v-6.97c0-.8-.51-1.48-1.22-1.74Z"/>
+                        <rect fill="#fff" width="12.66" height="12.66" rx="1.85" ry="1.85"/>
+                    </svg>`;
+                    item.appendChild(indicator);
+
+                    if (!isFromCanva && img.slides.length > 1) {
+                        const dotsContainer = document.createElement('div');
+                        dotsContainer.className = 'carousel-nav';
+                        img.slides.forEach((_, dotIndex) => {
+                            const dot = document.createElement('div');
+                            dot.className = `carousel-dot ${dotIndex === 0 ? 'active' : ''}`;
+                            dotsContainer.appendChild(dot);
+                        });
+                        item.appendChild(dotsContainer);
+
+                        let currentSlide = 0;
+                        let hoverInterval = null;
+                        
+                        item.addEventListener('mouseenter', () => {
+                            if (!dragMode) {
+                                hoverInterval = setInterval(() => {
+                                    const slides = item.querySelectorAll('.carousel-slide');
+                                    const dots = item.querySelectorAll('.carousel-dot');
+                                    
+                                    slides[currentSlide].classList.remove('active');
+                                    dots[currentSlide].classList.remove('active');
+                                    
+                                    currentSlide = (currentSlide + 1) % img.slides.length;
+                                    
+                                    slides[currentSlide].classList.add('active');
+                                    dots[currentSlide].classList.add('active');
+                                }, 2000);
+                            }
+                        });
+                        
+                        item.addEventListener('mouseleave', () => {
+                            if (hoverInterval) {
+                                clearInterval(hoverInterval);
+                                hoverInterval = null;
+                            }
+                        });
+                    }
+
+                } else if (img.type === 'Reel' && primarySource) {
+                    const fallback = isFromCanva ? img.imageUrl : null;
+                    const media = createMediaElement(primarySource, img.name, !isFromCanva, apiUrl, apiKey, fallback);
+                    if (media) {
+                        item.appendChild(media.element);
+                        
+                        if (media.type === 'video') {
+                            const videoElement = media.element.tagName === 'VIDEO' ? media.element : media.element.querySelector('video');
+                            if (videoElement) {
+                                item.addEventListener('mouseenter', () => videoElement.play());
+                                item.addEventListener('mouseleave', () => videoElement.pause());
+                            }
+                        }
+                    }
+
+                    const indicator = document.createElement('div');
+                    indicator.className = 'media-indicator';
+                    indicator.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11.44 12.86" width="16" height="16">
+                        <path fill="#fff" d="M10.87,7.42L1.72,12.7C.95,13.14,0,12.59,0,11.71V1.15C0,.27.95-.29,1.72.16l9.15,5.28c.76.44.76,1.54,0,1.98Z"/>
+                    </svg>`;
+                    item.appendChild(indicator);
+
+                } else if (primarySource) {
+                    console.log('Rendering regular photo/video for item', index);
+                    const fallback = isFromCanva ? img.imageUrl : null;
+                    const media = createMediaElement(primarySource, img.name, !isFromCanva, apiUrl, apiKey, fallback);
+                    console.log('Media element created:', media);
+                    if (media) {
+                        item.appendChild(media.element);
+                        
+                        // Add hover-to-play for videos
+                        if (media.type === 'video') {
+                            const videoElement = media.element.tagName === 'VIDEO' ? media.element : media.element.querySelector('video');
+                            if (videoElement) {
+                                item.addEventListener('mouseenter', () => {
+                                    videoElement.play().catch(e => console.log('Video play failed:', e));
+                                });
+                                item.addEventListener('mouseleave', () => {
+                                    videoElement.pause();
+                                    videoElement.currentTime = 0;
+                                });
+                            }
+                        }
+                    } else {
+                        console.error('Failed to create media element for item', index);
+                    }
+                } else {
+                    console.warn('No primary source for item', index, img);
+                }
+
+                if (isFromCanva) {
+                    item.classList.add('has-canva');
+                    
+                    // Check if Canva badge should be shown
+                    const showCanvaBadge = document.getElementById('showCanvaBadge')?.checked ?? true;
+                    
+                    if (showCanvaBadge) {
+                        const badge = document.createElement('div');
+                        badge.className = 'canva-badge';
+                        badge.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="30 42 350 120">
+                            <path fill="#fff" fill-rule="evenodd" d="M34.69,100.89c0,27.01,13.28,43.18,36.29,43.18,15.71,0,29.48-12.13,36.77-26.36.81,11.81,6.16,17.95,14.42,17.95,7.29,0,13.12-4.37,17.66-11.97,1.78,7.92,6.32,11.81,12.31,11.81,6.8,0,12.64-4.37,17.98-12.29,0,6.31,1.3,12.29,6.8,12.29,2.59,0,5.67-.65,6.16-2.91,5.83-23.77,20.09-43.34,24.46-43.34,1.3,0,1.62,1.29,1.62,2.75,0,6.47-4.54,19.73-4.54,28.14,0,9.22,3.89,15.2,11.99,15.2,8.91,0,17.98-10.84,23.98-26.85,1.94,14.88,5.99,26.85,12.31,26.85,7.78,0,21.87-16.5,30.29-33.96,3.24.49,8.26.32,13.12-3.07-2.11,5.18-3.24,10.84-3.24,16.33,0,16.17,7.78,20.7,14.42,20.7,7.29,0,13.12-4.37,17.66-11.97,1.46,6.79,5.35,11.81,12.31,11.81,10.85,0,20.41-11.16,20.41-20.38.16-1.94-.97-3.56-2.11-3.56-.49,0-.97.32-1.3,1.13-3.24,9.38-7.78,15.04-11.5,15.04-2.11,0-2.92-2.43-2.92-5.98,0-9.22,5.51-28.79,8.26-37.84.32-1.13.49-2.1.49-2.91,0-2.59-1.46-3.88-5.02-3.88s-7.94,1.46-11.83,8.41c-1.3-6.15-5.51-8.73-11.34-8.73-6.64,0-13.12,4.37-18.47,11.32-5.35,6.95-11.66,9.22-16.36,8.09,3.4-8.25,4.7-14.55,4.7-19.08,0-7.28-3.56-11.64-9.4-11.64-8.75,0-13.77,8.41-13.77,17.14,0,6.79,3.08,13.75,9.88,17.14-5.67,12.78-13.93,24.42-17.17,24.42-4.05,0-5.35-19.89-5.02-34.12.16-8.09.81-8.57.81-11,0-1.46-.97-2.43-4.7-2.43-8.59,0-11.34,7.28-11.66,15.69-.16,3.23-.65,6.31-1.46,9.38-3.56,12.78-11.02,22.64-15.88,22.64-2.27,0-2.92-2.26-2.92-5.17,0-9.22,5.18-20.86,5.18-30.73,0-7.28-3.24-11.81-9.23-11.81-7.13,0-16.36,8.41-25.27,24.1,2.92-11.97,4.05-23.61-4.54-23.61-1.94,0-3.73.49-5.35,1.46-1.13.49-1.78,1.62-1.78,2.91.81,12.78-10.37,45.6-20.9,45.6-1.94,0-2.92-2.1-2.92-5.5,0-9.22,5.51-28.79,8.26-37.84.32-1.13.49-2.1.49-3.07,0-2.43-1.46-3.72-5.02-3.72s-7.94,1.46-11.83,8.41c-1.46-6.15-5.51-8.73-11.34-8.73-9.56,0-20.09,10.03-24.79,23.13-6.32,17.47-18.79,34.45-35.8,34.45-15.39,0-23.49-12.78-23.49-32.99,0-29.27,21.55-53.04,37.42-53.04,7.61,0,11.18,4.85,11.18,12.29,0,9.06-5.02,13.1-5.02,16.66,0,.97.81,2.10,2.59,2.10,6.97,0,15.07-8.09,15.07-19.24s-8.75-19.08-24.62-19.08h0c-26.4,0-52.81,26.36-52.81,60.32ZM324.33,84.88c3.56,0,4.86,4.2,4.86,9.54.16,11.64-7.13,32.18-14.9,32.18-4.37,0-6.16-5.17-6.16-11,0-11.16,7.94-30.73,16.2-30.73ZM276.55,81.16c0-4.69,1.78-8.57,3.73-8.57s2.75,1.94,2.75,4.85c-.16,4.53-1.78,11.48-2.92,14.88-2.59-3.07-3.56-7.44-3.56-11.16ZM139.01,84.88c3.56,0,5.02,4.2,5.02,9.54,0,11.64-7.45,32.18-15.07,32.18-4.37,0-6.16-4.37-6.16-11,0-11.48,7.94-30.73,16.2-30.73Z"/>
+                        </svg>`;
+                        item.appendChild(badge);
                     }
                 }
-                
-                fragment.appendChild(item);
-            });
 
-            grid.innerHTML = '';
-            grid.appendChild(fragment); // ⚡ Single DOM update
+                // Add date badge and pinned indicator in a container
+                const showDateBadge = document.getElementById('showDateBadge')?.checked ?? true;
+                
+                if (img.pinned || (showDateBadge && img.date)) {
+                    const container = document.createElement('div');
+                    container.className = 'date-badge-container';
+                    
+                    // Add pinned indicator
+                    if (img.pinned) {
+                        const pinnedIcon = document.createElement('div');
+                        pinnedIcon.style.cssText = 'display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));';
+                        pinnedIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20.91 28.42" width="14" height="14">
+                            <g>
+                                <polygon fill="#fff" points="20.64 6.42 20.64 6.42 20.64 6.42 20.64 6.42"/>
+                                <path fill="#fff" d="M20.64,6.42L11.04.09c-.27-.18-.64-.1-.81.18l-.5.8c-.17.28-.1.65.18.83l.83.54-.44.7h0s-2.73,4.34-2.73,4.34L.87,9.84l-.73,1.17,6.44,4.24L.73,24.53,0,28.41h0s0,0,0,0h0s0,0,0,0l3.15-2.28,5.85-9.29,6.44,4.24.73-1.17-.67-7.20,2.73-4.34h0s.44-.7.44-.7l.83.54c.27.18.64.1.81-.18l.5-.8c.17-.28.09-.65-.18-.83Z"/>
+                            </g>
+                        </svg>`;
+                        container.appendChild(pinnedIcon);
+                    }
+                    
+                    // Add date badge
+                    if (showDateBadge && img.date) {
+                        const formattedDate = formatDateBadge(img.date);
+                        if (formattedDate) {
+                            const dateBadge = document.createElement('div');
+                            dateBadge.className = 'date-badge';
+                            dateBadge.style.cssText = 'position:relative;left:auto;top:auto;';
+                            dateBadge.textContent = formattedDate;
+                            container.appendChild(dateBadge);
+                        }
+                    }
+                    
+                    item.appendChild(container);
+                }
+
+                grid.appendChild(item);
+            });
+            
+            setTimeout(() => {
+                checkScroll();
+            }, 200);
         }
 
-        // Infinite scroll ⚡
-        window.addEventListener('scroll', () => {
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
-                if (displayedCount < images.length) {
-                    displayedCount += LOAD_INCREMENT;
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            this.classList.add('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+
+            if (draggedElement !== this) {
+                const draggedIndex = parseInt(draggedElement.dataset.index);
+                const targetIndex = parseInt(this.dataset.index);
+
+                const draggedImage = images[draggedIndex];
+                images.splice(draggedIndex, 1);
+                images.splice(targetIndex, 0, draggedImage);
+
+                renderGrid();
+            }
+        }
+
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+            document.querySelectorAll('.grid-item').forEach(item => {
+                item.classList.remove('drag-over');
+            });
+        }
+
+        let isLoading = false;
+        
+        function checkScroll() {
+            if (isLoading) return;
+            if (displayedCount >= images.length) return;
+            
+            const scrollPosition = window.innerHeight + window.pageYOffset;
+            const pageHeight = document.documentElement.scrollHeight;
+            const threshold = pageHeight - 800;
+            
+            console.log('Scroll check:', {
+                scrollPosition,
+                threshold,
+                pageHeight,
+                displayed: displayedCount,
+                total: images.length
+            });
+            
+            if (scrollPosition >= threshold) {
+                isLoading = true;
+                console.log('Loading more images...');
+                
+                setTimeout(() => {
+                    const previousCount = displayedCount;
+                    displayedCount = Math.min(displayedCount + LOAD_INCREMENT, images.length);
+                    console.log(`Loading more: ${previousCount} → ${displayedCount} of ${images.length}`);
                     renderGrid();
-                }
+                    isLoading = false;
+                }, 100);
             }
+        }
+        
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            if (scrollTimeout) clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(checkScroll, 100);
         });
+        
+        window.addEventListener('resize', checkScroll);
 
-        // Initialize
-        window.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const savedApiUrl = urlParams.get('apiUrl') || localStorage.getItem('apiUrl');
-            const savedDatabaseId = urlParams.get('databaseId') || localStorage.getItem('databaseId');
-            const savedApiKey = urlParams.get('apiKey') || localStorage.getItem('apiKey');
-            const savedShowDateBadge = localStorage.getItem('showDateBadge');
-            const savedShowCanvaBadge = localStorage.getItem('showCanvaBadge');
-            
-            if (savedApiUrl) document.getElementById('apiUrl').value = savedApiUrl;
-            if (savedDatabaseId) document.getElementById('databaseId').value = savedDatabaseId;
-            if (savedApiKey) document.getElementById('apiKey').value = savedApiKey;
-            
-            if (savedShowDateBadge !== null) {
-                document.getElementById('showDateBadge').checked = savedShowDateBadge === 'true';
-            }
-            if (savedShowCanvaBadge !== null) {
-                document.getElementById('showCanvaBadge').checked = savedShowCanvaBadge === 'true';
-            }
-            
-            document.getElementById('showDateBadge').addEventListener('change', function() {
-                localStorage.setItem('showDateBadge', this.checked);
-                renderGrid();
-            });
-            
-            document.getElementById('showCanvaBadge').addEventListener('change', function() {
-                localStorage.setItem('showCanvaBadge', this.checked);
-                renderGrid();
-            });
-            
-            if (savedApiUrl) localStorage.setItem('apiUrl', savedApiUrl);
-            if (savedDatabaseId) localStorage.setItem('databaseId', savedDatabaseId);
-            if (savedApiKey) localStorage.setItem('apiKey', savedApiKey);
-            
-            if (savedApiUrl && savedDatabaseId && savedApiKey) {
-                loadFromNotion();
-                setTimeout(() => hideSettings(), 1000);
-            }
-        });
-
-        // Close menu on outside click
-        document.addEventListener('click', (e) => {
-            const menu = document.getElementById('menuBtn');
-            const dropdown = document.getElementById('settingsDropdown');
-            if (!menu.contains(e.target)) {
-                dropdown.classList.remove('show');
-            }
-        });
+        renderGrid();
     </script>
 </body>
 </html>
