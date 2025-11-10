@@ -353,7 +353,7 @@
             cursor: default;
             background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
             background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
+            animation: shimmer 1s infinite;
             transition: box-shadow 0.2s;
         }
         
@@ -987,8 +987,8 @@
         let images = [];
         let draggedElement = null;
         let dragMode = false;
-        let displayedCount = 12;
-        const LOAD_INCREMENT = 12;
+        let displayedCount = 9;
+        const LOAD_INCREMENT = 9;
         let isInitialLoad = true; // Track if this is the first load
 
         // Detect if we're in an environment that supports iframes well
@@ -1355,6 +1355,40 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 return;
             }
 
+            function loadFromCache() {
+    try {
+        const cachedData = localStorage.getItem('gridCache');
+        if (cachedData) {
+            const parsed = JSON.parse(cachedData);
+            const cacheAge = Date.now() - parsed.timestamp;
+            // Use cache if less than 5 minutes old
+            if (cacheAge < 5 * 60 * 1000) {
+                console.log('⚡ Loading from cache');
+                images = parsed.images;
+                displayedCount = 9;
+                renderGrid();
+                return true;
+            }
+        }
+    } catch (e) {
+        console.log('Cache load failed:', e);
+    }
+    return false;
+}
+
+function saveToCache() {
+    try {
+        const cacheData = {
+            timestamp: Date.now(),
+            images: images
+        };
+        localStorage.setItem('gridCache', JSON.stringify(cacheData));
+        console.log('💾 Saved to cache');
+    } catch (e) {
+        console.log('Cache save failed:', e);
+    }
+}
+
             const shareUrl = new URL(window.location.href.split('?')[0]);
             shareUrl.searchParams.set('apiUrl', apiUrl);
             shareUrl.searchParams.set('databaseId', databaseId);
@@ -1431,9 +1465,14 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
             // Auto-load if database ID and API key are present (API URL has default)
             const currentApiUrl = document.getElementById('apiUrl').value.trim();
             if (currentApiUrl && savedDatabaseId && savedApiKey) {
-                loadFromNotion();
-                setTimeout(() => hideSettings(), 1000);
-            }
+        const cacheLoaded = loadFromCache();  // OPTIMIZED: Try cache first
+        loadFromNotion();  // Load fresh in background
+        if (cacheLoaded) {
+            setTimeout(() => hideSettings(), 500);
+        } else {
+            setTimeout(() => hideSettings(), 1000);
+        }
+    }
         });
 
         function saveCredentials(apiUrl, databaseId, apiKey) {
@@ -1597,8 +1636,8 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                     });
                 });
 
-                displayedCount = 12;
-
+                displayedCount = 9;
+                saveToCache(); 
                 renderGrid();
                 
                 // Show toast only on initial load
@@ -1691,7 +1730,8 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 
                 if (errorCount === 0) {
                     showStatus(`✓ Grid order saved successfully! (${successCount} items)`);
-                    showToast(`Grid order saved! ${successCount} items updated`, 'success');
+    showToast(`Grid order saved! ${successCount} items updated`, 'success');
+    saveToCache(); 
                     console.log('✅ All items saved successfully!');
                 } else {
                     showStatus(`⚠ Partially saved: ${successCount} succeeded, ${errorCount} failed`, true);
@@ -1728,6 +1768,7 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 video.muted = true;
                 video.loop = true;
                 video.playsInline = true;
+                video.preload = 'metadata';
                 video.setAttribute('crossorigin', 'anonymous');
                 video.onerror = () => console.error('Video failed to load:', url);
                 video.onloadeddata = () => {
@@ -1744,6 +1785,7 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                     img.src = url;
                 }
                 img.alt = alt;
+                img.loading = 'lazy';
                 img.setAttribute('crossorigin', 'anonymous');
                 img.onerror = () => {
                     console.error('Image failed to load:', url);
@@ -2205,7 +2247,7 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
         let scrollTimeout;
         window.addEventListener('scroll', () => {
             if (scrollTimeout) clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(checkScroll, 100);
+            scrollTimeout = setTimeout(checkScroll, 150);
         });
         
         window.addEventListener('resize', checkScroll);
