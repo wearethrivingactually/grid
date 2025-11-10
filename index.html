@@ -1345,6 +1345,41 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
             return `https://www.canva.com/design/${designId}/view`;
         }
 
+        // OPTIMIZED: Cache functions for faster repeat loads
+        function loadFromCache() {
+            try {
+                const cachedData = localStorage.getItem('gridCache');
+                if (cachedData) {
+                    const parsed = JSON.parse(cachedData);
+                    const cacheAge = Date.now() - parsed.timestamp;
+                    // Use cache if less than 5 minutes old
+                    if (cacheAge < 5 * 60 * 1000) {
+                        console.log('⚡ Loading from cache');
+                        images = parsed.images;
+                        displayedCount = 9;
+                        renderGrid();
+                        return true;
+                    }
+                }
+            } catch (e) {
+                console.log('Cache load failed:', e);
+            }
+            return false;
+        }
+
+        function saveToCache() {
+            try {
+                const cacheData = {
+                    timestamp: Date.now(),
+                    images: images
+                };
+                localStorage.setItem('gridCache', JSON.stringify(cacheData));
+                console.log('💾 Saved to cache');
+            } catch (e) {
+                console.log('Cache save failed:', e);
+            }
+        }
+
         function copyShareLink() {
             const apiUrl = document.getElementById('apiUrl').value.trim();
             const databaseId = document.getElementById('databaseId').value.trim();
@@ -1354,40 +1389,6 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 showStatus('Please configure settings first', true);
                 return;
             }
-
-            function loadFromCache() {
-    try {
-        const cachedData = localStorage.getItem('gridCache');
-        if (cachedData) {
-            const parsed = JSON.parse(cachedData);
-            const cacheAge = Date.now() - parsed.timestamp;
-            // Use cache if less than 5 minutes old
-            if (cacheAge < 5 * 60 * 1000) {
-                console.log('⚡ Loading from cache');
-                images = parsed.images;
-                displayedCount = 9;
-                renderGrid();
-                return true;
-            }
-        }
-    } catch (e) {
-        console.log('Cache load failed:', e);
-    }
-    return false;
-}
-
-function saveToCache() {
-    try {
-        const cacheData = {
-            timestamp: Date.now(),
-            images: images
-        };
-        localStorage.setItem('gridCache', JSON.stringify(cacheData));
-        console.log('💾 Saved to cache');
-    } catch (e) {
-        console.log('Cache save failed:', e);
-    }
-}
 
             const shareUrl = new URL(window.location.href.split('?')[0]);
             shareUrl.searchParams.set('apiUrl', apiUrl);
