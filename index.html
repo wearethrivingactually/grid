@@ -676,6 +676,38 @@
             background: rgba(255, 255, 255, 1);
         }
 
+        /* Reel Cover Styles */
+        .reel-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .reel-cover img,
+        .reel-cover iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: none;
+        }
+
+        .grid-item.reel .reel-cover iframe {
+            transform: translate(-50%, -50%) scale(1.5);
+            transform-origin: center center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+        }
+
+        .grid-item.reel:hover .reel-cover {
+            opacity: 0;
+        }
+
         .placeholder {
             display: flex;
             align-items: center;
@@ -850,7 +882,7 @@
             <div id="status"></div>
             <div class="input-group">
                 <label for="apiUrl">API Endpoint URL:</label>
-                <input type="text" id="apiUrl" placeholder="https://igwidget.thrivingactually.com/api/notion" value="https://igwidget.thrivingactually.com/api/notion">
+                <input type="text" id="apiUrl" placeholder="https://your-project.vercel.app/api/notion" value="https://grid-three-iota.vercel.app/api/notion">
             </div>
             <div class="input-group">
                 <label for="databaseId">Database ID:</label>
@@ -878,6 +910,7 @@
                 • <strong>Canva embeds:</strong> Share → More → Embed → Generate code, then paste URL<br/>
                 • <strong>Pin posts:</strong> Add a "Pinned" checkbox property to keep posts at the top<br/>
                 • <strong>Hide items:</strong> Add a "Visible" checkbox property to control visibility<br/>
+                • <strong>Reel covers:</strong> Add "Reel Cover Image" (file upload) or "Reel Cover Canva URL" (URL) properties<br/>
                 • <strong>New posts:</strong> Latest posts appear first (unless pinned posts are above them)
             </div>
 
@@ -943,6 +976,13 @@
                         <span class="toggle-label">Show Canva Badge</span>
                         <label class="toggle-switch" onclick="event.stopPropagation();">
                             <input type="checkbox" id="showCanvaBadge" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="dropdown-item toggle-item">
+                        <span class="toggle-label">Show Reel Covers</span>
+                        <label class="toggle-switch" onclick="event.stopPropagation();">
+                            <input type="checkbox" id="showReelCovers" checked>
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
@@ -1425,6 +1465,7 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
             const savedApiKey = urlApiKey || localStorage.getItem('apiKey');
             const savedShowDateBadge = localStorage.getItem('showDateBadge');
             const savedShowCanvaBadge = localStorage.getItem('showCanvaBadge');
+            const savedShowReelCovers = localStorage.getItem('showReelCovers');
             
             // Set API URL - use saved value if exists, otherwise keep the default value in the input
             if (savedApiUrl) {
@@ -1445,6 +1486,11 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 document.getElementById('showCanvaBadge').checked = savedShowCanvaBadge === 'true';
             }
             
+            // Load reel covers preference (default to true/checked)
+            if (savedShowReelCovers !== null) {
+                document.getElementById('showReelCovers').checked = savedShowReelCovers === 'true';
+            }
+            
             // Save date badge preference when changed
             document.getElementById('showDateBadge').addEventListener('change', function() {
                 localStorage.setItem('showDateBadge', this.checked);
@@ -1455,6 +1501,12 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
             document.getElementById('showCanvaBadge').addEventListener('change', function() {
                 localStorage.setItem('showCanvaBadge', this.checked);
                 renderGrid(); // Re-render to show/hide badges
+            });
+            
+            // Save reel covers preference when changed
+            document.getElementById('showReelCovers').addEventListener('change', function() {
+                localStorage.setItem('showReelCovers', this.checked);
+                renderGrid(); // Re-render to show/hide reel covers
             });
             
             if (urlApiUrl || urlDatabaseId || urlApiKey) {
@@ -1546,11 +1598,20 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                     const visible = page.properties.Visible?.checkbox ?? true;
                     const pinned = page.properties.Pinned?.checkbox ?? false;
                     
+                    // Reel cover properties
+                    const reelCoverCanvaUrl = page.properties['Reel Cover Canva URL']?.url || null;
+                    const reelCoverImageFiles = page.properties['Reel Cover Image']?.files || [];
+                    const reelCoverImageUrl = reelCoverImageFiles.length > 0 
+                        ? (reelCoverImageFiles[0].file?.url || reelCoverImageFiles[0].external?.url)
+                        : null;
+                    
                     console.log('  - Canva URL:', canvaUrl);
                     console.log('  - Image URL property:', imageUrlProperty);
                     console.log('  - Image files:', imageFiles);
                     console.log('  - Visible:', visible);
                     console.log('  - Pinned:', pinned);
+                    console.log('  - Reel Cover Canva URL:', reelCoverCanvaUrl);
+                    console.log('  - Reel Cover Image URL:', reelCoverImageUrl);
                     
                     // Get URLs from image files
                     const allImageUrls = imageFiles.map(file => file.file?.url || file.external?.url).filter(url => url);
@@ -1588,7 +1649,9 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                         visible: visible,
                         pinned: pinned,
                         createdTime: page.created_time,
-                        date: page.properties.Date?.date?.start || null
+                        date: page.properties.Date?.date?.start || null,
+                        reelCoverCanvaUrl: reelCoverCanvaUrl ? convertToCanvaEmbedUrl(reelCoverCanvaUrl) : null,
+                        reelCoverImageUrl: reelCoverImageUrl
                     };
                 });
                 
@@ -2080,6 +2143,41 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                             if (videoElement) {
                                 item.addEventListener('mouseenter', () => videoElement.play());
                                 item.addEventListener('mouseleave', () => videoElement.pause());
+                            }
+                        }
+                    }
+
+                    // Add reel cover if enabled and available
+                    const showReelCovers = document.getElementById('showReelCovers')?.checked ?? true;
+                    if (showReelCovers && (img.reelCoverCanvaUrl || img.reelCoverImageUrl)) {
+                        const coverContainer = document.createElement('div');
+                        coverContainer.className = 'reel-cover';
+                        
+                        let coverSource;
+                        let isCoverFromCanva = false;
+                        
+                        // Priority: Canva URL > Image URL
+                        if (img.reelCoverCanvaUrl && SUPPORTS_IFRAMES) {
+                            coverSource = img.reelCoverCanvaUrl;
+                            isCoverFromCanva = true;
+                        } else if (img.reelCoverImageUrl) {
+                            coverSource = img.reelCoverImageUrl;
+                            isCoverFromCanva = false;
+                        }
+                        
+                        if (coverSource) {
+                            const coverMedia = createMediaElement(
+                                coverSource, 
+                                `${img.name} Cover`, 
+                                !isCoverFromCanva, 
+                                apiUrl, 
+                                apiKey, 
+                                img.reelCoverImageUrl
+                            );
+                            
+                            if (coverMedia) {
+                                coverContainer.appendChild(coverMedia.element);
+                                item.appendChild(coverContainer);
                             }
                         }
                     }
