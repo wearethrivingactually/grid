@@ -499,6 +499,12 @@
             -webkit-transform: translate(-50%, -50%) scale(1.5);
         }
 
+        /* Remove zoom in reels-only view */
+        .grid.reels-only .grid-item.reel iframe {
+            transform: translate(-50%, -50%) scale(1);
+            -webkit-transform: translate(-50%, -50%) scale(1);
+        }
+
         .grid-item.dragging iframe {
             pointer-events: none;
         }
