@@ -1222,7 +1222,8 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
         });
 
         document.addEventListener('keydown', (e) => {
-            if (e.shiftKey && !dragMode) {
+            // Only enable drag mode with Shift key if not in reels-only view
+            if (e.shiftKey && !dragMode && !reelsOnlyView) {
                 dragMode = true;
                 document.querySelectorAll('.grid-item').forEach(item => {
                     item.classList.add('drag-mode');
@@ -1976,10 +1977,13 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 item.dataset.index = index;
                 item.draggable = false;
 
-                item.addEventListener('dragstart', handleDragStart);
-                item.addEventListener('dragover', handleDragOver);
-                item.addEventListener('drop', handleDrop);
-                item.addEventListener('dragend', handleDragEnd);
+                // Only enable drag-and-drop in normal grid view, not in reels-only view
+                if (!reelsOnlyView) {
+                    item.addEventListener('dragstart', handleDragStart);
+                    item.addEventListener('dragover', handleDragOver);
+                    item.addEventListener('drop', handleDrop);
+                    item.addEventListener('dragend', handleDragEnd);
+                }
 
                 item.addEventListener('dblclick', (e) => {
                     if (!dragMode) {
@@ -2009,15 +2013,18 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                     
                     lastTapTime = currentTime;
                     
-                    longPressTimer = setTimeout(() => {
-                        if (!isDraggingTouch) {
-                            isDraggingTouch = true;
-                            touchDraggedElement = item;
-                            item.classList.add('dragging');
-                            item.style.opacity = '0.5';
-                            navigator.vibrate && navigator.vibrate(50);
-                        }
-                    }, LONG_PRESS_DURATION);
+                    // Only enable long-press drag in normal grid view, not in reels-only view
+                    if (!reelsOnlyView) {
+                        longPressTimer = setTimeout(() => {
+                            if (!isDraggingTouch) {
+                                isDraggingTouch = true;
+                                touchDraggedElement = item;
+                                item.classList.add('dragging');
+                                item.style.opacity = '0.5';
+                                navigator.vibrate && navigator.vibrate(50);
+                            }
+                        }, LONG_PRESS_DURATION);
+                    }
                 }, { passive: false });
 
                 item.addEventListener('touchmove', (e) => {
@@ -2029,7 +2036,8 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                         clearTimeout(longPressTimer);
                     }
                     
-                    if (isDraggingTouch && touchDraggedElement) {
+                    // Only process touch drag if not in reels-only view
+                    if (!reelsOnlyView && isDraggingTouch && touchDraggedElement) {
                         e.preventDefault();
                         
                         const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -2045,7 +2053,8 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 item.addEventListener('touchend', (e) => {
                     clearTimeout(longPressTimer);
                     
-                    if (isDraggingTouch && touchDraggedElement) {
+                    // Only process drag drop if not in reels-only view
+                    if (!reelsOnlyView && isDraggingTouch && touchDraggedElement) {
                         e.preventDefault();
                         
                         const touch = e.changedTouches[0];
