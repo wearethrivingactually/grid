@@ -1324,12 +1324,16 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
             if (!dateString) return null;
             
             try {
-                const date = new Date(dateString);
+                // Parse as local date to avoid timezone shifts
+                // Notion dates are in YYYY-MM-DD format
+                const [year, month, day] = dateString.split('T')[0].split('-').map(Number);
+                const date = new Date(year, month - 1, day); // month is 0-indexed
+                
                 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
                                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                const month = months[date.getMonth()];
-                const day = date.getDate();
-                return `${month} ${day}`;
+                const monthName = months[date.getMonth()];
+                const dayNum = date.getDate();
+                return `${monthName} ${dayNum}`;
             } catch (e) {
                 return null;
             }
