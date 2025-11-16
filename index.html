@@ -1780,26 +1780,40 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 return;
             }
 
-            showStatus('Saving order...');
+            showStatus('Saving order and dates...');
             console.log('Starting save process...');
             console.log(`Total items to save: ${images.length}`);
             
             try {
+                // First, create a copy of the original dates array before reordering
+                const originalDates = images.map(img => img.date);
+                console.log('Original dates:', originalDates);
+                
+                // Now assign dates based on position: position 0 gets date from position 0, etc.
+                // This effectively swaps dates when items are reordered
+                const updatedImages = images.map((img, index) => ({
+                    ...img,
+                    newDate: originalDates[index]
+                }));
+                
                 let successCount = 0;
                 let errorCount = 0;
                 
-                for (let i = 0; i < images.length; i++) {
-                    console.log(`\n=== Saving item ${i + 1}/${images.length} ===`);
-                    console.log('Item name:', images[i].name);
-                    console.log('Page ID:', images[i].id);
+                for (let i = 0; i < updatedImages.length; i++) {
+                    console.log(`\n=== Saving item ${i + 1}/${updatedImages.length} ===`);
+                    console.log('Item name:', updatedImages[i].name);
+                    console.log('Page ID:', updatedImages[i].id);
                     console.log('New order:', i);
+                    console.log('Original date:', updatedImages[i].date);
+                    console.log('New date:', updatedImages[i].newDate);
                     
                     const requestBody = {
                         action: 'update',
                         databaseId: databaseId,
                         apiKey: apiKey,
-                        pageId: images[i].id,
-                        order: i
+                        pageId: updatedImages[i].id,
+                        order: i,
+                        date: updatedImages[i].newDate
                     };
                     
                     console.log('Request body:', JSON.stringify(requestBody, null, 2));
@@ -1821,6 +1835,8 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                     if (response.ok) {
                         successCount++;
                         console.log(`✅ Item ${i + 1} saved successfully`);
+                        // Update the local date to reflect the change
+                        images[i].date = updatedImages[i].newDate;
                     } else {
                         errorCount++;
                         console.error(`❌ Item ${i + 1} failed`);
@@ -1833,9 +1849,10 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 console.log(`❌ Failed: ${errorCount}`);
                 
                 if (errorCount === 0) {
-                    showStatus(`✓ Grid order saved successfully! (${successCount} items)`);
-    showToast(`Grid order saved! ${successCount} items updated`, 'success');
-    saveToCache(); 
+                    showStatus(`✓ Grid order and dates saved successfully! (${successCount} items)`);
+                    showToast(`Grid order and dates saved! ${successCount} items updated`, 'success');
+                    // Re-render grid to show updated dates
+                    renderGrid();
                     console.log('✅ All items saved successfully!');
                 } else {
                     showStatus(`⚠ Partially saved: ${successCount} succeeded, ${errorCount} failed`, true);
