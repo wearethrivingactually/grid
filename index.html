@@ -12,39 +12,6 @@
             box-sizing: border-box;
         }
 
-        /* Scrollbar styling for light mode */
-        ::-webkit-scrollbar {
-            width: 12px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 6px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-
-        /* Scrollbar styling for dark mode */
-        @media (prefers-color-scheme: dark) {
-            ::-webkit-scrollbar-track {
-                background: #2d2d2d;
-            }
-
-            ::-webkit-scrollbar-thumb {
-                background: #555;
-            }
-
-            ::-webkit-scrollbar-thumb:hover {
-                background: #777;
-            }
-        }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: transparent;
@@ -123,40 +90,6 @@
             display: block;
             fill: #000;
             transition: fill 0.2s;
-        }
-
-        .icon-btn.saving svg {
-            animation: shimmer 0.4s ease-in-out infinite !important;
-        }
-
-        /* Light mode shimmer - much more dramatic */
-        @keyframes shimmer {
-            0%, 100% { 
-                opacity: 1;
-                fill: #000;
-                transform: scale(1) rotate(0deg);
-            }
-            50% { 
-                opacity: 0.1;
-                fill: #ddd;
-                transform: scale(0.7) rotate(5deg);
-            }
-        }
-
-        /* Dark mode shimmer */
-        @media (prefers-color-scheme: dark) {
-            @keyframes shimmer {
-                0%, 100% { 
-                    opacity: 1;
-                    fill: #fff;
-                    transform: scale(1) rotate(0deg);
-                }
-                50% { 
-                    opacity: 0.1;
-                    fill: #555;
-                    transform: scale(0.7) rotate(5deg);
-                }
-            }
         }
 
         .icon-btn:hover {
@@ -413,11 +346,6 @@
             backface-visibility: hidden;
         }
 
-        .grid.reels-only {
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2px;
-        }
-
         .grid-item {
             position: relative;
             aspect-ratio: 4 / 5;
@@ -427,10 +355,6 @@
             background-size: 200% 100%;
             animation: shimmer 1s infinite;
             transition: box-shadow 0.2s;
-        }
-
-        .grid.reels-only .grid-item {
-            aspect-ratio: 9 / 16;
         }
         
         @keyframes shimmer {
@@ -564,12 +488,6 @@
             width: 100%;
             height: 100%;
             -webkit-transform: translate(-50%, -50%) scale(1.5);
-        }
-
-        /* Remove zoom in reels-only view */
-        .grid.reels-only .grid-item.reel iframe {
-            transform: translate(-50%, -50%) scale(1);
-            -webkit-transform: translate(-50%, -50%) scale(1);
         }
 
         .grid-item.dragging iframe {
@@ -1069,10 +987,6 @@
                         </label>
                     </div>
                     <!-- Menu Items -->
-                    <div class="dropdown-item" onclick="toggleReelsOnlyView(); closeSettingsDropdown();">
-                        <span class="icon">🎬</span>
-                        <span id="reelsViewLabel">View Reels Only</span>
-                    </div>
                     <div class="dropdown-item" onclick="toggleSettings(); closeSettingsDropdown();">
                         <span class="icon">⚙️</span>
                         <span>Settings</span>
@@ -1116,8 +1030,6 @@
         let displayedCount = 9;
         const LOAD_INCREMENT = 9;
         let isInitialLoad = true; // Track if this is the first load
-        let reelsOnlyView = false; // Track if we're in reels-only view mode
-        let originalOrderDates = []; // Store original order-to-date mapping for swapping
 
         // Detect if we're in an environment that supports iframes well
         function canUseIframes() {
@@ -1290,8 +1202,7 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
         });
 
         document.addEventListener('keydown', (e) => {
-            // Only enable drag mode with Shift key if not in reels-only view
-            if (e.shiftKey && !dragMode && !reelsOnlyView) {
+            if (e.shiftKey && !dragMode) {
                 dragMode = true;
                 document.querySelectorAll('.grid-item').forEach(item => {
                     item.classList.add('drag-mode');
@@ -1313,21 +1224,6 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
         function toggleSettingsDropdown() {
             const dropdown = document.getElementById('settingsDropdown');
             dropdown.classList.toggle('show');
-        }
-
-        function toggleReelsOnlyView() {
-            reelsOnlyView = !reelsOnlyView;
-            const label = document.getElementById('reelsViewLabel');
-            
-            if (reelsOnlyView) {
-                label.textContent = 'View Entire Grid';
-            } else {
-                label.textContent = 'View Reels Only';
-            }
-            
-            // Reset displayed count when switching views
-            displayedCount = 9;
-            renderGrid();
         }
 
         function closeSettingsDropdown() {
@@ -1393,16 +1289,12 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
             if (!dateString) return null;
             
             try {
-                // Parse as local date to avoid timezone shifts
-                // Notion dates are in YYYY-MM-DD format
-                const [year, month, day] = dateString.split('T')[0].split('-').map(Number);
-                const date = new Date(year, month - 1, day); // month is 0-indexed
-                
+                const date = new Date(dateString);
                 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
                                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                const monthName = months[date.getMonth()];
-                const dayNum = date.getDate();
-                return `${monthName} ${dayNum}`;
+                const month = months[date.getMonth()];
+                const day = date.getDate();
+                return `${month} ${day}`;
             } catch (e) {
                 return null;
             }
@@ -1797,14 +1689,6 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                     createdTime: i.createdTime
                 })));
 
-                // Store the original order-to-date mapping for date swapping
-                // Map each item ID to the date at that position
-                originalOrderDates = images.map((img, index) => ({
-                    position: index,
-                    date: img.date
-                }));
-                console.log('Stored original order-to-date mapping:', originalOrderDates);
-
                 images.forEach((img, i) => {
                     console.log(`Image ${i}:`, {
                         hasCanva: !!img.canvaUrl,
@@ -1856,124 +1740,74 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 return;
             }
 
-            // Add shimmer to save button
-            const saveButton = document.querySelector('.icon-btn[onclick="saveToNotion()"]');
-            console.log('Save button found:', saveButton);
-            if (saveButton) {
-                saveButton.classList.add('saving');
-                console.log('Added saving class to button');
-            } else {
-                console.log('⚠️ Save button not found!');
-            }
-
-            showStatus('Saving order and dates...');
+            showStatus('Saving order...');
             console.log('Starting save process...');
             console.log(`Total items to save: ${images.length}`);
             
             try {
-                console.log('=== DATE SWAP DEBUG ===');
-                console.log('Original order-to-date mapping (from last load):', originalOrderDates);
-                console.log('Current images order after drag-drop:', images.map(img => ({ name: img.name, currentDate: img.date })));
+                let successCount = 0;
+                let errorCount = 0;
                 
-                // Each position gets the date that was ORIGINALLY in that position (from Notion)
-                // So if you drag item from position 5 to position 0, 
-                // it will get the date that was in position 0 when loaded from Notion
-                const updatedImages = images.map((img, index) => ({
-                    ...img,
-                    newDate: originalOrderDates[index]?.date || img.date  // Fallback to current date if no mapping
-                }));
-                
-                console.log('Updated images with new dates:', updatedImages.map(img => ({ 
-                    name: img.name, 
-                    oldDate: img.date, 
-                    newDate: img.newDate,
-                    changed: img.date !== img.newDate ? '✅ CHANGED' : '❌ same'
-                })));
-                
-                // Save all items in parallel for maximum speed
-                console.log('🚀 Starting parallel save of', updatedImages.length, 'items...');
-                const startTime = Date.now();
-                
-                const savePromises = updatedImages.map((img, index) => {
+                for (let i = 0; i < images.length; i++) {
+                    console.log(`\n=== Saving item ${i + 1}/${images.length} ===`);
+                    console.log('Item name:', images[i].name);
+                    console.log('Page ID:', images[i].id);
+                    console.log('New order:', i);
+                    
                     const requestBody = {
                         action: 'update',
                         databaseId: databaseId,
                         apiKey: apiKey,
-                        pageId: img.id,
-                        order: index,
-                        date: img.newDate
+                        pageId: images[i].id,
+                        order: i
                     };
                     
-                    return fetch(apiUrl, {
+                    console.log('Request body:', JSON.stringify(requestBody, null, 2));
+                    
+                    const response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify(requestBody)
-                    })
-                    .then(response => {
-                        return response.text().then(text => ({
-                            ok: response.ok,
-                            status: response.status,
-                            body: text,
-                            index: index,
-                            name: img.name
-                        }));
-                    })
-                    .catch(error => ({
-                        ok: false,
-                        error: error.message,
-                        index: index,
-                        name: img.name
-                    }));
-                });
-                
-                const results = await Promise.all(savePromises);
-                const endTime = Date.now();
-                const duration = ((endTime - startTime) / 1000).toFixed(2);
-                
-                // Process results
-                let successCount = 0;
-                let errorCount = 0;
-                
-                results.forEach(result => {
-                    if (result.ok) {
+                    });
+                    
+                    console.log(`Response status: ${response.status}`);
+                    console.log(`Response ok: ${response.ok}`);
+                    
+                    const responseText = await response.text();
+                    console.log('Response body:', responseText);
+                    
+                    if (response.ok) {
                         successCount++;
-                        // Update the local date to reflect the change
-                        images[result.index].date = updatedImages[result.index].newDate;
+                        console.log(`✅ Item ${i + 1} saved successfully`);
                     } else {
                         errorCount++;
-                        console.error(`❌ Item ${result.index + 1} (${result.name}) failed:`, result.body || result.error);
+                        console.error(`❌ Item ${i + 1} failed`);
+                        console.error('Error details:', responseText);
                     }
-                });
+                }
                 
-                console.log(`\n=== SAVE COMPLETE in ${duration}s ===`);
+                console.log(`\n=== SAVE COMPLETE ===`);
                 console.log(`✅ Succeeded: ${successCount}`);
                 console.log(`❌ Failed: ${errorCount}`);
                 
                 if (errorCount === 0) {
-                    showStatus(`✓ Grid order and dates saved successfully! (${successCount} items)`);
-                    showToast(`Saved ${successCount} items! ⚡`, 'success');
-                    // Re-render grid to show updated dates
-                    renderGrid();
+                    showStatus(`✓ Grid order saved successfully! (${successCount} items)`);
+    showToast(`Grid order saved! ${successCount} items updated`, 'success');
+    saveToCache(); 
                     console.log('✅ All items saved successfully!');
                 } else {
                     showStatus(`⚠ Partially saved: ${successCount} succeeded, ${errorCount} failed`, true);
                     showToast(`Partially saved: ${successCount} succeeded, ${errorCount} failed`, 'error');
                     console.warn(`Save completed with errors: ${successCount} succeeded, ${errorCount} failed`);
                 }
-
-                // Remove shimmer from save button
-                if (saveButton) saveButton.classList.remove('saving');
             } catch (error) {
                 console.error('❌ Save error:', error);
                 console.error('Error details:', error.message);
                 console.error('Error stack:', error.stack);
                 showStatus(`Error saving: ${error.message}`, true);
                 showToast(`Error saving: ${error.message}`, 'error');
-                
-                // Remove shimmer from save button on error
-                if (saveButton) saveButton.classList.remove('saving');
             }
         }
 
@@ -2068,29 +1902,14 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
             const apiUrl = document.getElementById('apiUrl').value.trim();
             const apiKey = document.getElementById('apiKey').value.trim();
 
-            // Toggle grid class for reels-only view
-            if (reelsOnlyView) {
-                grid.classList.add('reels-only');
-            } else {
-                grid.classList.remove('reels-only');
-            }
+            console.log('Rendering grid with', displayedCount, 'of', images.length, 'images');
 
-            // Filter images based on view mode
-            const filteredImages = reelsOnlyView 
-                ? images.filter(img => img.type === 'Reel')
-                : images;
-
-            console.log('Rendering grid with', displayedCount, 'of', filteredImages.length, reelsOnlyView ? 'reels' : 'images');
-
-            if (filteredImages.length === 0) {
-                const message = reelsOnlyView 
-                    ? 'No reels found. Add some reels to your database!'
-                    : 'No items loaded. Configure your settings above and add some content!';
-                grid.innerHTML = `<div class="placeholder">${message}</div>`;
+            if (images.length === 0) {
+                grid.innerHTML = '<div class="placeholder">No items loaded. Configure your settings above and add some content!</div>';
                 return;
             }
 
-            const imagesToRender = filteredImages.slice(0, displayedCount);
+            const imagesToRender = images.slice(0, displayedCount);
 
             imagesToRender.forEach((img, index) => {
                 console.log('Rendering item', index, img);
@@ -2103,13 +1922,10 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 item.dataset.index = index;
                 item.draggable = false;
 
-                // Only enable drag-and-drop in normal grid view, not in reels-only view
-                if (!reelsOnlyView) {
-                    item.addEventListener('dragstart', handleDragStart);
-                    item.addEventListener('dragover', handleDragOver);
-                    item.addEventListener('drop', handleDrop);
-                    item.addEventListener('dragend', handleDragEnd);
-                }
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('drop', handleDrop);
+                item.addEventListener('dragend', handleDragEnd);
 
                 item.addEventListener('dblclick', (e) => {
                     if (!dragMode) {
@@ -2139,18 +1955,15 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                     
                     lastTapTime = currentTime;
                     
-                    // Only enable long-press drag in normal grid view, not in reels-only view
-                    if (!reelsOnlyView) {
-                        longPressTimer = setTimeout(() => {
-                            if (!isDraggingTouch) {
-                                isDraggingTouch = true;
-                                touchDraggedElement = item;
-                                item.classList.add('dragging');
-                                item.style.opacity = '0.5';
-                                navigator.vibrate && navigator.vibrate(50);
-                            }
-                        }, LONG_PRESS_DURATION);
-                    }
+                    longPressTimer = setTimeout(() => {
+                        if (!isDraggingTouch) {
+                            isDraggingTouch = true;
+                            touchDraggedElement = item;
+                            item.classList.add('dragging');
+                            item.style.opacity = '0.5';
+                            navigator.vibrate && navigator.vibrate(50);
+                        }
+                    }, LONG_PRESS_DURATION);
                 }, { passive: false });
 
                 item.addEventListener('touchmove', (e) => {
@@ -2162,8 +1975,7 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                         clearTimeout(longPressTimer);
                     }
                     
-                    // Only process touch drag if not in reels-only view
-                    if (!reelsOnlyView && isDraggingTouch && touchDraggedElement) {
+                    if (isDraggingTouch && touchDraggedElement) {
                         e.preventDefault();
                         
                         const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -2179,8 +1991,7 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 item.addEventListener('touchend', (e) => {
                     clearTimeout(longPressTimer);
                     
-                    // Only process drag drop if not in reels-only view
-                    if (!reelsOnlyView && isDraggingTouch && touchDraggedElement) {
+                    if (isDraggingTouch && touchDraggedElement) {
                         e.preventDefault();
                         
                         const touch = e.changedTouches[0];
@@ -2194,9 +2005,6 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                             const draggedImage = images[draggedIndex];
                             images.splice(draggedIndex, 1);
                             images.splice(targetIndex, 0, draggedImage);
-                            
-                            // Update dates to match new positions
-                            updateDatesAfterReorder();
                             
                             renderGrid();
                         }
@@ -2492,9 +2300,6 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 images.splice(draggedIndex, 1);
                 images.splice(targetIndex, 0, draggedImage);
 
-                // Update dates to match new positions
-                updateDatesAfterReorder();
-
                 renderGrid();
             }
         }
@@ -2506,31 +2311,11 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
             });
         }
 
-        function updateDatesAfterReorder() {
-            // After reordering, update all dates to match the original order positions
-            // Position 0 gets the date that was originally in position 0, etc.
-            if (originalOrderDates.length === 0) return; // No date mapping yet
-            
-            images.forEach((img, index) => {
-                if (originalOrderDates[index]) {
-                    img.date = originalOrderDates[index].date;
-                }
-            });
-            
-            console.log('🔄 Dates updated after reorder:', images.map(img => ({ name: img.name, date: img.date })));
-        }
-
         let isLoading = false;
         
         function checkScroll() {
             if (isLoading) return;
-            
-            // Get the filtered images count based on current view mode
-            const filteredImages = reelsOnlyView 
-                ? images.filter(img => img.type === 'Reel')
-                : images;
-            
-            if (displayedCount >= filteredImages.length) return;
+            if (displayedCount >= images.length) return;
             
             const scrollPosition = window.innerHeight + window.pageYOffset;
             const pageHeight = document.documentElement.scrollHeight;
@@ -2541,8 +2326,7 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 threshold,
                 pageHeight,
                 displayed: displayedCount,
-                total: filteredImages.length,
-                reelsOnly: reelsOnlyView
+                total: images.length
             });
             
             if (scrollPosition >= threshold) {
@@ -2551,8 +2335,8 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 
                 setTimeout(() => {
                     const previousCount = displayedCount;
-                    displayedCount = Math.min(displayedCount + LOAD_INCREMENT, filteredImages.length);
-                    console.log(`Loading more: ${previousCount} → ${displayedCount} of ${filteredImages.length}`);
+                    displayedCount = Math.min(displayedCount + LOAD_INCREMENT, images.length);
+                    console.log(`Loading more: ${previousCount} → ${displayedCount} of ${images.length}`);
                     renderGrid();
                     isLoading = false;
                 }, 100);
