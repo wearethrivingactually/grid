@@ -1855,7 +1855,13 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
 
             // Add shimmer to save button
             const saveButton = document.querySelector('.icon-btn[onclick="saveToNotion()"]');
-            if (saveButton) saveButton.classList.add('saving');
+            console.log('Save button found:', saveButton);
+            if (saveButton) {
+                saveButton.classList.add('saving');
+                console.log('Added saving class to button');
+            } else {
+                console.log('⚠️ Save button not found!');
+            }
 
             showStatus('Saving order and dates...');
             console.log('Starting save process...');
