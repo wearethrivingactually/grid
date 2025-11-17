@@ -54,9 +54,15 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: transparent;
+            background: #ffffff;
             padding: 20px;
             min-height: 100vh;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #1a1a1a;
+            }
         }
 
         .container {
@@ -180,20 +186,24 @@
 
         /* Dark mode support */
         @media (prefers-color-scheme: dark) {
+            .icon-btn {
+                background: rgba(255, 255, 255, 0.05);
+            }
+            
             .icon-btn svg {
                 fill: #fff;
             }
             
             .icon-btn:hover {
-                background: rgba(255, 255, 255, 0.1);
+                background: rgba(255, 255, 255, 0.15);
             }
             
             .icon-btn:hover svg {
-                fill: #ccc;
+                fill: #fff;
             }
             
             .icon-btn:active {
-                background: rgba(255, 255, 255, 0.15);
+                background: rgba(255, 255, 255, 0.2);
             }
         }
 
