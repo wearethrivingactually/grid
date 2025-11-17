@@ -12,6 +12,39 @@
             box-sizing: border-box;
         }
 
+        /* Scrollbar styling for light mode */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Scrollbar styling for dark mode */
+        @media (prefers-color-scheme: dark) {
+            ::-webkit-scrollbar-track {
+                background: #2d2d2d;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: #555;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #777;
+            }
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: transparent;
@@ -90,6 +123,16 @@
             display: block;
             fill: #000;
             transition: fill 0.2s;
+        }
+
+        .icon-btn.saving svg {
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
         }
 
         .icon-btn:hover {
@@ -1786,6 +1829,10 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 return;
             }
 
+            // Add shimmer to save button
+            const saveButton = document.querySelector('.icon-btn[onclick="saveToNotion()"]');
+            if (saveButton) saveButton.classList.add('saving');
+
             showStatus('Saving order and dates...');
             console.log('Starting save process...');
             console.log(`Total items to save: ${images.length}`);
@@ -1872,8 +1919,8 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 console.log(`❌ Failed: ${errorCount}`);
                 
                 if (errorCount === 0) {
-                    showStatus(`✓ Grid order and dates saved successfully! (${successCount} items in ${duration}s)`);
-                    showToast(`Saved ${successCount} items in ${duration}s! ⚡`, 'success');
+                    showStatus(`✓ Grid order and dates saved successfully! (${successCount} items)`);
+                    showToast(`Saved ${successCount} items! ⚡`, 'success');
                     // Re-render grid to show updated dates
                     renderGrid();
                     console.log('✅ All items saved successfully!');
@@ -1882,12 +1929,18 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                     showToast(`Partially saved: ${successCount} succeeded, ${errorCount} failed`, 'error');
                     console.warn(`Save completed with errors: ${successCount} succeeded, ${errorCount} failed`);
                 }
+
+                // Remove shimmer from save button
+                if (saveButton) saveButton.classList.remove('saving');
             } catch (error) {
                 console.error('❌ Save error:', error);
                 console.error('Error details:', error.message);
                 console.error('Error stack:', error.stack);
                 showStatus(`Error saving: ${error.message}`, true);
                 showToast(`Error saving: ${error.message}`, 'error');
+                
+                // Remove shimmer from save button on error
+                if (saveButton) saveButton.classList.remove('saving');
             }
         }
 
