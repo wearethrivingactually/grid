@@ -1050,6 +1050,7 @@
         const LOAD_INCREMENT = 9;
         let isInitialLoad = true; // Track if this is the first load
         let reelsOnlyView = false; // Track if we're in reels-only view mode
+        let originalOrderDates = []; // Store original order-to-date mapping for swapping
 
         // Detect if we're in an environment that supports iframes well
         function canUseIframes() {
@@ -1729,6 +1730,11 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                     createdTime: i.createdTime
                 })));
 
+                // Store the original order-to-date mapping for date swapping
+                // This captures the dates in their Notion order BEFORE any drag-and-drop
+                originalOrderDates = images.map(img => img.date);
+                console.log('Stored original order-to-date mapping:', originalOrderDates);
+
                 images.forEach((img, i) => {
                     console.log(`Image ${i}:`, {
                         hasCanva: !!img.canvaUrl,
@@ -1785,23 +1791,23 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
             console.log(`Total items to save: ${images.length}`);
             
             try {
-                // First, create a copy of the original dates array before reordering
-                const originalDates = images.map(img => img.date);
                 console.log('=== DATE SWAP DEBUG ===');
-                console.log('Original dates array:', originalDates);
-                console.log('Current images order:', images.map(img => ({ name: img.name, date: img.date })));
+                console.log('Original order-to-date mapping (from last load):', originalOrderDates);
+                console.log('Current images order after drag-drop:', images.map(img => ({ name: img.name, currentDate: img.date })));
                 
-                // Now assign dates based on position: position 0 gets date from position 0, etc.
-                // This effectively swaps dates when items are reordered
+                // Each position gets the date that was ORIGINALLY in that position (from Notion)
+                // So if you drag item from position 5 to position 0, 
+                // it will get the date that was in position 0 when loaded from Notion
                 const updatedImages = images.map((img, index) => ({
                     ...img,
-                    newDate: originalDates[index]
+                    newDate: originalOrderDates[index] || img.date  // Fallback to current date if no mapping
                 }));
                 
                 console.log('Updated images with new dates:', updatedImages.map(img => ({ 
                     name: img.name, 
                     oldDate: img.date, 
-                    newDate: img.newDate 
+                    newDate: img.newDate,
+                    changed: img.date !== img.newDate ? '✅ CHANGED' : '❌ same'
                 })));
                 
                 let successCount = 0;
