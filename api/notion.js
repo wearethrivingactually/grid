@@ -100,3 +100,29 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: error.message });
   }
 }
+
+// In your /api/notion endpoint
+
+if (action === 'update') {
+  const { pageId, order, date } = req.body;
+  
+  const properties = {
+    Order: {
+      number: order
+    }
+  };
+  
+  // Add Date property if provided
+  if (date) {
+    properties.Date = {
+      date: {
+        start: date
+      }
+    };
+  }
+  
+  await notion.pages.update({
+    page_id: pageId,
+    properties: properties
+  });
+}
