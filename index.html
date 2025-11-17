@@ -126,20 +126,20 @@
         }
 
         .icon-btn.saving svg {
-            animation: shimmer 0.5s ease-in-out infinite;
+            animation: shimmer 0.4s ease-in-out infinite !important;
         }
 
-        /* Light mode shimmer */
+        /* Light mode shimmer - much more dramatic */
         @keyframes shimmer {
             0%, 100% { 
                 opacity: 1;
                 fill: #000;
-                transform: scale(1);
+                transform: scale(1) rotate(0deg);
             }
             50% { 
-                opacity: 0.2;
-                fill: #ccc;
-                transform: scale(0.85);
+                opacity: 0.1;
+                fill: #ddd;
+                transform: scale(0.7) rotate(5deg);
             }
         }
 
@@ -149,12 +149,12 @@
                 0%, 100% { 
                     opacity: 1;
                     fill: #fff;
-                    transform: scale(1);
+                    transform: scale(1) rotate(0deg);
                 }
                 50% { 
-                    opacity: 0.2;
-                    fill: #666;
-                    transform: scale(0.85);
+                    opacity: 0.1;
+                    fill: #555;
+                    transform: scale(0.7) rotate(5deg);
                 }
             }
         }
