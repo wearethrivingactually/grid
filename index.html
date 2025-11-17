@@ -1787,7 +1787,9 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
             try {
                 // First, create a copy of the original dates array before reordering
                 const originalDates = images.map(img => img.date);
-                console.log('Original dates:', originalDates);
+                console.log('=== DATE SWAP DEBUG ===');
+                console.log('Original dates array:', originalDates);
+                console.log('Current images order:', images.map(img => ({ name: img.name, date: img.date })));
                 
                 // Now assign dates based on position: position 0 gets date from position 0, etc.
                 // This effectively swaps dates when items are reordered
@@ -1795,6 +1797,12 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                     ...img,
                     newDate: originalDates[index]
                 }));
+                
+                console.log('Updated images with new dates:', updatedImages.map(img => ({ 
+                    name: img.name, 
+                    oldDate: img.date, 
+                    newDate: img.newDate 
+                })));
                 
                 let successCount = 0;
                 let errorCount = 0;
