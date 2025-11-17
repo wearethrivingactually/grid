@@ -2100,6 +2100,9 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                             images.splice(draggedIndex, 1);
                             images.splice(targetIndex, 0, draggedImage);
                             
+                            // Update dates to match new positions
+                            updateDatesAfterReorder();
+                            
                             renderGrid();
                         }
                         
@@ -2394,6 +2397,9 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 images.splice(draggedIndex, 1);
                 images.splice(targetIndex, 0, draggedImage);
 
+                // Update dates to match new positions
+                updateDatesAfterReorder();
+
                 renderGrid();
             }
         }
@@ -2403,6 +2409,20 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
             document.querySelectorAll('.grid-item').forEach(item => {
                 item.classList.remove('drag-over');
             });
+        }
+
+        function updateDatesAfterReorder() {
+            // After reordering, update all dates to match the original order positions
+            // Position 0 gets the date that was originally in position 0, etc.
+            if (originalOrderDates.length === 0) return; // No date mapping yet
+            
+            images.forEach((img, index) => {
+                if (originalOrderDates[index]) {
+                    img.date = originalOrderDates[index];
+                }
+            });
+            
+            console.log('🔄 Dates updated after reorder:', images.map(img => ({ name: img.name, date: img.date })));
         }
 
         let isLoading = false;
