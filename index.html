@@ -1798,8 +1798,11 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 })));
 
                 // Store the original order-to-date mapping for date swapping
-                // This captures the dates in their Notion order BEFORE any drag-and-drop
-                originalOrderDates = images.map(img => img.date);
+                // Map each item ID to the date at that position
+                originalOrderDates = images.map((img, index) => ({
+                    position: index,
+                    date: img.date
+                }));
                 console.log('Stored original order-to-date mapping:', originalOrderDates);
 
                 images.forEach((img, i) => {
@@ -1877,7 +1880,7 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 // it will get the date that was in position 0 when loaded from Notion
                 const updatedImages = images.map((img, index) => ({
                     ...img,
-                    newDate: originalOrderDates[index] || img.date  // Fallback to current date if no mapping
+                    newDate: originalOrderDates[index]?.date || img.date  // Fallback to current date if no mapping
                 }));
                 
                 console.log('Updated images with new dates:', updatedImages.map(img => ({ 
@@ -2510,7 +2513,7 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
             
             images.forEach((img, index) => {
                 if (originalOrderDates[index]) {
-                    img.date = originalOrderDates[index];
+                    img.date = originalOrderDates[index].date;
                 }
             });
             
