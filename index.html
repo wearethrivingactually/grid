@@ -1810,61 +1810,70 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                     changed: img.date !== img.newDate ? '✅ CHANGED' : '❌ same'
                 })));
                 
-                let successCount = 0;
-                let errorCount = 0;
+                // Save all items in parallel for maximum speed
+                console.log('🚀 Starting parallel save of', updatedImages.length, 'items...');
+                const startTime = Date.now();
                 
-                for (let i = 0; i < updatedImages.length; i++) {
-                    console.log(`\n=== Saving item ${i + 1}/${updatedImages.length} ===`);
-                    console.log('Item name:', updatedImages[i].name);
-                    console.log('Page ID:', updatedImages[i].id);
-                    console.log('New order:', i);
-                    console.log('Original date:', updatedImages[i].date);
-                    console.log('New date:', updatedImages[i].newDate);
-                    
+                const savePromises = updatedImages.map((img, index) => {
                     const requestBody = {
                         action: 'update',
                         databaseId: databaseId,
                         apiKey: apiKey,
-                        pageId: updatedImages[i].id,
-                        order: i,
-                        date: updatedImages[i].newDate
+                        pageId: img.id,
+                        order: index,
+                        date: img.newDate
                     };
                     
-                    console.log('Request body:', JSON.stringify(requestBody, null, 2));
-                    
-                    const response = await fetch(apiUrl, {
+                    return fetch(apiUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify(requestBody)
-                    });
-                    
-                    console.log(`Response status: ${response.status}`);
-                    console.log(`Response ok: ${response.ok}`);
-                    
-                    const responseText = await response.text();
-                    console.log('Response body:', responseText);
-                    
-                    if (response.ok) {
+                    })
+                    .then(response => {
+                        return response.text().then(text => ({
+                            ok: response.ok,
+                            status: response.status,
+                            body: text,
+                            index: index,
+                            name: img.name
+                        }));
+                    })
+                    .catch(error => ({
+                        ok: false,
+                        error: error.message,
+                        index: index,
+                        name: img.name
+                    }));
+                });
+                
+                const results = await Promise.all(savePromises);
+                const endTime = Date.now();
+                const duration = ((endTime - startTime) / 1000).toFixed(2);
+                
+                // Process results
+                let successCount = 0;
+                let errorCount = 0;
+                
+                results.forEach(result => {
+                    if (result.ok) {
                         successCount++;
-                        console.log(`✅ Item ${i + 1} saved successfully`);
                         // Update the local date to reflect the change
-                        images[i].date = updatedImages[i].newDate;
+                        images[result.index].date = updatedImages[result.index].newDate;
                     } else {
                         errorCount++;
-                        console.error(`❌ Item ${i + 1} failed`);
-                        console.error('Error details:', responseText);
+                        console.error(`❌ Item ${result.index + 1} (${result.name}) failed:`, result.body || result.error);
                     }
-                }
+                });
                 
-                console.log(`\n=== SAVE COMPLETE ===`);
+                console.log(`\n=== SAVE COMPLETE in ${duration}s ===`);
                 console.log(`✅ Succeeded: ${successCount}`);
                 console.log(`❌ Failed: ${errorCount}`);
                 
                 if (errorCount === 0) {
-                    showStatus(`✓ Grid order and dates saved successfully! (${successCount} items)`);
-                    showToast(`Grid order and dates saved! ${successCount} items updated`, 'success');
+                    showStatus(`✓ Grid order and dates saved successfully! (${successCount} items in ${duration}s)`);
+                    showToast(`Saved ${successCount} items in ${duration}s! ⚡`, 'success');
                     // Re-render grid to show updated dates
                     renderGrid();
                     console.log('✅ All items saved successfully!');
