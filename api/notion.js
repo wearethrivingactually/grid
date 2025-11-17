@@ -72,6 +72,8 @@ export default async function handler(req, res) {
       return res.status(200).json(data);
 
     } else if (action === 'update') {
+      console.log('UPDATE ACTION - Full request body:', JSON.stringify(req.body, null, 2));
+      
       // Build the properties object
       const properties = {
         Order: {
@@ -79,33 +81,60 @@ export default async function handler(req, res) {
         }
       };
       
-      // Add Date property if provided
-      if (date) {
+      // Add Date property if provided and valid
+      if (date && date !== null && date !== 'null' && date !== '') {
+        console.log('Adding Date property with value:', date);
         properties.Date = {
           date: {
             start: date
           }
         };
+      } else {
+        console.log('Skipping Date property - date value is:', date);
       }
       
+      console.log('Final properties object:', JSON.stringify(properties, null, 2));
+      
       // Update the page
-      const response = await fetch(
-        `https://api.notion.com/v1/pages/${pageId}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${apiKey}`,
-            'Notion-Version': '2022-06-28',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            properties: properties
-          })
-        }
-      );
+      try {
+        const response = await fetch(
+          `https://api.notion.com/v1/pages/${pageId}`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'Notion-Version': '2022-06-28',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              properties: properties
+            })
+          }
+        );
 
-      const data = await response.json();
-      return res.status(200).json(data);
+        const data = await response.json();
+        
+        console.log('Notion API response status:', response.status);
+        console.log('Notion API response data:', JSON.stringify(data, null, 2));
+        
+        if (!response.ok) {
+          console.error('Notion API Error Response:', data);
+          return res.status(response.status).json({ 
+            error: 'Notion API error',
+            message: data.message,
+            details: data 
+          });
+        }
+        
+        console.log('✅ Update successful for page:', pageId);
+        return res.status(200).json(data);
+      } catch (fetchError) {
+        console.error('Fetch error:', fetchError);
+        return res.status(500).json({ 
+          error: 'Failed to update page',
+          message: fetchError.message 
+        });
+      }
     }
 
     return res.status(400).json({ error: 'Invalid action' });
