@@ -44,7 +44,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { action, databaseId, apiKey, pageId, order } = req.body;
+  const { action, databaseId, apiKey, pageId, order, date } = req.body;
 
   if (!apiKey || !databaseId) {
     return res.status(400).json({ error: 'Missing required fields' });
@@ -72,7 +72,23 @@ export default async function handler(req, res) {
       return res.status(200).json(data);
 
     } else if (action === 'update') {
-      // Update a page
+      // Build the properties object
+      const properties = {
+        Order: {
+          number: order
+        }
+      };
+      
+      // Add Date property if provided
+      if (date) {
+        properties.Date = {
+          date: {
+            start: date
+          }
+        };
+      }
+      
+      // Update the page
       const response = await fetch(
         `https://api.notion.com/v1/pages/${pageId}`,
         {
@@ -83,9 +99,7 @@ export default async function handler(req, res) {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            properties: {
-              Order: { number: order }
-            }
+            properties: properties
           })
         }
       );
@@ -99,30 +113,4 @@ export default async function handler(req, res) {
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-}
-
-// In your /api/notion endpoint
-
-if (action === 'update') {
-  const { pageId, order, date } = req.body;
-  
-  const properties = {
-    Order: {
-      number: order
-    }
-  };
-  
-  // Add Date property if provided
-  if (date) {
-    properties.Date = {
-      date: {
-        start: date
-      }
-    };
-  }
-  
-  await notion.pages.update({
-    page_id: pageId,
-    properties: properties
-  });
 }
