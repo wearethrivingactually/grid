@@ -139,37 +139,12 @@
         }
 
         .icon-btn.saving svg {
-            animation: shimmer 0.4s ease-in-out infinite !important;
+            animation: spin 0.8s linear infinite;
         }
 
-        /* Light mode shimmer - much more dramatic */
-        @keyframes shimmer {
-            0%, 100% { 
-                opacity: 1;
-                fill: #000;
-                transform: scale(1) rotate(0deg);
-            }
-            50% { 
-                opacity: 0.1;
-                fill: #ddd;
-                transform: scale(0.7) rotate(5deg);
-            }
-        }
-
-        /* Dark mode shimmer */
-        @media (prefers-color-scheme: dark) {
-            @keyframes shimmer {
-                0%, 100% { 
-                    opacity: 1;
-                    fill: #fff;
-                    transform: scale(1) rotate(0deg);
-                }
-                50% { 
-                    opacity: 0.1;
-                    fill: #555;
-                    transform: scale(0.7) rotate(5deg);
-                }
-            }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .icon-btn:hover {
@@ -977,7 +952,7 @@
             <div id="status"></div>
             <div class="input-group">
                 <label for="apiUrl">API Endpoint URL:</label>
-                <input type="text" id="apiUrl" placeholder="https://your-project.vercel.app/api/notion" value="https://grid-three-iota.vercel.app/api/notion">
+                <input type="text" id="apiUrl" placeholder="https://your-project.vercel.app/api/notion" value="https://igwidget.thrivingactually.com/api/notion">
             </div>
             <div class="input-group">
                 <label for="databaseId">Database ID:</label>
