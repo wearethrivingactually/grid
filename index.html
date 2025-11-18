@@ -1618,9 +1618,13 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
             if (isViewOnly) {
                 console.log('🔒 View-only mode enabled');
                 
-                // Hide the save button
+                // Disable the save button (make it unclickable but keep appearance)
                 const saveButton = document.querySelector('.icon-btn[onclick="saveToNotion()"]');
-                if (saveButton) saveButton.style.display = 'none';
+                if (saveButton) {
+                    saveButton.style.pointerEvents = 'none';
+                    saveButton.removeAttribute('onclick');
+                    saveButton.setAttribute('title', 'View-only mode');
+                }
                 
                 // Hide settings and share options from dropdown
                 const settingsDropdown = document.getElementById('settingsDropdown');
