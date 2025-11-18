@@ -1077,6 +1077,10 @@
                         <span class="icon">⚙️</span>
                         <span>Settings</span>
                     </div>
+                    <div class="dropdown-item" onclick="copyEmbedLink(); closeSettingsDropdown();">
+                        <span class="icon">📦</span>
+                        <span>Copy Embed Link</span>
+                    </div>
                     <div class="dropdown-item" onclick="copyShareLink(); closeSettingsDropdown();">
                         <span class="icon">🔗</span>
                         <span>Copy Share Link</span>
@@ -1118,6 +1122,7 @@
         let isInitialLoad = true; // Track if this is the first load
         let reelsOnlyView = false; // Track if we're in reels-only view mode
         let originalOrderDates = []; // Store original order-to-date mapping for swapping
+        let isViewOnly = false; // Track if in view-only mode
 
         // Detect if we're in an environment that supports iframes well
         function canUseIframes() {
@@ -1290,8 +1295,8 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
         });
 
         document.addEventListener('keydown', (e) => {
-            // Only enable drag mode with Shift key if not in reels-only view
-            if (e.shiftKey && !dragMode && !reelsOnlyView) {
+            // Only enable drag mode with Shift key if not in reels-only view or view-only mode
+            if (e.shiftKey && !dragMode && !reelsOnlyView && !isViewOnly) {
                 dragMode = true;
                 document.querySelectorAll('.grid-item').forEach(item => {
                     item.classList.add('drag-mode');
@@ -1301,7 +1306,7 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
         });
 
         document.addEventListener('keyup', (e) => {
-            if (!e.shiftKey && dragMode) {
+            if (!e.shiftKey && dragMode && !isViewOnly) {
                 dragMode = false;
                 document.querySelectorAll('.grid-item').forEach(item => {
                     item.classList.remove('drag-mode');
@@ -1533,6 +1538,40 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
             }
         }
 
+        function copyEmbedLink() {
+            const apiUrl = document.getElementById('apiUrl').value.trim();
+            const databaseId = document.getElementById('databaseId').value.trim();
+            const apiKey = document.getElementById('apiKey').value.trim();
+
+            if (!apiUrl || !databaseId || !apiKey) {
+                showStatus('Please configure settings first', true);
+                return;
+            }
+
+            const embedUrl = new URL(window.location.href.split('?')[0]);
+            embedUrl.searchParams.set('apiUrl', apiUrl);
+            embedUrl.searchParams.set('databaseId', databaseId);
+            embedUrl.searchParams.set('apiKey', apiKey);
+
+            navigator.clipboard.writeText(embedUrl.toString()).then(() => {
+                showToast('Embed link copied!', 'success');
+            }).catch(err => {
+                const textArea = document.createElement('textarea');
+                textArea.value = embedUrl.toString();
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast('Embed link copied!', 'success');
+                } catch (err) {
+                    showToast('Failed to copy link', 'error');
+                }
+                document.body.removeChild(textArea);
+            });
+        }
+
         function copyShareLink() {
             const apiUrl = document.getElementById('apiUrl').value.trim();
             const databaseId = document.getElementById('databaseId').value.trim();
@@ -1547,9 +1586,10 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
             shareUrl.searchParams.set('apiUrl', apiUrl);
             shareUrl.searchParams.set('databaseId', databaseId);
             shareUrl.searchParams.set('apiKey', apiKey);
+            shareUrl.searchParams.set('viewOnly', 'true'); // Add view-only flag
 
             navigator.clipboard.writeText(shareUrl.toString()).then(() => {
-                showStatus('✅ Share link copied! Paste it anywhere to stay logged in.');
+                showToast('Share link copied! (view-only)', 'success');
             }).catch(err => {
                 const textArea = document.createElement('textarea');
                 textArea.value = shareUrl.toString();
@@ -1559,9 +1599,9 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 textArea.select();
                 try {
                     document.execCommand('copy');
-                    showStatus('✅ Share link copied! Paste it anywhere to stay logged in.');
+                    showToast('Share link copied! (view-only)', 'success');
                 } catch (err) {
-                    showStatus('Failed to copy link', true);
+                    showToast('Failed to copy link', 'error');
                 }
                 document.body.removeChild(textArea);
             });
@@ -1572,6 +1612,35 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
             const urlApiUrl = urlParams.get('apiUrl');
             const urlDatabaseId = urlParams.get('databaseId');
             const urlApiKey = urlParams.get('apiKey');
+            isViewOnly = urlParams.get('viewOnly') === 'true';
+            
+            // If view-only mode, hide/disable editing features
+            if (isViewOnly) {
+                console.log('🔒 View-only mode enabled');
+                
+                // Hide the save button
+                const saveButton = document.querySelector('.icon-btn[onclick="saveToNotion()"]');
+                if (saveButton) saveButton.style.display = 'none';
+                
+                // Hide settings and share options from dropdown
+                const settingsDropdown = document.getElementById('settingsDropdown');
+                if (settingsDropdown) {
+                    // Remove settings and copy link items
+                    const settingsItem = Array.from(settingsDropdown.children).find(el => 
+                        el.textContent.includes('Settings')
+                    );
+                    const embedLinkItem = Array.from(settingsDropdown.children).find(el => 
+                        el.textContent.includes('Copy Embed Link')
+                    );
+                    const shareLinkItem = Array.from(settingsDropdown.children).find(el => 
+                        el.textContent.includes('Copy Share Link')
+                    );
+                    
+                    if (settingsItem) settingsItem.remove();
+                    if (embedLinkItem) embedLinkItem.remove();
+                    if (shareLinkItem) shareLinkItem.remove();
+                }
+            }
             
             const savedApiUrl = urlApiUrl || localStorage.getItem('apiUrl');
             const savedDatabaseId = urlDatabaseId || localStorage.getItem('databaseId');
@@ -2124,8 +2193,8 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 item.dataset.index = index;
                 item.draggable = false;
 
-                // Only enable drag-and-drop in normal grid view, not in reels-only view
-                if (!reelsOnlyView) {
+                // Only enable drag-and-drop in normal grid view, not in reels-only view or view-only mode
+                if (!reelsOnlyView && !isViewOnly) {
                     item.addEventListener('dragstart', handleDragStart);
                     item.addEventListener('dragover', handleDragOver);
                     item.addEventListener('drop', handleDrop);
@@ -2160,8 +2229,8 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                     
                     lastTapTime = currentTime;
                     
-                    // Only enable long-press drag in normal grid view, not in reels-only view
-                    if (!reelsOnlyView) {
+                    // Only enable long-press drag in normal grid view, not in reels-only view or view-only mode
+                    if (!reelsOnlyView && !isViewOnly) {
                         longPressTimer = setTimeout(() => {
                             if (!isDraggingTouch) {
                                 isDraggingTouch = true;
@@ -2183,8 +2252,8 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                         clearTimeout(longPressTimer);
                     }
                     
-                    // Only process touch drag if not in reels-only view
-                    if (!reelsOnlyView && isDraggingTouch && touchDraggedElement) {
+                    // Only process touch drag if not in reels-only view or view-only mode
+                    if (!reelsOnlyView && !isViewOnly && isDraggingTouch && touchDraggedElement) {
                         e.preventDefault();
                         
                         const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -2200,8 +2269,8 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 item.addEventListener('touchend', (e) => {
                     clearTimeout(longPressTimer);
                     
-                    // Only process drag drop if not in reels-only view
-                    if (!reelsOnlyView && isDraggingTouch && touchDraggedElement) {
+                    // Only process drag drop if not in reels-only view or view-only mode
+                    if (!reelsOnlyView && !isViewOnly && isDraggingTouch && touchDraggedElement) {
                         e.preventDefault();
                         
                         const touch = e.changedTouches[0];
