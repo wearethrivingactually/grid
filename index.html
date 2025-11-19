@@ -2114,8 +2114,8 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                         date: page.properties.Date?.date?.start || null,
                         reelCoverCanvaUrl: reelCoverCanvaUrl ? convertToCanvaEmbedUrl(reelCoverCanvaUrl) : null,
                         reelCoverImageUrl: reelCoverImageUrl,
-                        caption: page.properties.Caption?.rich_text[0]?.plain_text || '',
-                        hashtags: page.properties.Hashtags?.rich_text[0]?.plain_text || ''
+                        caption: (page.properties.Caption && page.properties.Caption.rich_text && page.properties.Caption.rich_text[0]) ? page.properties.Caption.rich_text[0].plain_text : '',
+                        hashtags: (page.properties.Hashtags && page.properties.Hashtags.rich_text && page.properties.Hashtags.rich_text[0]) ? page.properties.Hashtags.rich_text[0].plain_text : ''
                     };
                 });
                 
