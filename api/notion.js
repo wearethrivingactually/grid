@@ -44,7 +44,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { action, databaseId, apiKey, pageId, order, date } = req.body;
+  const { action, databaseId, apiKey, pageId, order, date, textType, textValue } = req.body;
 
   if (!apiKey || !databaseId) {
     return res.status(400).json({ error: 'Missing required fields' });
@@ -135,6 +135,54 @@ export default async function handler(req, res) {
           message: fetchError.message 
         });
       }
+    } else if (action === 'updateText') {
+      // Handle caption/hashtags update
+      console.log('UPDATE TEXT ACTION - pageId:', pageId, 'textType:', textType);
+      
+      const propertyName = textType === 'caption' ? 'Caption' : 'Hashtags';
+      
+      try {
+        const response = await fetch(
+          `https://api.notion.com/v1/pages/${pageId}`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'Notion-Version': '2022-06-28',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              properties: {
+                [propertyName]: {
+                  rich_text: [{
+                    text: { content: textValue }
+                  }]
+                }
+              }
+            })
+          }
+        );
+
+        const data = await response.json();
+        
+        if (!response.ok) {
+          console.error('Notion API Error Response:', data);
+          return res.status(response.status).json({ 
+            error: 'Notion API error',
+            message: data.message,
+            details: data 
+          });
+        }
+        
+        console.log('✅ Text update successful for page:', pageId);
+        return res.status(200).json({ success: true });
+      } catch (fetchError) {
+        console.error('Fetch error:', fetchError);
+        return res.status(500).json({ 
+          error: 'Failed to update text',
+          message: fetchError.message 
+        });
+      }
     }
 
     return res.status(400).json({ error: 'Invalid action' });
@@ -142,23 +190,4 @@ export default async function handler(req, res) {
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-}
-
-if (body.action === 'updateText') {
-  const { pageId, textType, textValue } = body;
-  
-  const propertyName = textType === 'caption' ? 'Caption' : 'Hashtags';
-  
-  await notion.pages.update({
-    page_id: pageId,
-    properties: {
-      [propertyName]: {
-        rich_text: [{
-          text: { content: textValue }
-        }]
-      }
-    }
-  });
-  
-  return { success: true };
 }
