@@ -143,3 +143,22 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: error.message });
   }
 }
+
+if (body.action === 'updateText') {
+  const { pageId, textType, textValue } = body;
+  
+  const propertyName = textType === 'caption' ? 'Caption' : 'Hashtags';
+  
+  await notion.pages.update({
+    page_id: pageId,
+    properties: {
+      [propertyName]: {
+        rich_text: [{
+          text: { content: textValue }
+        }]
+      }
+    }
+  });
+  
+  return { success: true };
+}
