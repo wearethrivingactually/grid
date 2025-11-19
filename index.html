@@ -1517,6 +1517,7 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 
                 title.textContent = 'Caption';
                 textarea.value = img.caption || '';
+                textarea.placeholder = 'Enter caption...';
                 textarea.dataset.type = 'caption';
                 panel.classList.add('active');
             }
@@ -1543,6 +1544,7 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 
                 title.textContent = 'Hashtags';
                 textarea.value = img.hashtags || '';
+                textarea.placeholder = 'Enter hashtags...';
                 textarea.dataset.type = 'hashtags';
                 panel.classList.add('active');
             }
