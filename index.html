@@ -926,6 +926,145 @@
         .lightbox-close:hover {
             background: white;
         }
+        
+        /* Caption/Hashtags Editor */
+        .caption-editor {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 10001;
+        }
+        
+        .caption-editor-btn {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            padding: 10px;
+        }
+        
+        .caption-editor-btn:hover {
+            background: white;
+            transform: scale(1.05);
+        }
+        
+        .caption-editor-btn svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .caption-panel {
+            position: absolute;
+            top: 80px;
+            left: 20px;
+            right: 20px;
+            max-width: 600px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            z-index: 10002;
+            display: none;
+        }
+        
+        .caption-panel.active {
+            display: block;
+        }
+        
+        .caption-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .caption-panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .caption-panel-close {
+            width: 32px;
+            height: 32px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 8px;
+        }
+        
+        .caption-panel-close:hover {
+            background: #e0e0e0;
+        }
+        
+        .caption-panel-close svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .caption-panel textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 12px;
+        }
+        
+        .caption-panel textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .caption-panel-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .caption-panel-btn {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .caption-panel-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .caption-panel-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .caption-panel-btn.secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .caption-panel-btn.secondary:hover {
+            background: #e0e0e0;
+        }
 
         /* Mobile touch improvements */
         @media (hover: none) and (pointer: coarse) {
@@ -1258,6 +1397,46 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                 }
             }
 
+            // Add caption/hashtags editor buttons (only in edit mode, not view-only)
+            if (!isViewOnly) {
+                const editorButtons = document.createElement('div');
+                editorButtons.className = 'caption-editor';
+                editorButtons.innerHTML = `
+                    <button class="caption-editor-btn" onclick="openCaptionEditor('${img.id}')" title="Edit Caption">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25.17 18.71">
+                            <path fill="currentColor" d="M4.38,18.71c-1.09,0-1.75-.6-1.75-1.53,0-.66.55-1.2,1.15-1.86.71-.77,1.64-1.81,1.64-3.17,0-1.15-.77-1.37-1.53-1.64-2.41-.82-3.88-2.57-3.88-4.92C0,2.52,2.52,0,5.85,0c3.67,0,6.13,3.12,6.13,7.39,0,5.91-4.87,11.33-7.61,11.33ZM15.81,17.18c0-.66.55-1.2,1.15-1.86.71-.77,1.64-1.81,1.64-3.17,0-1.15-.77-1.37-1.53-1.64-2.41-.82-3.89-2.57-3.89-4.92,0-3.06,2.52-5.58,5.86-5.58,3.67,0,6.13,3.12,6.13,7.39,0,5.91-4.87,11.33-7.61,11.33-1.09,0-1.75-.6-1.75-1.53Z"/>
+                        </svg>
+                    </button>
+                    <button class="caption-editor-btn" onclick="openHashtagsEditor('${img.id}')" title="Edit Hashtags">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33.56 39.18">
+                            <path fill="currentColor" d="M14.87,2.35l-.77,7.44h7.5l.77-7.44c.16-1.59.93-2.35,2.63-2.35h.88c1.48,0,2.35.77,2.19,2.35l-.77,7.44h4.16c1.59,0,2.3.71,2.08,2.41l-.11.82c-.16,1.7-.98,2.41-2.57,2.41h-4.16l-.88,8.32h4.16c1.59,0,2.24.71,2.08,2.41l-.11.82c-.22,1.7-1.04,2.41-2.63,2.41h-4.1l-.77,7.44c-.22,1.59-.99,2.35-2.68,2.35h-.93c-1.48,0-2.24-.77-2.08-2.35l.77-7.44h-7.55l-.77,7.44c-.16,1.59-.93,2.35-2.68,2.35h-.88c-1.48,0-2.3-.77-2.08-2.35l.77-7.44H2.12c-1.59,0-2.3-.71-2.08-2.41l.05-.82c.22-1.7,1.04-2.41,2.63-2.41h4.21l.88-8.32H3.65c-1.59,0-2.3-.71-2.13-2.41l.11-.82c.16-1.7,1.04-2.41,2.63-2.41h4.16l.77-7.44c.16-1.59.93-2.35,2.57-2.35h.93c1.48,0,2.35.77,2.19,2.35ZM13.5,15.43l-.93,8.32h7.55l.88-8.32h-7.5Z"/>
+                        </svg>
+                    </button>
+                `;
+                content.appendChild(editorButtons);
+                
+                // Add caption panel (hidden by default)
+                const captionPanel = document.createElement('div');
+                captionPanel.className = 'caption-panel';
+                captionPanel.id = `captionPanel-${img.id}`;
+                captionPanel.innerHTML = `
+                    <div class="caption-panel-header">
+                        <div class="caption-panel-title" id="captionPanelTitle-${img.id}">Caption</div>
+                        <button class="caption-panel-close" onclick="closeCaptionPanel('${img.id}')">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10.71 10.71">
+                                <path fill="currentColor" d="M6.99,5.35l3.38-3.38c.22-.22.34-.51.34-.82s-.12-.6-.34-.82c-.45-.45-1.19-.45-1.64,0l-3.38,3.38L1.98.34c-.45-.45-1.19-.45-1.64,0-.45.45-.45,1.19,0,1.64l3.38,3.38L.34,8.73c-.45.45-.45,1.19,0,1.64.45.45,1.19.45,1.64,0l3.38-3.38,3.38,3.38c.23.23.52.34.82.34s.59-.11.82-.34.34-.51.34-.82-.12-.6-.34-.82l-3.38-3.38Z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <textarea id="captionTextarea-${img.id}" placeholder="Enter caption..."></textarea>
+                    <div class="caption-panel-actions">
+                        <button class="caption-panel-btn secondary" onclick="copyCaptionText('${img.id}')">Copy Text</button>
+                        <button class="caption-panel-btn primary" onclick="saveCaptionText('${img.id}')">Save</button>
+                    </div>
+                `;
+                content.appendChild(captionPanel);
+            }
+
             lightbox.classList.add('active');
         }
 
@@ -1272,6 +1451,103 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
             });
             
             lightbox.classList.remove('active');
+        }
+
+        function openCaptionEditor(imageId) {
+            const img = images.find(i => i.id === imageId);
+            if (!img) return;
+            
+            const panel = document.getElementById(`captionPanel-${imageId}`);
+            const textarea = document.getElementById(`captionTextarea-${imageId}`);
+            const title = document.getElementById(`captionPanelTitle-${imageId}`);
+            
+            if (panel && textarea && title) {
+                title.textContent = 'Caption';
+                textarea.value = img.caption || '';
+                textarea.dataset.type = 'caption';
+                panel.classList.add('active');
+            }
+        }
+
+        function openHashtagsEditor(imageId) {
+            const img = images.find(i => i.id === imageId);
+            if (!img) return;
+            
+            const panel = document.getElementById(`captionPanel-${imageId}`);
+            const textarea = document.getElementById(`captionTextarea-${imageId}`);
+            const title = document.getElementById(`captionPanelTitle-${imageId}`);
+            
+            if (panel && textarea && title) {
+                title.textContent = 'Hashtags';
+                textarea.value = img.hashtags || '';
+                textarea.dataset.type = 'hashtags';
+                panel.classList.add('active');
+            }
+        }
+
+        function closeCaptionPanel(imageId) {
+            const panel = document.getElementById(`captionPanel-${imageId}`);
+            if (panel) {
+                panel.classList.remove('active');
+            }
+        }
+
+        function copyCaptionText(imageId) {
+            const textarea = document.getElementById(`captionTextarea-${imageId}`);
+            if (!textarea) return;
+            
+            textarea.select();
+            document.execCommand('copy');
+            showToast('Text copied!', 'success');
+        }
+
+        async function saveCaptionText(imageId) {
+            const textarea = document.getElementById(`captionTextarea-${imageId}`);
+            if (!textarea) return;
+            
+            const img = images.find(i => i.id === imageId);
+            if (!img) return;
+            
+            const type = textarea.dataset.type;
+            const text = textarea.value;
+            
+            const apiUrl = document.getElementById('apiUrl').value.trim();
+            const databaseId = document.getElementById('databaseId').value.trim();
+            const apiKey = document.getElementById('apiKey').value.trim();
+            
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'updateText',
+                        databaseId: databaseId,
+                        apiKey: apiKey,
+                        pageId: imageId,
+                        textType: type,
+                        textValue: text
+                    })
+                });
+                
+                if (response.ok) {
+                    // Update local data
+                    if (type === 'caption') {
+                        img.caption = text;
+                    } else {
+                        img.hashtags = text;
+                    }
+                    
+                    showToast(`${type === 'caption' ? 'Caption' : 'Hashtags'} saved!`, 'success');
+                    closeCaptionPanel(imageId);
+                } else {
+                    throw new Error('Save failed');
+                }
+            } catch (error) {
+                console.error('Error saving text:', error);
+                showToast('Failed to save', 'error');
+            }
         }
 
         document.addEventListener('click', (e) => {
@@ -1837,7 +2113,9 @@ const media = createMediaElement(processedSlideUrl, img.name, true, apiUrl, apiK
                         createdTime: page.created_time,
                         date: page.properties.Date?.date?.start || null,
                         reelCoverCanvaUrl: reelCoverCanvaUrl ? convertToCanvaEmbedUrl(reelCoverCanvaUrl) : null,
-                        reelCoverImageUrl: reelCoverImageUrl
+                        reelCoverImageUrl: reelCoverImageUrl,
+                        caption: page.properties.Caption?.rich_text[0]?.plain_text || '',
+                        hashtags: page.properties.Hashtags?.rich_text[0]?.plain_text || ''
                     };
                 });
                 
